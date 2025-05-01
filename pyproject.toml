@@ -1,0 +1,15 @@
+[project]
+name = "Simple-Site-Monitor"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Thomas Bonnici", email = "thomas.bonnici@icloud.com"},
+]
+dependencies = ["sqlalchemy>=2.0.40", "fastapi>=0.115.12", "jinja2>=3.1.6", "uvicorn>=0.34.2"]
+requires-python = "==3.13.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
