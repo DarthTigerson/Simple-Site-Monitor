@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Site Monitor</title>
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    {% if request.url.path == '/' %}
+    <link rel="stylesheet" href="/static/css/home.css">
+    {% elif request.url.path == '/sites' %}
+    <link rel="stylesheet" href="/static/css/sites.css">
+    {% elif request.url.path == '/settings' %}
+    <link rel="stylesheet" href="/static/css/settings.css">
+    {% endif %}
+</head>
+<body>
+    <div class="container">
+        <!-- Notification container -->
+        <div id="notification-container"></div>
+        
+        {% include "navbar.html" %}
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+        <footer>
+            <p class="author">Made by <a href="https://thomas.bonnici.xyz" target="_blank">Thomas Bonnici</a></p>
+            <p class="version">v0.1.0</p>
+        </footer>
+    </div>
+    
+    <script src="/static/js/layout.js"></script>
+    <script src="/static/js/navbar.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

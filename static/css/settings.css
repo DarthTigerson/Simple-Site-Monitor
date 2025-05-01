@@ -1,0 +1,438 @@
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Sites Dashboard Section - Copied from home.css */
+.sites-dashboard {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+/* Settings Panel */
+.settings-panel {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+/* Import section-header styling from home.css */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+    background: linear-gradient(90deg, var(--text-color) 0%, #9bc8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* Settings Grid Layout */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+/* Settings Cards */
+.settings-card {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.settings-card-header {
+    background: linear-gradient(135deg, #2e61a1 0%, #3273c4 50%, #2c5d98 100%);
+    color: white;
+    padding: 15px 20px;
+}
+
+.settings-card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.settings-card-content {
+    padding: 20px;
+    background-color: var(--dark-bg);
+}
+
+/* Webhook Form Layout */
+.webhook-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.webhook-url {
+    flex: 1;
+}
+
+.webhook-toggle-container {
+    width: auto;
+    flex-shrink: 0;
+}
+
+/* Webhook Test Button */
+.webhook-test {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    color: white;
+    transition: background-color 0.3s, transform 0.1s, opacity 0.3s;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.webhook-test:hover {
+    background-color: #5a6268;
+    transform: scale(1.05);
+}
+
+.webhook-test:active {
+    transform: scale(0.95);
+}
+
+.webhook-test.disabled {
+    background-color: #9a9a9a;
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.webhook-test.disabled:hover {
+    transform: none;
+    background-color: #9a9a9a;
+}
+
+/* Webhook Toggle Button */
+.webhook-toggle {
+    height: 40px;
+    padding: 0 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.1s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.webhook-toggle.enabled {
+    background: linear-gradient(135deg, #2c9e3f 0%, #4CAF50 50%, #2c9e3f 100%);
+    color: white;
+}
+
+.webhook-toggle.disabled {
+    background: linear-gradient(135deg, #d32f2f 0%, #f44336 50%, #d32f2f 100%);
+    color: white;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label, .webhook-url label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-group input, .webhook-url input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: opacity 0.3s, background-color 0.3s, border-color 0.3s;
+}
+
+.form-group input:focus, .webhook-url input:focus {
+    outline: none;
+    border-color: #4b6cb7;
+}
+
+.webhook-url input:disabled {
+    opacity: 0.6;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-color: #666;
+    cursor: not-allowed;
+}
+
+/* Message Alerts */
+.message-alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.message-alert.success {
+    background-color: rgba(76, 175, 80, 0.2);
+    border: 1px solid #4CAF50;
+    color: #4CAF50;
+}
+
+.message-alert.error {
+    background-color: rgba(244, 67, 54, 0.2);
+    border: 1px solid #f44336;
+    color: #f44336;
+}
+
+.message-alert.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .settings-subcards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-subcards {
+        grid-template-columns: 1fr;
+    }
+    
+    .webhook-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .webhook-toggle-container {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+/* Custom Number Input */
+.number-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    margin-top: auto;
+    margin-bottom: 5px;
+}
+
+.number-input-container input[type="number"] {
+    width: 80px;
+    height: 36px;
+    text-align: center;
+    margin: 0 8px;
+    -moz-appearance: textfield;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgba(30, 30, 30, 0.7);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.number-input-container input[type="number"]::-webkit-inner-spin-button,
+.number-input-container input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.number-decrement, .number-increment {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #4b6cb7;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: bold;
+}
+
+.number-decrement:hover, .number-increment:hover {
+    background-color: #3b5a9d;
+    transform: scale(1.05);
+}
+
+.number-decrement:active, .number-increment:active {
+    transform: scale(0.95);
+}
+
+.unit-label {
+    color: #9a9a9a;
+    font-size: 0.85rem;
+    text-align: center;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Make existing styles work with the new inputs */
+.form-group input, .webhook-url input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: opacity 0.3s, background-color 0.3s, border-color 0.3s;
+}
+
+/* Settings Subcards */
+.settings-subcards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    justify-items: start;
+}
+
+.settings-subcard {
+    background-color: rgba(40, 44, 52, 0.7);
+    border: 1px solid rgba(100, 100, 100, 0.4);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+}
+
+.settings-subcard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.settings-subcard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #4b6cb7 0%, #3b5a9d 100%);
+}
+
+.settings-subcard .form-group {
+    margin-bottom: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings-subcard label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #f0f0f0;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    display: block;
+}
+
+.setting-description {
+    font-size: 0.85rem;
+    color: #9a9a9a;
+    margin-bottom: 10px;
+    font-weight: normal;
+    line-height: 1.4;
+}
+
+/* Actions Container */
+.actions-container {
+    margin-top: 25px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Debug Toggle Button and Container */
+.debug-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.debug-toggle {
+    height: 40px;
+    padding: 0 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.1s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.debug-toggle.enabled {
+    background: linear-gradient(135deg, #2c9e3f 0%, #4CAF50 50%, #2c9e3f 100%);
+    color: white;
+}
+
+.debug-toggle.disabled {
+    background: linear-gradient(135deg, #4a3b92 0%, #4a42b8 50%, #3c3b92 100%);
+    color: white;
+}
+
+.section-header .btn-success {
+    background: linear-gradient(135deg, #2d8757 0%, #38a169 50%, #2a7d50 100%);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.section-header .btn-success:hover {
+    background: linear-gradient(135deg, #38a169 0%, #3db476 50%, #38a169 100%);
+    transform: translateY(-2px);
+} 

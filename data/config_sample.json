@@ -1,0 +1,28 @@
+{
+    "default_scan_interval": 30,
+    "default_timeout": 10,
+    "default_slow_threshold": 2,
+    "expiring_token_threshold": 10,
+    "attempt_before_trigger": 3,
+    "include_error_debugging": false,
+    "runner_concurrency": 10,
+    "webhooks": {
+        "type": "discord",
+        "url": "https://discord.com/api/webhooks/1234567890/abcdefghijklmnopqrstuvwxyz",
+        "enabled": false
+    },
+    "sites": [
+        {
+            "url": "https://www.google.com",
+            "name": "Google",
+            "scan_interval": 0,
+            "timeout": 0,
+            "trigger": {
+                "type": "status_code",
+                "value": "200"
+            },
+            "monitor_expiring_token": false,
+            "webhook": false
+        }
+    ]
+}

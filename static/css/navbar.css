@@ -1,0 +1,101 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #1e1e1e 0%, #252836 50%, #1e2030 100%);
+    color: var(--text-color);
+    box-shadow: var(--shadow);
+    border-bottom: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--navbar-height);
+    z-index: 1000;
+}
+
+.navbar-brand a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(78, 145, 223, 0.3);
+    background: linear-gradient(90deg, var(--text-color) 0%, #9bc8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.navbar-items {
+    display: flex;
+    list-style: none;
+}
+
+.navbar-item {
+    margin-left: 20px;
+}
+
+.navbar-item a {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.navbar-item a:hover {
+    background-color: var(--hover-bg);
+}
+
+.navbar-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.navbar-toggle span {
+    height: 3px;
+    width: 100%;
+    background-color: var(--text-color);
+    border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .navbar-toggle {
+        display: flex;
+    }
+
+    .navbar-menu {
+        position: fixed;
+        top: var(--navbar-height);
+        left: 0;
+        right: 0;
+        height: 0;
+        background: linear-gradient(135deg, #1e1e1e 0%, #252836 50%, #1e2030 100%);
+        overflow: hidden;
+        transition: height 0.3s ease;
+        z-index: 999;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .navbar-menu.active {
+        height: auto;
+        padding-bottom: 15px;
+    }
+
+    .navbar-items {
+        flex-direction: column;
+        padding: 0 20px;
+    }
+
+    .navbar-item {
+        margin: 15px 0;
+    }
+}

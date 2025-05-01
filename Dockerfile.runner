@@ -1,0 +1,15 @@
+FROM python:3.13-slim
+
+WORKDIR /app
+
+COPY . .
+
+# Set environment variable to disable Python output buffering
+ENV PYTHONUNBUFFERED=1
+
+RUN pip install --no-cache-dir pdm && \
+    pdm install --no-self && \
+    chmod -R 777 /app/data
+
+# Set the entrypoint to run the runner script
+CMD ["pdm", "run", "python", "runner.py"] 

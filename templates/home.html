@@ -1,0 +1,174 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="dashboard-container" data-refresh-interval="{{ config.default_scan_interval }}">
+    <div class="status-summary">
+        <div class="status-card total" data-filter="all">
+            <div class="status-number">{{ stats.total }}</div>
+            <div class="status-label">All Sites</div>
+        </div>
+        <div class="status-card error" data-filter="down">
+            <div class="status-number">{{ stats.down }}</div>
+            <div class="status-label">Down</div>
+        </div>
+        <div class="status-card warning" data-filter="slow">
+            <div class="status-number">{{ stats.slow }}</div>
+            <div class="status-label">Slow</div>
+        </div>
+        <div class="status-card expiring" data-filter="expiring">
+            <div class="status-number">{{ stats.expiring }}</div>
+            <div class="status-label">Token Expiring</div>
+        </div>
+        <div class="status-card success" data-filter="healthy">
+            <div class="status-number">{{ stats.healthy }}</div>
+            <div class="status-label">Healthy</div>
+        </div>
+    </div>
+
+    <section class="sites-dashboard">
+        <div class="section-header">
+            <h2>Monitoring</h2>
+            <div class="header-actions">
+                <select id="logFilter" class="form-control">
+                    <option value="all">All Sites</option>
+                    <option value="down">Down</option>
+                    <option value="slow">Slow</option>
+                    <option value="expiring">Token Expiring</option>
+                    <option value="healthy">Healthy</option>
+                </select>
+                <button id="refreshDashboardBtn" class="btn btn-success">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                        <g id="SVGRepo_iconCarrier">
+                            <path d="M21 12C21 16.9706 16.9706 21 12 21C9.69494 21 7.59227 20.1334 6 18.7083L3 16M3 12C3 7.02944 7.02944 3 12 3C14.3051 3 16.4077 3.86656 18 5.29168L21 8M3 21V16M3 16H8M21 3V8M21 8H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="logs-container">
+            <div class="logs-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Name</th>
+                            <th>URL</th>
+                            <th>Load Time</th>
+                            <th>Duration</th>
+                            <th>Last Scan</th>
+                            <th>SSL Expiry</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr class="log-row 
+                            {% if log.status == 'down' %}error
+                            {% elif log.status == 'slow' %}warning
+                            {% elif log.status == 'token_alert' %}expiring
+                            {% else %}success{% endif %}">
+                            <td>
+                                <span class="status-indicator 
+                                    {% if log.status == 'down' %}error
+                                    {% elif log.status == 'slow' %}warning
+                                    {% elif log.status == 'token_alert' %}expiring
+                                    {% else %}success{% endif %}"></span>
+                                <span class="status-text">
+                                    {% if log.status == 'down' %}Down
+                                    {% elif log.status == 'slow' %}Slow
+                                    {% elif log.status == 'token_alert' %}Token Expiring
+                                    {% else %}Healthy{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ log.name }}</td>
+                            <td class="url-cell"><a href="{{ log.url }}" target="_blank">{{ log.url }}</a></td>
+                            <td>{{ log.response_time }}</td>
+                            <td>{{ log.duration }}</td>
+                            <td>{{ log.last_scan }}</td>
+                            <td class="ssl-days-cell">
+                                {% if log.ssl_days_remaining is not none and log.ssl_days_remaining > 0 %}
+                                    <span class="ssl-days {% if log.ssl_days_remaining <= 30 %}expiring{% endif %}">
+                                        {{ log.ssl_days_remaining }} days
+                                    </span>
+                                {% else %}
+                                    <span class="ssl-days not-monitored">Not Monitored</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                        {% if logs|length == 0 %}
+                        <tr>
+                            <td colspan="7" class="no-sites-message">
+                                No monitored sites found. Add sites in the settings.
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Add/Edit Site Modal -->
+    <div id="siteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Add New Site</h2>
+            <form id="siteForm">
+                <input type="hidden" id="siteIndex" name="siteIndex" value="">
+                <div class="form-group">
+                    <label for="siteName">Site Name</label>
+                    <input type="text" id="siteName" name="siteName" required>
+                </div>
+                <div class="form-group">
+                    <label for="siteUrl">URL</label>
+                    <input type="url" id="siteUrl" name="siteUrl" required>
+                </div>
+                <div class="form-group">
+                    <label for="siteTimeout">Timeout (0 for default)</label>
+                    <input type="number" id="siteTimeout" name="siteTimeout" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="triggerType">Trigger Type</label>
+                    <select id="triggerType" name="triggerType">
+                        <option value="status_code">Status Code</option>
+                        <option value="text">Text Content</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="triggerValue">Trigger Value</label>
+                    <input type="text" id="triggerValue" name="triggerValue" required>
+                </div>
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="webhookEnabled" name="webhookEnabled">
+                    <label for="webhookEnabled">Enable Webhook Notifications</label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete this site?</p>
+            <input type="hidden" id="deleteIndex" value="">
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/home.js"></script>
+{% endblock %}

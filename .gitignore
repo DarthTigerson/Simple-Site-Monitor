@@ -8,3 +8,4 @@ config.json
 .pdm-python
 .venv
 *.db
+*.DS_Store
