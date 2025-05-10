@@ -7,7 +7,7 @@ import models.models as models
 app = FastAPI(
     title="Simple Site Monitor",
     description="A simple site monitor for monitoring website availability and performance",
-    version="0.1.0"
+    version="0.1.1"
 )
 
 models.Base.metadata.create_all(bind=engine)
