@@ -53,9 +53,6 @@
                     <div class="site-header">
                         <h3>{{ site.name }}</h3>
                         <div class="site-actions">
-                            <button class="btn btn-scan" data-action="scan">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M16.6582 9.28638C18.098 10.1862 18.8178 10.6361 19.0647 11.2122C19.2803 11.7152 19.2803 12.2847 19.0647 12.7878C18.8178 13.3638 18.098 13.8137 16.6582 14.7136L9.896 18.94C8.29805 19.9387 7.49907 20.4381 6.83973 20.385C6.26501 20.3388 5.73818 20.0469 5.3944 19.584C5 19.053 5 18.1108 5 16.2264V7.77357C5 5.88919 5 4.94701 5.3944 4.41598C5.73818 3.9531 6.26501 3.66111 6.83973 3.6149C7.49907 3.5619 8.29805 4.06126 9.896 5.05998L16.6582 9.28638Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path> </g></svg>
-                            </button>
                             <button class="btn btn-edit" data-action="edit" title="Edit Site">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -126,11 +123,6 @@
                     </div>
                     <div class="list-cell site-actions-col">
                         <div class="list-actions">
-                            <button class="btn btn-scan" data-action="scan" title="Run Scan">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M16.6582 9.28638C18.098 10.1862 18.8178 10.6361 19.0647 11.2122C19.2803 11.7152 19.2803 12.2847 19.0647 12.7878C18.8178 13.3638 18.098 13.8137 16.6582 14.7136L9.896 18.94C8.29805 19.9387 7.49907 20.4381 6.83973 20.385C6.26501 20.3388 5.73818 20.0469 5.3944 19.584C5 19.053 5 18.1108 5 16.2264V7.77357C5 5.88919 5 4.94701 5.3944 4.41598C5.73818 3.9531 6.26501 3.66111 6.83973 3.6149C7.49907 3.5619 8.29805 4.06126 9.896 5.05998L16.6582 9.28638Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
-                                </svg>
-                            </button>
                             <button class="btn btn-edit" data-action="edit" title="Edit Site">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -160,131 +152,195 @@
             <form id="siteForm">
                 <input type="hidden" id="siteIndex" name="siteIndex" value="">
                 
-                <div class="form-group">
-                    <label for="siteName">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 5H21M3 12H21M3 19H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        Site Name
-                    </label>
-                    <input type="text" id="siteName" name="siteName" placeholder="Enter site name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="siteUrl">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        URL
-                    </label>
-                    <input type="url" id="siteUrl" name="siteUrl" placeholder="https://" required>
-                </div>
-                
-                <!-- Scan Interval control -->
-                <div class="form-group row">
-                    <div class="col-md-12">
-                        <label for="scanInterval">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            Scan Interval
-                        </label>
-                        <div class="timeout-wrapper">
-                            <div class="number-input-container">
-                                <button type="button" class="number-decrement" id="scanInterval-decrement">-</button>
-                                <input type="number" id="scanInterval" name="scanInterval" class="form-control" value="0" min="0">
-                                <button type="button" class="number-increment" id="scanInterval-increment">+</button>
-                            </div>
-                            <span class="timeout-description">Set custom scan frequency in seconds. If set to 0, default ({{ config.default_scan_interval }}s) will be used.</span>
+                <div class="form-split-container">
+                    <!-- Left Column -->
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="siteName">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 5H21M3 12H21M3 19H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Site Name
+                            </label>
+                            <input type="text" id="siteName" name="siteName" placeholder="Enter site name" required>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Timeout in its own row -->
-                <div class="form-group row">
-                    <div class="col-md-12">
-                        <label for="timeout">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2V4M12 20V22M4 12H2M22 12H20M19.8 19.8L17.6 17.6M19.8 4.2L17.6 6.4M4.2 19.8L6.4 17.6M4.2 4.2L6.4 6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2"/>
-                                <path d="M12 8V12L14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            Timeout
-                        </label>
-                        <div class="timeout-wrapper">
-                            <div class="number-input-container">
-                                <button type="button" class="number-decrement" id="timeout-decrement">-</button>
-                                <input type="number" id="timeout" name="timeout" class="form-control" value="0" min="0">
-                                <button type="button" class="number-increment" id="timeout-increment">+</button>
-                            </div>
-                            <span class="timeout-description">Set custom timeout for the site. If set to 0, default ({{ config.default_timeout }}s) will be used.</span>
+                        
+                        <div class="form-group">
+                            <label for="siteUrl">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                URL
+                            </label>
+                            <input type="url" id="siteUrl" name="siteUrl" placeholder="https://" required>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Trigger Type and Trigger Value in the same row -->
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="triggerType">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22 12H18L15 21L9 3L6 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Trigger Type
-                        </label>
-                        <select id="triggerType" name="triggerType">
-                            <option value="status_code">Status Code</option>
-                            <option value="text">Text Content</option>
-                        </select>
+                        
+                        <!-- Scan Interval control -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="scanInterval">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                    Scan Interval
+                                </label>
+                                <div class="timeout-wrapper">
+                                    <div class="number-input-container">
+                                        <button type="button" class="number-decrement" id="scanInterval-decrement">-</button>
+                                        <input type="number" id="scanInterval" name="scanInterval" class="form-control" value="0" min="0">
+                                        <button type="button" class="number-increment" id="scanInterval-increment">+</button>
+                                    </div>
+                                    <span class="timeout-description">Set custom scan frequency in seconds. If set to 0, default ({{ config.default_scan_interval }}s) will be used.</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timeout in its own row -->
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="timeout">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2V4M12 20V22M4 12H2M22 12H20M19.8 19.8L17.6 17.6M19.8 4.2L17.6 6.4M4.2 19.8L6.4 17.6M4.2 4.2L6.4 6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M12 8V12L14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                    Timeout
+                                </label>
+                                <div class="timeout-wrapper">
+                                    <div class="number-input-container">
+                                        <button type="button" class="number-decrement" id="timeout-decrement">-</button>
+                                        <input type="number" id="timeout" name="timeout" class="form-control" value="0" min="0">
+                                        <button type="button" class="number-increment" id="timeout-increment">+</button>
+                                    </div>
+                                    <span class="timeout-description">Set custom timeout for the site. If set to 0, default ({{ config.default_timeout }}s) will be used.</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="monitorTokenExpiry">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2L15 5H19C19.5523 5 20 5.44772 20 6V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V6C4 5.44772 4.44772 5 5 5H9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 16V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 8.5V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                SSL Certificate Monitoring
+                            </label>
+                            <div class="ssl-toggle-wrapper">
+                                <div class="ssl-toggle-container">
+                                    <button type="button" id="sslToggleBtn" class="btn ssl-toggle disabled">
+                                        Not Monitoring SSL
+                                    </button>
+                                    <input type="hidden" id="monitorTokenExpiry" name="monitorTokenExpiry" value="false">
+                                </div>
+                                <p class="ssl-description">Monitors SSL certificate expiration dates. Expiring certificates will be highlighted.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="webhookEnabled">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Webhook Notifications
+                            </label>
+                            <div class="notify-toggle-wrapper">
+                                <div class="notify-toggle-container">
+                                    <button type="button" id="notifyToggleBtn" class="btn notify-toggle disabled">
+                                        No Webhooks
+                                    </button>
+                                    <input type="hidden" id="webhookEnabled" name="webhookEnabled" value="false">
+                                </div>
+                                <p class="notify-description">Send webhook notifications when a site's status changes (requires webhook URL in settings).</p>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="triggerValue">Trigger Value</label>
-                        <input type="text" id="triggerValue" name="triggerValue" placeholder="e.g. 200 or 'Success'" required>
-                    </div>
-                </div>
-                <!-- Trigger help text below both fields -->
-                <div class="form-group trigger-help-container">
-                    <small class="form-help full-width" id="triggerHelp">Status code (usually 200) or text to look for in the response</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="monitorTokenExpiry">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L15 5H19C19.5523 5 20 5.44772 20 6V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V6C4 5.44772 4.44772 5 5 5H9L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 16V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 8.5V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        SSL Certificate Monitoring
-                    </label>
-                    <div class="ssl-toggle-wrapper">
-                        <div class="ssl-toggle-container">
-                            <button type="button" id="sslToggleBtn" class="btn ssl-toggle disabled">
-                                Not Monitoring SSL
-                            </button>
-                            <input type="hidden" id="monitorTokenExpiry" name="monitorTokenExpiry" value="false">
+                    <!-- Right Column -->
+                    <div class="form-column">
+                        <!-- Trigger Type and Trigger Value in the same row -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="triggerType">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M22 12H18L15 21L9 3L6 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Trigger Type
+                                </label>
+                                <select id="triggerType" name="triggerType">
+                                    <option value="status_code">Status Code</option>
+                                    <option value="text">Text Content</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="triggerValue">Trigger Value</label>
+                                <input type="text" id="triggerValue" name="triggerValue" placeholder="e.g. 200 or 'Success'" required>
+                            </div>
                         </div>
-                        <p class="ssl-description">Monitors SSL certificate expiration dates. Expiring certificates will be highlighted.</p>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="webhookEnabled">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        Webhook Notifications
-                    </label>
-                    <div class="notify-toggle-wrapper">
-                        <div class="notify-toggle-container">
-                            <button type="button" id="notifyToggleBtn" class="btn notify-toggle disabled">
-                                No Webhooks
-                            </button>
-                            <input type="hidden" id="webhookEnabled" name="webhookEnabled" value="false">
+                        <!-- Trigger help text below both fields -->
+                        <div class="form-group trigger-help-container">
+                            <small class="form-help full-width" id="triggerHelp">Status code (usually 200) or text to look for in the response</small>
                         </div>
-                        <p class="notify-description">Send webhook notifications when a site's status changes (requires webhook URL in settings).</p>
+
+                        <!-- Test Button with Inline Results -->
+                        <div class="form-group test-container">
+                            <div class="test-button-row">
+                                <button type="button" id="testSiteBtn" class="btn btn-primary test-button">
+                                    Test Now
+                                </button>
+                                <!-- Inline Test Results -->
+                                <div id="testResultSuccess" class="test-result-inline success" style="display: none;">
+                                    <span>Trigger condition met</span>
+                                </div>
+                                <div id="testResultFailure" class="test-result-inline failure" style="display: none;">
+                                    <span>Trigger condition not met</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Response Preview Panel (hidden by default) -->
+                        <div id="responsePreviewPanel" class="response-preview-panel" style="display: none;">
+                            <div class="panel-header">
+                                <div class="header-left">
+                                    <h4>Response Preview</h4>
+                                </div>
+                            </div>
+                            
+                            <!-- Response Content -->
+                            <div class="response-content">
+                                <pre id="responseBody">No response data available yet. Run a test to see results.</pre>
+                            </div>
+                            
+                            <!-- Footer with Toggle -->
+                            <div class="preview-footer">
+                                <button type="button" id="toggleResponseDetailsBtn" class="btn-text">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Details
+                                </button>
+                            </div>
+                            
+                            <!-- Response Details (hidden by default) -->
+                            <div id="responseDetails" class="response-details" style="display: none;">
+                                <div class="detail-item">
+                                    <span class="detail-label">Status Code:</span>
+                                    <span class="detail-value" id="responseStatusCode">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Response Time:</span>
+                                    <span class="detail-value" id="responseTime">-</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Content Type:</span>
+                                    <span class="detail-value" id="responseContentType">-</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

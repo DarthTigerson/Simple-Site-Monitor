@@ -3,6 +3,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 import json
 import os
+import requests
+import time
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from database import SessionLocal
@@ -363,3 +365,106 @@ async def delete_webhook(webhook_index: int):
     write_config(config)
     
     return JSONResponse(content={"message": "Webhook deleted successfully"})
+
+@router.post("/api/test-site")
+async def test_site(site_data: Dict[str, Any] = Body(...)):
+    """
+    Test a site based on provided URL and trigger conditions.
+    Returns response data for display in the UI.
+    """
+    try:
+        # Extract required fields
+        url = site_data.get("url")
+        trigger_type = site_data.get("trigger_type")
+        trigger_value = site_data.get("trigger_value")
+        timeout = site_data.get("timeout", 10)  # Default to 10 seconds timeout
+        
+        # Validate required fields
+        if not url or not trigger_type or not trigger_value:
+            raise HTTPException(status_code=400, detail="Missing required fields")
+        
+        # Load config to get default timeout if needed
+        config = read_config()
+        if timeout == 0:
+            timeout = config["default_timeout"]
+            
+        # Make the request to the site
+        result = await test_site_request(url, timeout, trigger_type, trigger_value, site_data)
+        
+        return JSONResponse(content=result)
+    except Exception as e:
+        print(f"Error testing site: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e)}
+        )
+
+async def test_site_request(url: str, timeout: int, trigger_type: str, trigger_value: str, site_data: Dict[str, Any]):
+    """
+    Makes a request to the site and checks if the trigger condition is met.
+    Returns response data including success status, timing, and response details.
+    """
+    try:
+        # Get method, headers, and body from the request if provided
+        method = site_data.get("method", "GET").upper()
+        content_type = site_data.get("content_type", "application/json")
+        body = site_data.get("body", "")
+        
+        # Set up headers
+        headers = {"Content-Type": content_type}
+        
+        # Make the request with timing
+        start_time = time.time()
+        
+        if method == "GET":
+            response = requests.get(url, headers=headers, timeout=timeout)
+        elif method == "POST":
+            response = requests.post(url, data=body, headers=headers, timeout=timeout)
+        elif method == "PUT":
+            response = requests.put(url, data=body, headers=headers, timeout=timeout)
+        elif method == "DELETE":
+            response = requests.delete(url, headers=headers, timeout=timeout)
+        else:
+            # Default to GET for unsupported methods
+            response = requests.get(url, headers=headers, timeout=timeout)
+            
+        response_time = time.time() - start_time
+        
+        # Check if trigger condition is met
+        success = False
+        if trigger_type == "status_code":
+            success = response.status_code == int(trigger_value)
+        elif trigger_type == "text":
+            success = trigger_value in response.text
+        
+        # Get content type
+        content_type = response.headers.get("Content-Type", "text/plain")
+        
+        # Prepare result object
+        result = {
+            "success": success,
+            "response_time": round(response_time * 1000, 2),  # Convert to ms
+            "status_code": response.status_code,
+            "content_type": content_type,
+            "body": response.text[:10000],  # Limit response size
+        }
+        
+        return result
+    except requests.Timeout:
+        return {
+            "success": False,
+            "error": "Request timed out",
+            "response_time": timeout * 1000,
+            "status_code": None,
+            "content_type": None,
+            "body": "Request timed out after {} seconds".format(timeout)
+        }
+    except requests.RequestException as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "response_time": 0,
+            "status_code": None,
+            "content_type": None,
+            "body": f"Error connecting to site: {str(e)}"
+        }
