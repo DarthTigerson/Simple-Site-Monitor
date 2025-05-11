@@ -6,6 +6,7 @@
 
 :root {
     --expiring-color: #e67e22;
+    --unknown-color: #9e9e9e;  /* Gray color for unknown status */
 }
 
 /* Sites Dashboard Section */
@@ -193,6 +194,10 @@
     border-top: 4px solid var(--expiring-color);
 }
 
+.status-card.unknown {
+    border-top: 4px solid var(--unknown-color);
+}
+
 .status-number {
     font-size: 3rem;
     font-weight: 700;
@@ -217,6 +222,10 @@
 
 .status-card.expiring .status-number {
     color: var(--expiring-color);
+}
+
+.status-card.unknown .status-number {
+    color: var(--unknown-color);
 }
 
 .status-label {
@@ -303,6 +312,10 @@ td:first-child {
     background-color: rgba(230, 126, 34, 0.05);
 }
 
+.log-row.unknown {
+    background-color: rgba(158, 158, 158, 0.05);
+}
+
 /* Status indicators */
 .status-indicator {
     display: inline-block;
@@ -326,6 +339,10 @@ td:first-child {
 
 .status-indicator.expiring {
     background-color: var(--expiring-color);
+}
+
+.status-indicator.unknown {
+    background-color: var(--unknown-color);
 }
 
 .url-cell {
@@ -710,4 +727,10 @@ th.sorting-desc .sort-icon:after {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 5px solid var(--text-color);
+}
+
+/* Pending scan styling */
+.pending-scan {
+    color: var(--secondary-text-color);
+    font-style: italic;
 }

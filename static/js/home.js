@@ -315,6 +315,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     row.style.display = '';
                 } else if (filterValue === 'healthy' && row.classList.contains('success')) {
                     row.style.display = '';
+                } else if (filterValue === 'unknown' && row.classList.contains('unknown')) {
+                    row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
@@ -419,6 +421,8 @@ function restoreSortingState() {
                     } else if (filter === 'expiring' && row.classList.contains('expiring')) {
                         row.style.display = '';
                     } else if (filter === 'healthy' && row.classList.contains('success')) {
+                        row.style.display = '';
+                    } else if (filter === 'unknown' && row.classList.contains('unknown')) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -590,10 +594,11 @@ function getCellValue(row, index) {
 function compareStatus(rowA, rowB, ascending) {
     // Get status priority based on class names
     const statusPriority = {
-        'error': 1,    // Down
-        'warning': 2,  // Slow
-        'expiring': 3, // Token Expiring
-        'success': 4   // Healthy
+        'success': 1,   // Healthy
+        'error': 2,     // Down
+        'warning': 3,   // Slow
+        'expiring': 4,  // Token Expiring
+        'unknown': 5    // Unknown/Pending
     };
     
     // Determine row status from the class
@@ -601,6 +606,7 @@ function compareStatus(rowA, rowB, ascending) {
         if (row.classList.contains('error')) return 'error';
         if (row.classList.contains('warning')) return 'warning';
         if (row.classList.contains('expiring')) return 'expiring';
+        if (row.classList.contains('unknown')) return 'unknown';
         return 'success';
     };
     

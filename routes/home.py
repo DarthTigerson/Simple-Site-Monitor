@@ -65,6 +65,7 @@ async def get_home(request: Request):
         # Get the latest status for each site by name
         site_names = {site['name'] for site in config["sites"]}
         all_site_logs = []
+        unknown_sites_data = []  # To store sites with no logs yet
         
         for name in site_names:
             # Get the most recent log for this site
@@ -74,15 +75,38 @@ async def get_home(request: Request):
                 RunnerSiteLog.last_scan_time.desc()
             ).first()
             
-            if latest_log and latest_log.status != "unknown":
+            # Include all sites, even with unknown status
+            if latest_log:
                 all_site_logs.append(latest_log)
+            else:
+                # If no log exists yet, create a temporary dictionary with default values
+                # to represent an unknown status site
+                site_url = ""
+                for site in config["sites"]:
+                    if site["name"] == name:
+                        site_url = site["url"]
+                        break
+                
+                # Create a dummy log entry for display purposes only
+                unknown_sites_data.append({
+                    "id": "temp_" + name,
+                    "name": name,
+                    "url": site_url,
+                    "status": "unknown",
+                    "response_time": "0.00s",
+                    "created_at": "Just added",
+                    "last_scan": "Pending scan",
+                    "duration": "Pending scan",
+                    "ssl_days_remaining": None
+                })
         
         # Create stats for the status summary
-        total_sites = len(all_site_logs)
+        total_sites = len(site_names)  # Use all sites from config
         down_sites = sum(1 for log in all_site_logs if log.status == "down")
         slow_sites = sum(1 for log in all_site_logs if log.status == "slow") 
         token_alert_sites = sum(1 for log in all_site_logs if log.status == "token_alert")
         healthy_sites = sum(1 for log in all_site_logs if log.status == "up" or log.status == "healthy")
+        unknown_sites = total_sites - down_sites - slow_sites - token_alert_sites - healthy_sites
         
         # Prepare site logs for display
         display_logs = []
@@ -114,16 +138,23 @@ async def get_home(request: Request):
                 "ssl_days_remaining": log.ssl_days_remaining
             })
         
-        # Sort by status priority (down, slow, token_alert, healthy)
+        # Add the unknown sites to the display logs
+        display_logs.extend(unknown_sites_data)
+        
+        # Sort by status priority (healthy, down, slow, token_alert, unknown)
         def status_priority(log):
-            if log["status"] == "down":
-                return 0
-            elif log["status"] == "slow":
+            if log["status"] == "up" or log["status"] == "healthy":
+                return 0  # Healthy sites first
+            elif log["status"] == "down":
                 return 1
-            elif log["status"] == "token_alert":
+            elif log["status"] == "slow":
                 return 2
-            else:
+            elif log["status"] == "token_alert":
                 return 3
+            elif log["status"] == "unknown":
+                return 4  # Unknown sites last
+            else:
+                return 0  # Default to healthy for any other status
                 
         display_logs.sort(key=status_priority)
         
@@ -138,7 +169,8 @@ async def get_home(request: Request):
                     "down": down_sites,
                     "slow": slow_sites,
                     "expiring": token_alert_sites,
-                    "healthy": healthy_sites
+                    "healthy": healthy_sites,
+                    "unknown": unknown_sites
                 }
             }
         )
