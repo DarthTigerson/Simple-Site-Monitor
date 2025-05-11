@@ -7,6 +7,10 @@
             <div class="status-number">{{ stats.total }}</div>
             <div class="status-label">All Sites</div>
         </div>
+        <div class="status-card success" data-filter="healthy">
+            <div class="status-number">{{ stats.healthy }}</div>
+            <div class="status-label">Healthy</div>
+        </div>
         <div class="status-card error" data-filter="down">
             <div class="status-number">{{ stats.down }}</div>
             <div class="status-label">Down</div>
@@ -19,10 +23,12 @@
             <div class="status-number">{{ stats.expiring }}</div>
             <div class="status-label">Token Expiring</div>
         </div>
-        <div class="status-card success" data-filter="healthy">
-            <div class="status-number">{{ stats.healthy }}</div>
-            <div class="status-label">Healthy</div>
+        {% if stats.unknown > 0 %}
+        <div class="status-card unknown" data-filter="unknown">
+            <div class="status-number">{{ stats.unknown }}</div>
+            <div class="status-label">Pending</div>
         </div>
+        {% endif %}
     </div>
 
     <section class="sites-dashboard">
@@ -31,10 +37,13 @@
             <div class="header-actions">
                 <select id="logFilter" class="form-control">
                     <option value="all">All Sites</option>
+                    <option value="healthy">Healthy</option>
                     <option value="down">Down</option>
                     <option value="slow">Slow</option>
                     <option value="expiring">Token Expiring</option>
-                    <option value="healthy">Healthy</option>
+                    {% if stats.unknown > 0 %}
+                    <option value="unknown">Pending</option>
+                    {% endif %}
                 </select>
                 <button id="refreshDashboardBtn" class="btn btn-success">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
@@ -68,25 +77,40 @@
                             {% if log.status == 'down' %}error
                             {% elif log.status == 'slow' %}warning
                             {% elif log.status == 'token_alert' %}expiring
+                            {% elif log.status == 'unknown' %}unknown
                             {% else %}success{% endif %}">
                             <td>
                                 <span class="status-indicator 
                                     {% if log.status == 'down' %}error
                                     {% elif log.status == 'slow' %}warning
                                     {% elif log.status == 'token_alert' %}expiring
+                                    {% elif log.status == 'unknown' %}unknown
                                     {% else %}success{% endif %}"></span>
                                 <span class="status-text">
                                     {% if log.status == 'down' %}Down
                                     {% elif log.status == 'slow' %}Slow
                                     {% elif log.status == 'token_alert' %}Token Expiring
+                                    {% elif log.status == 'unknown' %}Unknown
                                     {% else %}Healthy{% endif %}
                                 </span>
                             </td>
                             <td>{{ log.name }}</td>
                             <td class="url-cell"><a href="{{ log.url }}" target="_blank">{{ log.url }}</a></td>
                             <td>{{ log.response_time }}</td>
-                            <td>{{ log.duration }}</td>
-                            <td>{{ log.last_scan }}</td>
+                            <td>
+                                {% if log.status == 'unknown' %}
+                                <span class="pending-scan">Pending scan</span>
+                                {% else %}
+                                {{ log.duration }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if log.status == 'unknown' %}
+                                <span class="pending-scan">Pending scan</span>
+                                {% else %}
+                                {{ log.last_scan }}
+                                {% endif %}
+                            </td>
                             <td class="ssl-days-cell">
                                 {% if log.ssl_days_remaining is not none and log.ssl_days_remaining > 0 %}
                                     <span class="ssl-days {% if log.ssl_days_remaining <= 30 %}expiring{% endif %}">
@@ -125,7 +149,7 @@
                 </div>
                 <div class="form-group">
                     <label for="siteUrl">URL</label>
-                    <input type="url" id="siteUrl" name="siteUrl" required>
+                    <input type="url" id="siteUrl" name="siteUrl" placeholder="https://" required>
                 </div>
                 <div class="form-group">
                     <label for="siteTimeout">Timeout (0 for default)</label>

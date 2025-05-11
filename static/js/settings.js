@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle save button click
     if (saveSettingsBtn && settingsForm) {
-        saveSettingsBtn.addEventListener('click', function() {
+        saveSettingsBtn.addEventListener('click', async function() {
             // Validate form manually
             const scanInterval = document.getElementById('scanInterval');
             const defaultTimeout = document.getElementById('defaultTimeout');
@@ -93,79 +93,104 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Get global settings
-            const globalSettings = {
-                default_scan_interval: parseInt(scanInterval.value),
-                default_timeout: parseInt(defaultTimeout.value),
-                default_slow_threshold: parseFloat(slowThreshold.value),
-                expiring_token_threshold: parseInt(expiringTokenThreshold.value),
-                attempt_before_trigger: parseInt(document.getElementById('attemptBeforeTrigger').value),
-                include_error_debugging: document.getElementById('includeErrorDebugging').value === 'true'
-            };
+            // Show loading state
+            saveSettingsBtn.disabled = true;
+            const originalBtnHTML = saveSettingsBtn.innerHTML;
+            saveSettingsBtn.innerHTML = '<svg class="spinner" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"></circle></svg>';
             
-            // Get webhook settings
-            const webhookUrl = webhookUrlInput.value.trim();
-            const hasWebhook = webhookUrl !== '';
-            
-            // Save settings
-            saveSettings(globalSettings)
-                .then(() => {
-                    // If webhook URL is provided, save webhook
-                    if (hasWebhook) {
-                        const webhook = {
-                            type: determineWebhookType(webhookUrl),
-                            url: webhookUrl,
-                            enabled: webhookEnabledInput.value === 'true'
-                        };
-                        
-                        return saveWebhook(webhook);
-                    } else {
-                        // If URL is empty, delete the webhook if it exists
-                        return deleteWebhookIfExists();
-                    }
-                })
-                .then(() => {
-                    window.showNotification('Settings saved successfully', 'success');
-                })
-                .catch(error => {
-                    console.error('Error saving settings:', error);
-                    window.showNotification('Error saving settings: ' + error.message, 'error');
-                });
+            try {
+                // Get global settings
+                const globalSettings = {
+                    default_scan_interval: parseInt(scanInterval.value),
+                    default_timeout: parseInt(defaultTimeout.value),
+                    default_slow_threshold: parseFloat(slowThreshold.value),
+                    expiring_token_threshold: parseInt(expiringTokenThreshold.value),
+                    attempt_before_trigger: parseInt(document.getElementById('attemptBeforeTrigger').value),
+                    include_error_debugging: document.getElementById('includeErrorDebugging').value === 'true'
+                };
+                
+                // Get webhook settings
+                const webhookUrl = webhookUrlInput.value.trim();
+                const hasWebhook = webhookUrl !== '';
+                
+                // Save global settings first
+                await saveSettings(globalSettings);
+                
+                // Then handle webhook
+                if (hasWebhook) {
+                    const webhook = {
+                        type: determineWebhookType(webhookUrl),
+                        url: webhookUrl,
+                        enabled: webhookEnabledInput.value === 'true'
+                    };
+                    
+                    await saveWebhook(webhook);
+                } else {
+                    // If URL is empty, delete the webhook if it exists
+                    await deleteWebhookIfExists();
+                }
+                
+                window.showNotification('Settings saved successfully', 'success');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                window.showNotification('Error: ' + error.message, 'error');
+            } finally {
+                // Restore button state
+                saveSettingsBtn.disabled = false;
+                saveSettingsBtn.innerHTML = originalBtnHTML;
+            }
         });
     }
     
     // Test the webhook to see if it works
     if (testWebhookBtn) {
-        testWebhookBtn.addEventListener('click', function() {
+        testWebhookBtn.addEventListener('click', async function() {
             const webhookUrl = webhookUrlInput.value.trim();
             if (!webhookUrl) {
                 window.showNotification('Please enter a webhook URL', 'error');
                 return;
             }
             
-            fetch('/api/test-webhook', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    url: webhookUrl,
-                    type: determineWebhookType(webhookUrl)
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to test webhook');
+            // Show loading state
+            testWebhookBtn.disabled = true;
+            testWebhookBtn.innerHTML = '<svg class="spinner" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"></circle></svg>';
+            
+            try {
+                // First validate the webhook
+                const validation = await validateWebhook(webhookUrl);
+                if (!validation.valid) {
+                    throw new Error(validation.error);
                 }
-                return response.json();
-            })
-            .then(data => {
-                window.showNotification('Webhook test message sent successfully', 'success');
-            })
-            .catch(error => {
+                
+                // Use the validated webhook type
+                const webhookType = validation.type;
+                
+                // Then send the test
+                const response = await fetch('/api/test-webhook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: webhookUrl,
+                        type: webhookType
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to test webhook');
+                }
+                
+                window.showNotification('Test notification sent. Check your ' + webhookType.charAt(0).toUpperCase() + webhookType.slice(1) + ' channel for the test message.', 'success');
+            } catch (error) {
                 console.error('Error testing webhook:', error);
-                window.showNotification('Error testing webhook: ' + error.message, 'error');
-            });
+                window.showNotification('Error: ' + error.message, 'error');
+            } finally {
+                // Restore button state
+                testWebhookBtn.disabled = false;
+                testWebhookBtn.innerHTML = '<svg fill="currentColor" height="18" width="18" viewBox="0 0 24 24"><path d="M23,24H1v-4.3l7-12V2H6V0h12v2h-2v5.7l7,12V24z M12,22h9v-1.7l-3.4-5.9l0,0c-2.6-1.5-3.9-0.8-5.4-0.1S9,15.7,6.5,14.5 l-3.4,5.9V22H12z M7.4,12.7C9,13.4,10,13,11.3,12.4c1.2-0.5,2.7-1.2,4.7-0.7l-2-3.4V2h-4v6.3L7.4,12.7z"></path><circle cx="14.5" cy="17.5" r="1.5"></circle><circle cx="9.5" cy="18.5" r="1.5"></circle></svg>';
+            }
         });
     }
     
@@ -173,15 +198,74 @@ document.addEventListener('DOMContentLoaded', function() {
     function determineWebhookType(url) {
         const urlLower = url.toLowerCase();
         
-        if (urlLower.includes('discord.com')) {
+        if (urlLower.includes('discord.com') && urlLower.includes('/api/webhooks/')) {
             return 'discord';
-        } else if (urlLower.includes('slack.com')) {
+        } else if (urlLower.includes('hooks.slack.com') && urlLower.includes('/services/')) {
             return 'slack';
-        } else if (urlLower.includes('office.com') || urlLower.includes('microsoft.com')) {
-            return 'teams';
         } else {
-            return 'custom';
+            // Default to empty as we only support discord and slack
+            return '';
         }
+    }
+    
+    // Function to validate webhook URL
+    async function validateWebhook(url) {
+        if (!url) return { valid: false, error: 'Webhook URL cannot be empty' };
+        
+        try {
+            const response = await fetch('/api/validate-webhook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { valid: false, error: errorData.detail || 'Error validating webhook' };
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error validating webhook:', error);
+            return { valid: false, error: error.message || 'Error validating webhook' };
+        }
+    }
+    
+    // Validate webhook field on blur
+    if (webhookUrlInput) {
+        webhookUrlInput.addEventListener('blur', async function() {
+            const url = webhookUrlInput.value.trim();
+            if (!url) return; // Skip validation for empty URLs
+            
+            const errorContainer = document.getElementById('webhookUrlError') || createErrorElement();
+            
+            const result = await validateWebhook(url);
+            if (!result.valid) {
+                // Show error
+                errorContainer.textContent = result.error;
+                errorContainer.style.display = 'block';
+                webhookUrlInput.classList.add('error');
+            } else {
+                // Clear error
+                errorContainer.style.display = 'none';
+                webhookUrlInput.classList.remove('error');
+            }
+        });
+    }
+    
+    // Create error element if it doesn't exist
+    function createErrorElement() {
+        const errorContainer = document.createElement('div');
+        errorContainer.id = 'webhookUrlError';
+        errorContainer.className = 'error-message';
+        errorContainer.style.color = '#f44336';
+        errorContainer.style.fontSize = '0.85rem';
+        errorContainer.style.marginTop = '4px';
+        
+        webhookUrlInput.parentNode.appendChild(errorContainer);
+        return errorContainer;
     }
     
     // Function to save global settings
@@ -206,8 +290,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Function to save webhook
-    function saveWebhook(webhook) {
+    // Function to save webhook with validation
+    async function saveWebhook(webhook) {
+        // Validate webhook URL if provided
+        if (webhook.url) {
+            const validation = await validateWebhook(webhook.url);
+            if (!validation.valid) {
+                throw new Error(validation.error);
+            }
+            
+            // Use the validated webhook type
+            webhook.type = validation.type;
+        }
+        
         // Always use PUT to update the existing webhook object
         return fetch('/api/webhooks/0', {
             method: 'PUT',
@@ -218,7 +313,9 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to save webhook');
+                return response.json().then(data => {
+                    throw new Error(data.detail || 'Failed to save webhook');
+                });
             }
             return response.json();
         });

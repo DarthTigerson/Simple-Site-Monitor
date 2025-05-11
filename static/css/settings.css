@@ -178,6 +178,10 @@
     border-color: #4b6cb7;
 }
 
+.form-group input.error, .webhook-url input.error {
+    border-color: #f44336;
+}
+
 .webhook-url input:disabled {
     opacity: 0.6;
     background-color: rgba(0, 0, 0, 0.1);
@@ -307,15 +311,13 @@
     margin-top: 5px;
 }
 
-/* Make existing styles work with the new inputs */
-.form-group input, .webhook-url input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    transition: opacity 0.3s, background-color 0.3s, border-color 0.3s;
+/* Error message styling */
+.error-message {
+    color: #f44336;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: none;
+    animation: fadeIn 0.3s ease;
 }
 
 /* Settings Subcards */

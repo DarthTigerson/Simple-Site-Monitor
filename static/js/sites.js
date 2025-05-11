@@ -24,11 +24,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const triggerValueInput = document.getElementById('triggerValue');
     const triggerHelp = document.getElementById('triggerHelp');
     
+    // Test and Response Preview elements
+    const testSiteBtn = document.getElementById('testSiteBtn');
+    const testResultSuccess = document.getElementById('testResultSuccess');
+    const testResultFailure = document.getElementById('testResultFailure');
+    const responsePreviewPanel = document.getElementById('responsePreviewPanel');
+    const toggleResponseDetailsBtn = document.getElementById('toggleResponseDetailsBtn');
+    const responseDetails = document.getElementById('responseDetails');
+    const responseBody = document.getElementById('responseBody');
+    
     // Initialize timeoutInput for use in other functions
     const timeoutInput = document.getElementById('timeout');
     
     // Initialize table sorting in list view
     initTableSorting();
+    
+    // Attach event listeners to site cards
+    attachSiteCardEvents();
     
     // View toggle functionality
     if (gridViewBtn && listViewBtn && sitesContainer) {
@@ -93,8 +105,204 @@ document.addEventListener('DOMContentLoaded', function() {
         triggerValueInput.value = '200';
         updateTriggerHelp();
         
+        // Pre-populate URL field with https://
+        document.getElementById('siteUrl').value = 'https://';
+        
+        // Hide test results and response preview
+        hideTestResults();
+        hideResponsePreview();
+        
         // Display modal
         siteModal.style.display = 'flex';
+    }
+    
+    // Test Site functionality
+    if (testSiteBtn) {
+        testSiteBtn.addEventListener('click', function() {
+            // Get values from form
+            const url = document.getElementById('siteUrl').value;
+            const triggerType = triggerTypeSelect.value;
+            const triggerValue = triggerValueInput.value;
+            const timeout = parseInt(document.getElementById('timeout').value, 10) || 0;
+            
+            // Try to get additional optional fields
+            const methodInput = document.getElementById('siteMethod');
+            const contentTypeInput = document.getElementById('siteContentType');
+            const bodyInput = document.getElementById('siteBody');
+            
+            // Validate URL
+            if (!url || url === 'https://') {
+                alert('Please enter a valid URL');
+                return;
+            }
+            
+            // Simulate loading state
+            testSiteBtn.classList.add('loading');
+            testSiteBtn.disabled = true;
+            
+            // Hide previous results
+            hideTestResults();
+            hideResponsePreview();
+            
+            // Prepare the request data
+            const requestData = {
+                url: url,
+                trigger_type: triggerType,
+                trigger_value: triggerValue,
+                timeout: timeout
+            };
+            
+            // Add optional parameters if they exist
+            if (methodInput && methodInput.value) {
+                requestData.method = methodInput.value;
+            }
+            
+            if (contentTypeInput && contentTypeInput.value) {
+                requestData.content_type = contentTypeInput.value;
+            }
+            
+            if (bodyInput && bodyInput.value) {
+                requestData.body = bodyInput.value;
+            }
+            
+            // Make the API call to test the site
+            fetch('/api/test-site', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Remove loading state
+                testSiteBtn.classList.remove('loading');
+                testSiteBtn.disabled = false;
+                
+                // Handle the response
+                if (data.success) {
+                    // Show success message
+                    testResultSuccess.style.display = 'flex';
+                } else {
+                    // Show failure message
+                    testResultFailure.style.display = 'flex';
+                    
+                    // Show response preview panel for troubleshooting
+                    showResponsePreview();
+                    
+                    // Populate response data
+                    populateResponseData(data);
+                }
+            })
+            .catch(error => {
+                // Remove loading state
+                testSiteBtn.classList.remove('loading');
+                testSiteBtn.disabled = false;
+                
+                // Show error message
+                testResultFailure.style.display = 'flex';
+                
+                // Show response preview for error details
+                showResponsePreview();
+                responseBody.textContent = `Error testing site: ${error.message}`;
+                
+                // Set other fields to indicate error
+                document.getElementById('responseStatusCode').textContent = 'Error';
+                document.getElementById('responseTime').textContent = '0ms';
+                document.getElementById('responseContentType').textContent = 'N/A';
+                
+                console.error('Error testing site:', error);
+            });
+        });
+    }
+    
+    // Helper to populate response data from API
+    function populateResponseData(data) {
+        // Set response details
+        document.getElementById('responseStatusCode').textContent = data.status_code || 'N/A';
+        document.getElementById('responseTime').textContent = `${data.response_time}ms`;
+        document.getElementById('responseContentType').textContent = data.content_type || 'N/A';
+        
+        // Set response body
+        const body = data.body || 'No response body';
+        
+        // If using text trigger type and we have both body and trigger value, highlight the text
+        const triggerType = document.getElementById('triggerType').value;
+        const triggerValue = document.getElementById('triggerValue').value;
+        
+        if (triggerType === 'text' && body && triggerValue) {
+            try {
+                // Try to highlight the trigger text if it exists
+                let displayBody = body;
+                
+                if (body.includes(triggerValue)) {
+                    // Escape HTML to prevent XSS
+                    const escapedBody = body
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                    
+                    // Escape the trigger value for use in regex
+                    const escapedTrigger = triggerValue
+                        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    
+                    // Replace the trigger value with a highlighted version
+                    const regex = new RegExp(escapedTrigger, 'g');
+                    displayBody = escapedBody.replace(regex, '<span class="highlight">$&</span>');
+                    
+                    // Use innerHTML carefully since we've already escaped the content
+                    responseBody.innerHTML = displayBody;
+                    return;
+                }
+            } catch (e) {
+                console.error('Error highlighting text:', e);
+            }
+        }
+        
+        // Default case, just set as text
+        responseBody.textContent = body;
+    }
+    
+    // Response Preview Panel functions
+    function hideTestResults() {
+        if (testResultSuccess) testResultSuccess.style.display = 'none';
+        if (testResultFailure) testResultFailure.style.display = 'none';
+    }
+    
+    function hideResponsePreview() {
+        if (responsePreviewPanel) responsePreviewPanel.style.display = 'none';
+    }
+    
+    function showResponsePreview() {
+        if (responsePreviewPanel) {
+            responsePreviewPanel.style.display = 'block';
+            
+            // Reset details view
+            if (responseDetails) responseDetails.style.display = 'none';
+            if (toggleResponseDetailsBtn) toggleResponseDetailsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Details';
+        }
+    }
+    
+    // Toggle details button
+    if (toggleResponseDetailsBtn && responseDetails) {
+        toggleResponseDetailsBtn.addEventListener('click', function() {
+            const isVisible = responseDetails.style.display === 'block';
+            
+            if (isVisible) {
+                responseDetails.style.display = 'none';
+                toggleResponseDetailsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Details';
+            } else {
+                responseDetails.style.display = 'block';
+                toggleResponseDetailsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 15L12 8L19 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Hide';
+            }
+        });
     }
     
     // Update help text based on trigger type
@@ -182,11 +390,30 @@ document.addEventListener('DOMContentLoaded', function() {
             const monitorTokenInput = document.getElementById("monitorTokenExpiry");
             const webhookEnabledInput = document.getElementById("webhookEnabled");
             
+            // Enhanced URL validation
+            const errorAlert = document.getElementById("formError");
+            
             // Validate form
             if (!nameInput.value || !urlInput.value) {
                 // Show error
-                const errorAlert = document.getElementById("formError");
                 errorAlert.textContent = "Please fill in all required fields";
+                errorAlert.style.display = "block";
+                return;
+            }
+            
+            // URL validation
+            let siteUrl = urlInput.value.trim();
+            
+            // Check if URL starts with http:// or https://
+            if (!siteUrl.startsWith('http://') && !siteUrl.startsWith('https://')) {
+                siteUrl = 'https://' + siteUrl;
+                urlInput.value = siteUrl;
+            }
+            
+            try {
+                new URL(siteUrl); // Will throw if invalid URL
+            } catch (e) {
+                errorAlert.textContent = "Please enter a valid URL";
                 errorAlert.style.display = "block";
                 return;
             }
@@ -195,7 +422,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const siteIndex = document.getElementById("siteIndex").value;
             
             // Hide error if visible
-            const errorAlert = document.getElementById("formError");
             errorAlert.style.display = "none";
             
             // Show loading
@@ -214,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create basic site data object with only required fields
             let siteData = {
                 name: nameInput.value,
-                url: urlInput.value,
+                url: siteUrl,
                 trigger: {
                     type: triggerTypeInput.value,
                     value: triggerValueInput.value
@@ -238,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 siteData.body = bodyInput.value;
             }
             
-            let url = '/api/sites';
+            let endpoint = '/api/sites';
             if (siteIndex !== '') {
                 const siteIndexInt = parseInt(siteIndex, 10);
                 if (isNaN(siteIndexInt)) {
@@ -246,13 +472,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Error: Invalid site index');
                     return;
                 }
-                url = `/api/sites/${siteIndexInt}`;
+                endpoint = `/api/sites/${siteIndexInt}`;
             }
             
-            console.log('Submitting to URL:', url);
+            console.log('Submitting to URL:', endpoint);
             console.log('Form data:', siteData);
             
-            fetch(url, {
+            fetch(endpoint, {
                 method: siteIndex === '' ? 'POST' : 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -453,6 +679,34 @@ document.addEventListener('DOMContentLoaded', function() {
             notifyToggleBtn.classList.remove('enabled');
             notifyToggleBtn.classList.add('disabled');
         }
+    }
+
+    // Attach event listeners to site cards
+    function attachSiteCardEvents() {
+        console.log('Attaching site card events');
+        
+        const siteCards = document.querySelectorAll('.site-card');
+        siteCards.forEach(card => {
+            const siteIndex = card.getAttribute('data-site-index');
+            
+            // Edit buttons
+            const editBtns = card.querySelectorAll('.btn-edit');
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleSiteAction('edit', card, siteIndex);
+                });
+            });
+            
+            // Delete buttons
+            const deleteBtns = card.querySelectorAll('.btn-delete');
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handleSiteAction('delete', card, siteIndex);
+                });
+            });
+        });
     }
 });
 
@@ -671,29 +925,5 @@ function handleSiteAction(action, card, siteIndex) {
         // Set up delete confirmation
         document.getElementById('deleteIndex').value = siteIndexInt;
         deleteModal.style.display = 'flex';
-    }
-    else if (action === 'scan') {
-        // Get site name
-        const siteName = card.querySelector('.site-name') ? 
-            card.querySelector('.site-name').textContent : 
-            card.querySelector('h3').textContent;
-        
-        // Simulate scan operation (will be replaced with actual API call)
-        const scanButton = card.querySelector('.btn-scan');
-        if (scanButton) {
-            // Show loading state
-            const originalHTML = scanButton.innerHTML;
-            scanButton.disabled = true;
-            scanButton.innerHTML = '<svg class="spinner" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"></circle></svg>';
-            
-            setTimeout(() => {
-                // Restore button
-                scanButton.disabled = false;
-                scanButton.innerHTML = originalHTML;
-                
-                // Show a notification on completion
-                alert(`Scan completed for ${siteName}`);
-            }, 1000);
-        }
     }
 } 

@@ -41,13 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for opening/closing modals
     if (addSiteBtn && siteModal) {
         addSiteBtn.addEventListener('click', function() {
-            // Reset form for adding new site
-            siteForm.reset();
-            document.getElementById('siteIndex').value = '';
-            document.getElementById('modalTitle').textContent = 'Add New Site';
-            
-            // Display modal
-            siteModal.style.display = 'flex';
+            openAddSiteModal();
         });
     }
     
@@ -55,13 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addFirstSiteBtn.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Reset form for adding new site
-            siteForm.reset();
-            document.getElementById('siteIndex').value = '';
-            document.getElementById('modalTitle').textContent = 'Add New Site';
-            
-            // Display modal
-            siteModal.style.display = 'flex';
+            openAddSiteModal();
         });
     }
     
@@ -195,9 +183,27 @@ document.addEventListener('DOMContentLoaded', function() {
             const siteIndex = document.getElementById('siteIndex').value;
             const isNew = siteIndex === '';
             
+            // Get URL and validate
+            const urlInput = document.getElementById('siteUrl');
+            let siteUrl = urlInput.value.trim();
+            
+            // Check if URL starts with http:// or https://
+            if (!siteUrl.startsWith('http://') && !siteUrl.startsWith('https://')) {
+                siteUrl = 'https://' + siteUrl;
+                urlInput.value = siteUrl;
+            }
+            
+            // Validate URL format
+            try {
+                new URL(siteUrl); // Will throw if invalid URL
+            } catch (e) {
+                alert("Please enter a valid URL");
+                return;
+            }
+            
             const formData = {
                 name: document.getElementById('siteName').value,
-                url: document.getElementById('siteUrl').value,
+                url: siteUrl,
                 timeout: parseInt(document.getElementById('siteTimeout').value),
                 trigger: {
                     type: document.getElementById('triggerType').value,
@@ -315,6 +321,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     row.style.display = '';
                 } else if (filterValue === 'healthy' && row.classList.contains('success')) {
                     row.style.display = '';
+                } else if (filterValue === 'unknown' && row.classList.contains('unknown')) {
+                    row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
@@ -419,6 +427,8 @@ function restoreSortingState() {
                     } else if (filter === 'expiring' && row.classList.contains('expiring')) {
                         row.style.display = '';
                     } else if (filter === 'healthy' && row.classList.contains('success')) {
+                        row.style.display = '';
+                    } else if (filter === 'unknown' && row.classList.contains('unknown')) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -590,10 +600,11 @@ function getCellValue(row, index) {
 function compareStatus(rowA, rowB, ascending) {
     // Get status priority based on class names
     const statusPriority = {
-        'error': 1,    // Down
-        'warning': 2,  // Slow
-        'expiring': 3, // Token Expiring
-        'success': 4   // Healthy
+        'success': 1,   // Healthy
+        'error': 2,     // Down
+        'warning': 3,   // Slow
+        'expiring': 4,  // Token Expiring
+        'unknown': 5    // Unknown/Pending
     };
     
     // Determine row status from the class
@@ -601,6 +612,7 @@ function compareStatus(rowA, rowB, ascending) {
         if (row.classList.contains('error')) return 'error';
         if (row.classList.contains('warning')) return 'warning';
         if (row.classList.contains('expiring')) return 'expiring';
+        if (row.classList.contains('unknown')) return 'unknown';
         return 'success';
     };
     
@@ -669,4 +681,20 @@ function compareSSLExpiry(a, b, ascending) {
     const daysB = parseInt(b.match(/\d+/)[0] || 0);
     
     return ascending ? daysA - daysB : daysB - daysA;
+}
+
+// Modal handling functions
+function openAddSiteModal() {
+    siteForm.reset();
+    document.getElementById('siteIndex').value = '';
+    document.getElementById('modalTitle').textContent = 'Add New Site';
+    
+    // Set the default trigger value
+    document.getElementById('triggerType').value = 'status_code';
+    document.getElementById('triggerValue').value = '200';
+    
+    // Pre-populate URL field with https://
+    document.getElementById('siteUrl').value = 'https://';
+    
+    siteModal.style.display = 'flex';
 }
