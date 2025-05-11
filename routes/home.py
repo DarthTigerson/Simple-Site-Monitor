@@ -322,6 +322,28 @@ async def add_webhook(webhook: Dict[str, Any] = Body(...)):
     if not all(key in webhook for key in ["type", "url"]):
         raise HTTPException(status_code=400, detail="Missing required fields")
     
+    # Validate webhook URL
+    url = webhook["url"].strip()
+    if url:
+        try:
+            parsed_url = requests.utils.urlparse(url)
+            if not all([parsed_url.scheme, parsed_url.netloc]):
+                raise HTTPException(status_code=400, detail="Invalid URL format")
+            
+            # Validate webhook type
+            domain = parsed_url.netloc.lower()
+            webhook_type = webhook["type"].lower()
+            
+            # Ensure type matches URL domain
+            if webhook_type == "discord" and "discord.com" not in domain:
+                raise HTTPException(status_code=400, detail="URL does not match Discord webhook format")
+            elif webhook_type == "slack" and "hooks.slack.com" not in domain:
+                raise HTTPException(status_code=400, detail="URL does not match Slack webhook format")
+            elif webhook_type not in ["discord", "slack"]:
+                raise HTTPException(status_code=400, detail="Only Discord and Slack webhooks are supported")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid webhook URL: {str(e)}")
+    
     # Ensure there's an 'enabled' field
     if "enabled" not in webhook:
         webhook["enabled"] = True
@@ -344,6 +366,28 @@ async def update_webhook(webhook_index: int, webhook: Dict[str, Any] = Body(...)
     # Validate required fields
     if not all(key in webhook for key in ["type", "url"]):
         raise HTTPException(status_code=400, detail="Missing required fields")
+    
+    # Validate webhook URL if not empty
+    url = webhook["url"].strip()
+    if url:
+        try:
+            parsed_url = requests.utils.urlparse(url)
+            if not all([parsed_url.scheme, parsed_url.netloc]):
+                raise HTTPException(status_code=400, detail="Invalid URL format")
+            
+            # Validate webhook type
+            domain = parsed_url.netloc.lower()
+            webhook_type = webhook["type"].lower()
+            
+            # Ensure type matches URL domain
+            if webhook_type == "discord" and "discord.com" not in domain:
+                raise HTTPException(status_code=400, detail="URL does not match Discord webhook format")
+            elif webhook_type == "slack" and "hooks.slack.com" not in domain:
+                raise HTTPException(status_code=400, detail="URL does not match Slack webhook format")
+            elif webhook_type not in ["discord", "slack"]:
+                raise HTTPException(status_code=400, detail="Only Discord and Slack webhooks are supported")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid webhook URL: {str(e)}")
     
     # Update the webhook
     config["webhooks"] = webhook
@@ -468,3 +512,165 @@ async def test_site_request(url: str, timeout: int, trigger_type: str, trigger_v
             "content_type": None,
             "body": f"Error connecting to site: {str(e)}"
         }
+
+@router.post("/api/validate-webhook")
+async def validate_webhook(webhook_data: Dict[str, Any] = Body(...)):
+    """
+    Validate a webhook URL to ensure it's either Discord or Slack.
+    Returns the detected webhook type or an error.
+    """
+    url = webhook_data.get("url", "").strip()
+    
+    if not url:
+        return JSONResponse(content={"valid": False, "error": "Webhook URL cannot be empty"})
+    
+    # Validate URL format
+    try:
+        parsed_url = requests.utils.urlparse(url)
+        if not all([parsed_url.scheme, parsed_url.netloc]):
+            return JSONResponse(content={"valid": False, "error": "Invalid URL format"})
+    except Exception:
+        return JSONResponse(content={"valid": False, "error": "Invalid URL format"})
+    
+    # Validate webhook type
+    webhook_type = None
+    domain = parsed_url.netloc.lower()
+    
+    # Check Discord webhook pattern
+    if "discord.com" in domain and "/api/webhooks/" in url.lower():
+        webhook_type = "discord"
+    # Check Slack webhook pattern
+    elif "hooks.slack.com" in domain and "/services/" in url.lower():
+        webhook_type = "slack"
+    else:
+        return JSONResponse(content={
+            "valid": False,
+            "error": "Only Discord and Slack webhooks are supported. URL must be from discord.com or hooks.slack.com domains."
+        })
+    
+    return JSONResponse(content={"valid": True, "type": webhook_type})
+
+@router.post("/api/test-webhook")
+async def test_webhook(webhook_data: Dict[str, Any] = Body(...)):
+    """
+    Test a webhook by sending a notification.
+    """
+    url = webhook_data.get("url", "").strip()
+    webhook_type = webhook_data.get("type", "").lower()
+    
+    if not url:
+        raise HTTPException(status_code=400, detail="Webhook URL cannot be empty")
+    
+    # Validate URL format
+    try:
+        parsed_url = requests.utils.urlparse(url)
+        if not all([parsed_url.scheme, parsed_url.netloc]):
+            raise HTTPException(status_code=400, detail="Invalid URL format")
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid URL format")
+    
+    # Validate webhook type
+    domain = parsed_url.netloc.lower()
+    
+    # Ensure type matches URL domain
+    if webhook_type == "discord" and "discord.com" not in domain:
+        raise HTTPException(status_code=400, detail="URL does not match Discord webhook format")
+    elif webhook_type == "slack" and "hooks.slack.com" not in domain:
+        raise HTTPException(status_code=400, detail="URL does not match Slack webhook format")
+    elif webhook_type not in ["discord", "slack"]:
+        raise HTTPException(status_code=400, detail="Only Discord and Slack webhooks are supported")
+    
+    # Send test notification
+    try:
+        if webhook_type == "discord":
+            await send_discord_test_notification(url)
+        elif webhook_type == "slack":
+            await send_slack_test_notification(url)
+        
+        return JSONResponse(content={"success": True, "message": "Test notification sent"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send test notification: {str(e)}")
+
+async def send_discord_test_notification(webhook_url: str):
+    """Send a test notification to Discord webhook that matches the format used by the runner"""
+    # Determine color (green for test)
+    color = 0x00FF00
+    
+    # Create a message that resembles a real alert
+    title = "Test Notification - Simple Site Monitor"
+    message = """
+        Site: Test Site
+        URL: https://example.com
+        Status: Test Message
+        
+        Response Time: 0.123s
+        SSL Days Remaining: 365
+        ------------------------------------------------------
+        Previous State Duration: 0 seconds
+        
+        This is a test notification to verify your webhook is working correctly.
+    """
+    
+    # Create Discord webhook payload similar to trigger_discord_webhook in runner.py
+    payload = {
+        "embeds": [
+            {
+                "title": title,
+                "description": message,
+                "color": color,
+                "timestamp": datetime.now().isoformat()
+            }
+        ]
+    }
+    
+    response = requests.post(
+        webhook_url,
+        json=payload,
+        headers={"Content-Type": "application/json"},
+        timeout=5
+    )
+    
+    if response.status_code < 200 or response.status_code >= 300:
+        raise Exception(f"Discord webhook returned status code {response.status_code}")
+
+async def send_slack_test_notification(webhook_url: str):
+    """Send a test notification to Slack webhook that matches the format used by the runner"""
+    # Determine color (green for test)
+    hex_color = "#00FF00"
+    
+    # Create a message that resembles a real alert
+    title = "Test Notification - Simple Site Monitor"
+    message = """
+        Site: Test Site
+        URL: https://example.com
+        Status: Test Message
+        
+        Response Time: 0.123s
+        SSL Days Remaining: 365
+        ------------------------------------------------------
+        Previous State Duration: 0 seconds
+        
+        This is a test notification to verify your webhook is working correctly.
+    """
+    
+    # Create Slack webhook payload similar to trigger_slack_webhook in runner.py
+    payload = {
+        "attachments": [
+            {
+                "color": hex_color,
+                "title": title,
+                "text": message,
+                "ts": time.time()
+            }
+        ]
+    }
+    
+    response = requests.post(
+        webhook_url,
+        json=payload,
+        headers={"Content-Type": "application/json"},
+        timeout=5
+    )
+    
+    if response.status_code < 200 or response.status_code >= 300:
+        raise Exception(f"Slack webhook returned status code {response.status_code}")
