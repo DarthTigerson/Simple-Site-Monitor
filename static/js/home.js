@@ -41,13 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for opening/closing modals
     if (addSiteBtn && siteModal) {
         addSiteBtn.addEventListener('click', function() {
-            // Reset form for adding new site
-            siteForm.reset();
-            document.getElementById('siteIndex').value = '';
-            document.getElementById('modalTitle').textContent = 'Add New Site';
-            
-            // Display modal
-            siteModal.style.display = 'flex';
+            openAddSiteModal();
         });
     }
     
@@ -55,13 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addFirstSiteBtn.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Reset form for adding new site
-            siteForm.reset();
-            document.getElementById('siteIndex').value = '';
-            document.getElementById('modalTitle').textContent = 'Add New Site';
-            
-            // Display modal
-            siteModal.style.display = 'flex';
+            openAddSiteModal();
         });
     }
     
@@ -195,9 +183,27 @@ document.addEventListener('DOMContentLoaded', function() {
             const siteIndex = document.getElementById('siteIndex').value;
             const isNew = siteIndex === '';
             
+            // Get URL and validate
+            const urlInput = document.getElementById('siteUrl');
+            let siteUrl = urlInput.value.trim();
+            
+            // Check if URL starts with http:// or https://
+            if (!siteUrl.startsWith('http://') && !siteUrl.startsWith('https://')) {
+                siteUrl = 'https://' + siteUrl;
+                urlInput.value = siteUrl;
+            }
+            
+            // Validate URL format
+            try {
+                new URL(siteUrl); // Will throw if invalid URL
+            } catch (e) {
+                alert("Please enter a valid URL");
+                return;
+            }
+            
             const formData = {
                 name: document.getElementById('siteName').value,
-                url: document.getElementById('siteUrl').value,
+                url: siteUrl,
                 timeout: parseInt(document.getElementById('siteTimeout').value),
                 trigger: {
                     type: document.getElementById('triggerType').value,
@@ -675,4 +681,20 @@ function compareSSLExpiry(a, b, ascending) {
     const daysB = parseInt(b.match(/\d+/)[0] || 0);
     
     return ascending ? daysA - daysB : daysB - daysA;
+}
+
+// Modal handling functions
+function openAddSiteModal() {
+    siteForm.reset();
+    document.getElementById('siteIndex').value = '';
+    document.getElementById('modalTitle').textContent = 'Add New Site';
+    
+    // Set the default trigger value
+    document.getElementById('triggerType').value = 'status_code';
+    document.getElementById('triggerValue').value = '200';
+    
+    // Pre-populate URL field with https://
+    document.getElementById('siteUrl').value = 'https://';
+    
+    siteModal.style.display = 'flex';
 }

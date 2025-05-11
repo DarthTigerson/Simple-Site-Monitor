@@ -93,6 +93,9 @@ document.addEventListener('DOMContentLoaded', function() {
         triggerValueInput.value = '200';
         updateTriggerHelp();
         
+        // Pre-populate URL field with https://
+        document.getElementById('siteUrl').value = 'https://';
+        
         // Display modal
         siteModal.style.display = 'flex';
     }
@@ -182,11 +185,30 @@ document.addEventListener('DOMContentLoaded', function() {
             const monitorTokenInput = document.getElementById("monitorTokenExpiry");
             const webhookEnabledInput = document.getElementById("webhookEnabled");
             
+            // Enhanced URL validation
+            const errorAlert = document.getElementById("formError");
+            
             // Validate form
             if (!nameInput.value || !urlInput.value) {
                 // Show error
-                const errorAlert = document.getElementById("formError");
                 errorAlert.textContent = "Please fill in all required fields";
+                errorAlert.style.display = "block";
+                return;
+            }
+            
+            // URL validation
+            let siteUrl = urlInput.value.trim();
+            
+            // Check if URL starts with http:// or https://
+            if (!siteUrl.startsWith('http://') && !siteUrl.startsWith('https://')) {
+                siteUrl = 'https://' + siteUrl;
+                urlInput.value = siteUrl;
+            }
+            
+            try {
+                new URL(siteUrl); // Will throw if invalid URL
+            } catch (e) {
+                errorAlert.textContent = "Please enter a valid URL";
                 errorAlert.style.display = "block";
                 return;
             }
@@ -195,7 +217,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const siteIndex = document.getElementById("siteIndex").value;
             
             // Hide error if visible
-            const errorAlert = document.getElementById("formError");
             errorAlert.style.display = "none";
             
             // Show loading
@@ -214,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create basic site data object with only required fields
             let siteData = {
                 name: nameInput.value,
-                url: urlInput.value,
+                url: siteUrl,
                 trigger: {
                     type: triggerTypeInput.value,
                     value: triggerValueInput.value
@@ -238,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 siteData.body = bodyInput.value;
             }
             
-            let url = '/api/sites';
+            let endpoint = '/api/sites';
             if (siteIndex !== '') {
                 const siteIndexInt = parseInt(siteIndex, 10);
                 if (isNaN(siteIndexInt)) {
@@ -246,13 +267,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Error: Invalid site index');
                     return;
                 }
-                url = `/api/sites/${siteIndexInt}`;
+                endpoint = `/api/sites/${siteIndexInt}`;
             }
             
-            console.log('Submitting to URL:', url);
+            console.log('Submitting to URL:', endpoint);
             console.log('Form data:', siteData);
             
-            fetch(url, {
+            fetch(endpoint, {
                 method: siteIndex === '' ? 'POST' : 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
