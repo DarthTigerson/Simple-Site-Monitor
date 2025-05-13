@@ -10,6 +10,7 @@
     <div class="navbar-menu" id="navbarMenu">
         <ul class="navbar-items">
             <li class="navbar-item"><a href="/" {% if request.path == '/' %}class="active"{% endif %}>Monitoring</a></li>
+            <li class="navbar-item"><a href="/history" {% if request.path == '/history' %}class="active"{% endif %}>History</a></li>
             <li class="navbar-item"><a href="/sites" {% if request.path == '/sites' %}class="active"{% endif %}>Sites</a></li>
             <li class="navbar-item"><a href="/settings" {% if request.path == '/settings' %}class="active"{% endif %}>Settings</a></li>
             <li class="navbar-item"><a href="https://github.com/DarthTigerson/Simple-Site-Monitor" target="_blank">GitHub</a></li>

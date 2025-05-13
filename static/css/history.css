@@ -1,0 +1,718 @@
+/* History Page Styles */
+.history-dashboard {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 150px); /* Subtract header and margins */
+    min-height: 500px; /* Minimum height for smaller screens */
+}
+
+/* Search Container */
+.search-container {
+    flex: 0 0 auto;
+    margin-bottom: 20px;
+}
+
+.query-bar {
+    display: flex;
+    gap: 10px;
+    position: relative;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    display: block;
+}
+
+.query-bar input {
+    width: 100%;
+    height: 38px;
+    padding: 8px 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: inherit;
+    position: relative;
+    z-index: 1;
+}
+
+.query-bar input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.query-bar input::placeholder {
+    color: var(--secondary-text-color);
+    opacity: 0.7;
+}
+
+/* Autocomplete styles */
+.autocomplete-container {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: calc(100% - 58px); /* Adjust for search button width and gap */
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    display: none;
+}
+
+.autocomplete-help {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    color: var(--secondary-text-color);
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.autocomplete-help kbd {
+    display: inline-block;
+    padding: 2px 4px;
+    font-size: 0.75rem;
+    font-family: monospace;
+    line-height: 1;
+    color: var(--text-color);
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    margin: 0 2px;
+}
+
+.autocomplete-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover, 
+.autocomplete-item.selected {
+    background-color: rgba(42, 124, 223, 0.1);
+}
+
+.autocomplete-item.selected {
+    border-left: 3px solid var(--primary-color);
+}
+
+.autocomplete-item span {
+    vertical-align: middle;
+}
+
+/* Syntax highlighting colors for autocomplete */
+.autocomplete-field {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.autocomplete-operator {
+    color: #1e68c5;
+}
+
+.autocomplete-value {
+    color: var(--text-color);
+}
+
+.autocomplete-description {
+    font-size: 0.85rem;
+    color: var(--secondary-text-color);
+    margin-top: 3px;
+}
+
+/* Highlighting layer */
+.query-highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 8px 15px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    white-space: pre;
+    overflow: hidden;
+    pointer-events: none;
+    background: transparent;
+    z-index: 2;
+    /* Position highlight text */
+    text-align: left;
+    line-height: normal;
+    box-sizing: border-box;
+}
+
+/* Use a different approach that won't mess with cursor position */
+.search-input-wrapper input {
+    color: var(--text-color);
+}
+
+/* The highlight elements need to be positioned as an overlay */
+.query-highlight {
+    color: transparent;
+    mix-blend-mode: multiply;
+}
+
+.highlight-field {
+    color: var(--primary-color) !important;
+    font-weight: 600;
+    background-color: rgba(42, 124, 223, 0.1);
+    border-radius: 3px;
+}
+
+.highlight-operator {
+    color: #1e68c5 !important;
+}
+
+.highlight-value {
+    color: transparent !important;
+}
+
+/* Search button */
+#searchBtn {
+    padding: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+}
+
+#searchBtn:hover {
+    background-color: #1e68c5;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Search Help Row */
+.search-help-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+}
+
+/* Search Help Section */
+.search-help {
+    position: relative;
+}
+
+.help-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--secondary-text-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.help-toggle:hover {
+    color: var(--primary-color);
+}
+
+.help-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 700px;
+    width: max-content;
+}
+
+.help-content h4 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.search-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.search-category {
+    margin-bottom: 8px;
+}
+
+.search-category h5 {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.help-content ul {
+    margin: 0;
+    padding: 0 0 0 20px;
+    list-style-type: none;
+}
+
+.help-content ul li {
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: var(--secondary-text-color);
+}
+
+.help-content code {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    border: 1px solid rgba(42, 124, 223, 0.2);
+}
+
+.search-tip {
+    margin-top: 16px;
+    padding: 8px 12px;
+    background-color: rgba(42, 124, 223, 0.1);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+.search-tip strong {
+    color: var(--primary-color);
+}
+
+/* Results info */
+.results-info {
+    color: var(--secondary-text-color);
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+#resultCount {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Logs Container */
+.logs-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0; /* Important for flexbox to respect child overflow */
+}
+
+/* Logs Table */
+.logs-table {
+    overflow-x: auto;
+    overflow-y: auto;
+    flex: 1;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--light-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logs-table table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.logs-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--card-bg);
+}
+
+.logs-table tbody {
+    overflow-y: auto;
+}
+
+.logs-table th {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.logs-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    text-align: center;
+}
+
+.logs-table tr:last-child td {
+    border-bottom: none;
+}
+
+.log-row:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.log-row.error {
+    background-color: rgba(255, 69, 58, 0.05);
+}
+
+.log-row.warning {
+    background-color: rgba(255, 196, 0, 0.05);
+}
+
+.log-row.success {
+    background-color: rgba(0, 128, 0, 0.05);
+}
+
+.log-row.expiring {
+    background-color: rgba(230, 126, 34, 0.05);
+}
+
+/* URL cell styling */
+.url-cell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.url-cell a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.url-cell a:hover {
+    text-decoration: underline;
+}
+
+/* Status indicators and text */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-text {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.status-indicator.error {
+    background-color: var(--danger-color);
+}
+
+.status-indicator.warning {
+    background-color: var(--warning-color);
+}
+
+.status-indicator.success {
+    background-color: var(--success-color);
+}
+
+.status-indicator.expiring {
+    background-color: var(--expiring-color);
+}
+
+/* SSL Days styling */
+.ssl-days-cell {
+    white-space: nowrap;
+}
+
+.ssl-days {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.ssl-days.expiring {
+    background-color: rgba(230, 126, 34, 0.2);
+    color: var(--expiring-color);
+    border: 1px solid rgba(230, 126, 34, 0.3);
+}
+
+/* Button with icon */
+.btn-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background-color: rgba(42, 124, 223, 0.1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: var(--primary-color);
+    font-size: 0.85rem;
+}
+
+.btn-icon:hover {
+    background-color: rgba(42, 124, 223, 0.2);
+}
+
+/* Pagination */
+.pagination {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 0;
+}
+
+.btn-page {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background-color: rgba(42, 124, 223, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(42, 124, 223, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-page:hover:not(:disabled) {
+    background-color: rgba(42, 124, 223, 0.2);
+}
+
+.btn-page:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    color: var(--secondary-text-color);
+    font-size: 0.85rem;
+}
+
+/* Log Details Modal */
+.log-details-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.log-detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: calc(33.33% - 10px);
+}
+
+.log-detail-row.full-width {
+    width: 100%;
+}
+
+.detail-label {
+    color: var(--secondary-text-color);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    word-break: break-word;
+}
+
+.detail-value pre {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0;
+    font-family: monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-height: 300px;
+}
+
+/* Modal styling */
+.modal-card-head, 
+.modal-card-foot {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.modal-card-title {
+    color: var(--text-color);
+}
+
+.modal-card-body {
+    background-color: var(--card-bg);
+}
+
+.button {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.button.is-primary {
+    background-color: var(--primary-color);
+    border-color: transparent;
+    color: white;
+}
+
+.button.is-primary:hover {
+    background-color: #1e68c5;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .query-bar {
+        flex-direction: column;
+    }
+    
+    .search-help-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .results-info {
+        text-align: left;
+    }
+    
+    .help-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 100;
+    }
+    
+    .search-categories {
+        grid-template-columns: 1fr;
+    }
+    
+    .log-detail-row {
+        width: 100%;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Log rows pagination */
+tr.page-hidden {
+    display: none !important;
+}
+
+tr.page-visible {
+    display: table-row;
+}
+
+/* No logs message */
+.no-logs-message {
+    padding: 30px !important;
+    text-align: center;
+    color: var(--secondary-text-color);
+    font-style: italic;
+}
+
+/* Search input highlighting */
+.query-bar input::placeholder {
+    color: var(--secondary-text-color);
+    opacity: 0.7;
+}
+
+/* Style for the search input to support colored text spans */
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    display: block;
+}
+
+/* Special colored tag styling */
+.tag-highlight {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Content editable div styling - will look like the input but support rich text */
+#richSearchInput {
+    width: 100%;
+    height: 38px;
+    padding: 8px 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: inherit;
+    overflow: hidden;
+    white-space: nowrap;
+    outline: none;
+}
+
+#richSearchInput:focus {
+    border-color: var(--primary-color);
+}
+
+/* Hide the original input but keep it in DOM for form submission */
+#searchQuery {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Content editable placeholder */
+#richSearchInput[contenteditable=true]:empty:before {
+    content: attr(data-placeholder);
+    color: var(--secondary-text-color);
+    opacity: 0.7;
+    pointer-events: none;
+    display: block;
+}
