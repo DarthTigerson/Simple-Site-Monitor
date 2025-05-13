@@ -1224,7 +1224,7 @@
 
 /* Only first column (name) should be left-aligned */
 .list-cell.site-name {
-    text-align: left;
+    text-align: center;
 }
 
 /* URL styling to match home.html */
