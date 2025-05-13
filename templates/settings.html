@@ -6,9 +6,7 @@
         <div class="section-header">
             <h2>Settings</h2>
             <button type="button" id="saveSettingsBtn" class="btn btn-success">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M4 5C4 4.44772 4.44772 4 5 4H7V7C7 7.55228 7.44772 8 8 8H15C15.5523 8 16 7.55228 16 7V4H16.1716C16.4368 4 16.6911 4.10536 16.8787 4.29289L19.7071 7.12132C19.8946 7.30886 20 7.56321 20 7.82843V19C20 19.5523 19.5523 20 19 20H18V13C18 12.4477 17.5523 12 17 12H7C6.44772 12 6 12.4477 6 13V20H5C4.44772 20 4 19.5523 4 19V5ZM8 20H16V14H8V20ZM14 4H9V6H14V4ZM5 2C3.34315 2 2 3.34315 2 5V19C2 20.6569 3.34315 22 5 22H19C20.6569 22 22 20.6569 22 19V7.82843C22 7.03278 21.6839 6.26972 21.1213 5.70711L18.2929 2.87868C17.7303 2.31607 16.9672 2 16.1716 2H5Z" fill="currentColor"></path>
-                </svg>
+                <img src="/static/images/save.svg" width="20" height="20" alt="Save" style="filter: brightness(0) invert(1);">
             </button>
         </div>
 
@@ -16,6 +14,7 @@
             <div class="settings-grid">
                 <div class="settings-card">
                     <div class="settings-card-header">
+                        <h3>General</h3>
                     </div>
                     <div class="settings-card-content">
                         <div class="settings-subcards">
@@ -79,10 +78,36 @@
                                     <span class="unit-label">attempts</span>
                                 </div>
                             </div>
-                            <div class="settings-subcard">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3>Webhooks</h3>
+                    </div>
+                    <div class="settings-card-content">
+                        <div class="settings-subcards">
+                            <div class="settings-subcard webhook-controls-card">
+                                <div class="form-group">
+                                    <label>WEBHOOK STATUS</label>
+                                    <p class="setting-description">Enable or disable webhook notifications</p>
+                                    <div class="webhook-toggle-container">
+                                        <button type="button" id="webhookToggleBtn" class="btn webhook-toggle {% if config.webhooks and config.webhooks.enabled %}enabled{% else %}disabled{% endif %}">
+                                            {% if config.webhooks and config.webhooks.enabled %}Webhook Enabled{% else %}Webhook Disabled{% endif %}
+                                        </button>
+                                        <input type="hidden" id="webhookEnabled" name="webhookEnabled" value="{% if config.webhooks and config.webhooks.enabled %}true{% else %}false{% endif %}">
+                                    </div>
+                                </div>
+                            </div>
+                            {% if config.webhooks and config.webhooks.enabled %}
+                            <div class="settings-subcard webhook-details-card">
+                            {% else %}
+                            <div class="settings-subcard webhook-details-card" style="display:none;">
+                            {% endif %}
                                 <div class="form-group">
                                     <label for="includeErrorDebugging">LEVEL OF DETAIL</label>
-                                    <p class="setting-description">Select the level of details to be included in your web and webhook notifications</p>
+                                    <p class="setting-description">Select the level of details to be included in triggered notifications</p>
                                     <div class="debug-toggle-container">
                                         <button type="button" id="debugToggleBtn" class="btn debug-toggle {% if config.include_error_debugging %}enabled{% else %}disabled{% endif %}">
                                             {% if config.include_error_debugging %}Error Details Included{% else %}Simple Details{% endif %}
@@ -91,38 +116,31 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-card">
-                    <div class="settings-card-header">
-                        <h3>Webhook Notification</h3>
-                    </div>
-                    <div class="settings-card-content">
-                        <div class="webhook-form">
-                            <div class="webhook-url">
-                                <label for="webhookUrl">Webhook URL</label>
-                                <input type="url" id="webhookUrl" name="webhookUrl" value="{{ config.webhooks.url if config.webhooks and config.webhooks|length > 0 else '' }}" placeholder="Enter webhook URL (Discord, Slack, or Teams)" {% if not config.webhooks or not config.webhooks.enabled %}disabled{% endif %}>
-                            </div>
-                            <button type="button" id="testWebhookBtn" class="btn webhook-test" title="Test Webhook" 
-                                {% if config.webhooks and config.webhooks.enabled %}
-                                style="display: flex;"
-                                {% else %}
-                                style="display: none;"
-                                {% endif %}
-                            >
-                                <svg fill="currentColor" height="18" width="18" viewBox="0 0 24 24">
-                                    <path d="M23,24H1v-4.3l7-12V2H6V0h12v2h-2v5.7l7,12V24z M12,22h9v-1.7l-3.4-5.9l0,0c-2.6-1.5-3.9-0.8-5.4-0.1S9,15.7,6.5,14.5 l-3.4,5.9V22H12z M7.4,12.7C9,13.4,10,13,11.3,12.4c1.2-0.5,2.7-1.2,4.7-0.7l-2-3.4V2h-4v6.3L7.4,12.7z"></path>
-                                    <circle cx="14.5" cy="17.5" r="1.5"></circle>
-                                    <circle cx="9.5" cy="18.5" r="1.5"></circle>
-                                </svg>
-                            </button>
-                            <div class="webhook-toggle-container">
-                                <button type="button" id="webhookToggleBtn" class="btn webhook-toggle {% if config.webhooks and config.webhooks.enabled %}enabled{% else %}disabled{% endif %}">
-                                    {% if config.webhooks and config.webhooks.enabled %}Webhook Enabled{% else %}Webhook Disabled{% endif %}
-                                </button>
-                                <input type="hidden" id="webhookEnabled" name="webhookEnabled" value="{% if config.webhooks and config.webhooks.enabled %}true{% else %}false{% endif %}">
+                            {% if config.webhooks and config.webhooks.enabled %}
+                            <div class="settings-subcard webhook-url-card">
+                            {% else %}
+                            <div class="settings-subcard webhook-url-card" style="display:none;">
+                            {% endif %}
+                                <div class="form-group">
+                                    <label for="webhookUrl">WEBHOOK URL</label>
+                                    <p class="setting-description">Enter a webhook URL to receive notifications when a site goes down or returns online</p>
+                                    <div class="webhook-form">
+                                        <div class="webhook-url">
+                                            <input type="url" id="webhookUrl" name="webhookUrl" value="{{ config.webhooks.url if config.webhooks and config.webhooks|length > 0 else '' }}" placeholder="Enter webhook URL (Discord, Slack, or Teams)" {% if not config.webhooks or not config.webhooks.enabled %}disabled{% endif %}>
+                                        </div>
+                                        <button type="button" id="testWebhookBtn" class="btn webhook-test" title="Test Webhook" 
+                                            {% if not config.webhooks or not config.webhooks.enabled %}
+                                            disabled
+                                            {% endif %}
+                                        >
+                                            <svg fill="currentColor" height="18" width="18" viewBox="0 0 24 24">
+                                                <path d="M23,24H1v-4.3l7-12V2H6V0h12v2h-2v5.7l7,12V24z M12,22h9v-1.7l-3.4-5.9l0,0c-2.6-1.5-3.9-0.8-5.4-0.1S9,15.7,6.5,14.5 l-3.4,5.9V22H12z M7.4,12.7C9,13.4,10,13,11.3,12.4c1.2-0.5,2.7-1.2,4.7-0.7l-2-3.4V2h-4v6.3L7.4,12.7z"></path>
+                                                <circle cx="14.5" cy="17.5" r="1.5"></circle>
+                                                <circle cx="9.5" cy="18.5" r="1.5"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

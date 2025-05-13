@@ -66,16 +66,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to update webhook field states based on enabled/disabled state
     function updateWebhookFieldStates(isEnabled) {
-        if (webhookUrlInput && testWebhookBtn) {
+        // Get the cards we want to show/hide
+        const webhookDetailsCard = document.querySelector('.webhook-details-card');
+        const webhookUrlCard = document.querySelector('.webhook-url-card');
+        
+        if (webhookUrlInput) {
             if (isEnabled) {
-                // Enable the webhook URL input and show test button
+                // Enable the webhook URL input
                 webhookUrlInput.removeAttribute('disabled');
-                testWebhookBtn.style.display = 'flex'; // Use flex to maintain centering
+                
+                // Show the webhook details and URL cards
+                if (webhookDetailsCard) webhookDetailsCard.style.display = 'block';
+                if (webhookUrlCard) webhookUrlCard.style.display = 'block';
             } else {
-                // Disable the webhook URL input and hide test button
+                // Disable the webhook URL input
                 webhookUrlInput.setAttribute('disabled', 'disabled');
-                testWebhookBtn.style.display = 'none';
+                
+                // Hide the webhook details and URL cards
+                if (webhookDetailsCard) webhookDetailsCard.style.display = 'none';
+                if (webhookUrlCard) webhookUrlCard.style.display = 'none';
             }
+        }
+        
+        // Always ensure the test button is visible, but disable it when webhook is disabled
+        if (testWebhookBtn) {
+            testWebhookBtn.style.display = 'flex'; // Always show
+            testWebhookBtn.disabled = !isEnabled; // But disable when webhook is disabled
         }
     }
     

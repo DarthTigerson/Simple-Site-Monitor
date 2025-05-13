@@ -77,21 +77,56 @@
 
 /* Webhook Form Layout */
 .webhook-form {
+    width: 100%;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 15px;
 }
 
 .webhook-url {
-    flex: 1;
+    width: 100%;
+}
+
+.webhook-url input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
 }
 
 .webhook-toggle-container {
-    width: auto;
-    flex-shrink: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
 }
 
-/* Webhook Test Button */
+.webhook-toggle {
+    width: auto;
+    min-width: 180px;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.1s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.webhook-toggle.enabled {
+    background: linear-gradient(135deg, #2c9e3f 0%, #4CAF50 50%, #2c9e3f 100%);
+    color: white;
+}
+
+.webhook-toggle.disabled {
+    background: linear-gradient(135deg, #d32f2f 0%, #f44336 50%, #d32f2f 100%);
+    color: white;
+}
+
 .webhook-test {
     display: flex;
     align-items: center;
@@ -125,29 +160,6 @@
 .webhook-test.disabled:hover {
     transform: none;
     background-color: #9a9a9a;
-}
-
-/* Webhook Toggle Button */
-.webhook-toggle {
-    height: 40px;
-    padding: 0 15px;
-    border-radius: 20px;
-    font-weight: 500;
-    transition: background-color 0.3s, transform 0.1s;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.webhook-toggle.enabled {
-    background: linear-gradient(135deg, #2c9e3f 0%, #4CAF50 50%, #2c9e3f 100%);
-    color: white;
-}
-
-.webhook-toggle.disabled {
-    background: linear-gradient(135deg, #d32f2f 0%, #f44336 50%, #d32f2f 100%);
-    color: white;
 }
 
 /* Form Groups */
@@ -221,9 +233,15 @@
 }
 
 /* Responsive */
+@media (max-width: 1400px) {
+    .settings-subcards {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
 @media (max-width: 1200px) {
     .settings-subcards {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
 }
 
@@ -232,9 +250,8 @@
         grid-template-columns: 1fr;
     }
     
-    .webhook-form {
-        flex-direction: column;
-        align-items: stretch;
+    .webhook-url-card, .webhook-controls-card, .webhook-details-card {
+        grid-column: span 1;
     }
     
     .webhook-toggle-container {
@@ -322,7 +339,7 @@
 /* Settings Subcards */
 .settings-subcards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     justify-items: start;
 }
@@ -340,6 +357,7 @@
     flex-direction: column;
     width: 100%;
     max-width: 100%;
+    min-width: 230px;
 }
 
 .settings-subcard:hover {
@@ -436,4 +454,179 @@
 .section-header .btn-success:hover {
     background: linear-gradient(135deg, #38a169 0%, #3db476 50%, #38a169 100%);
     transform: translateY(-2px);
+}
+
+.webhook-subcard {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+.webhook-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.webhook-url-card {
+    /* Take up two columns in the grid */
+    grid-column: span 2;
+}
+
+.webhook-controls-card, .webhook-details-card {
+    /* Each takes one column */
+    grid-column: span 1;
+    max-width: 300px;
+}
+
+.webhook-url {
+    flex: 1;
+}
+
+.webhook-url input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.webhook-test {
+    width: 40px;
+    height: 40px;
+}
+
+@media (max-width: 1200px) {
+    .webhook-url-card {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .webhook-url-card, .webhook-controls-card, .webhook-details-card {
+        grid-column: span 1;
+    }
+    
+    .webhook-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    
+    .webhook-toggle-container {
+        width: 100%;
+    }
+    
+    .webhook-toggle {
+        width: 100%;
+    }
+}
+
+/* Specific webhook section formatting */
+.settings-card:has(.webhook-controls-card) .settings-subcards {
+    display: grid;
+    grid-template-columns: minmax(300px, 350px) minmax(300px, 350px) 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+.webhook-controls-card {
+    grid-column: 1;
+    width: 100%;
+    min-width: 300px;
+}
+
+.webhook-details-card {
+    grid-column: 2;
+    width: 100%;
+    min-width: 300px;
+}
+
+.webhook-url-card {
+    grid-column: 3;
+    width: 100%;
+}
+
+/* Responsive adjustments for webhook cards */
+@media (max-width: 1100px) {
+    .settings-card:has(.webhook-controls-card) .settings-subcards {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .webhook-controls-card {
+        grid-column: 1;
+    }
+    
+    .webhook-details-card {
+        grid-column: 2;
+    }
+    
+    .webhook-url-card {
+        grid-column: 1 / span 2;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-card:has(.webhook-controls-card) .settings-subcards {
+        grid-template-columns: 1fr;
+    }
+    
+    .webhook-controls-card,
+    .webhook-details-card,
+    .webhook-url-card {
+        grid-column: 1;
+        margin-top: 0;
+    }
+}
+
+/* Fix for webhook section layout */
+.settings-card:nth-child(2) .settings-subcards {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+}
+
+.webhook-controls-card {
+    width: 25%;
+    max-width: none;
+    min-width: 220px;
+}
+
+.webhook-details-card {
+    width: 25%;
+    max-width: none;
+    min-width: 220px;
+}
+
+.webhook-url-card {
+    width: 50%;
+    flex-grow: 1;
+}
+
+/* Responsive adjustments for the webhook cards */
+@media (max-width: 1200px) {
+    .settings-card:nth-child(2) .settings-subcards {
+        flex-wrap: wrap;
+    }
+    
+    .webhook-controls-card,
+    .webhook-details-card,
+    .webhook-url-card {
+        width: 48%;
+        min-width: 250px;
+    }
+    
+    .webhook-url-card {
+        width: 100%;
+        flex-grow: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .webhook-controls-card,
+    .webhook-details-card {
+        width: 100%;
+    }
 } 
