@@ -629,4 +629,31 @@
     .webhook-details-card {
         width: 100%;
     }
+}
+
+/* Save button modified state */
+.btn-success.modified {
+    background: linear-gradient(135deg, #ff9800, #ffb74d);
+    color: #fff;
+    border-color: #ff9800;
+    animation: pulse-attention 2s infinite;
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-success.modified:hover {
+    background: linear-gradient(135deg, #ff8f00, #ffa726);
+    box-shadow: 0 5px 12px rgba(255, 152, 0, 0.4);
+}
+
+@keyframes pulse-attention {
+    0% {
+        box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.5);
+    }
+    100% {
+        box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+    }
 } 

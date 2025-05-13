@@ -9,6 +9,44 @@ document.addEventListener('DOMContentLoaded', function() {
     const debugToggleBtn = document.getElementById('debugToggleBtn');
     const includeErrorDebuggingInput = document.getElementById('includeErrorDebugging');
     
+    // Track if form has been modified
+    let formModified = false;
+    
+    // Function to mark form as modified
+    function markFormAsModified() {
+        if (!formModified) {
+            formModified = true;
+            saveSettingsBtn.classList.add('modified');
+        }
+    }
+    
+    // Function to reset modified state
+    function resetModifiedState() {
+        formModified = false;
+        saveSettingsBtn.classList.remove('modified');
+    }
+    
+    // Add change listeners to all form inputs
+    if (settingsForm) {
+        // Listen for changes on all number inputs
+        const numberInputs = settingsForm.querySelectorAll('input[type="number"]');
+        numberInputs.forEach(input => {
+            input.addEventListener('change', markFormAsModified);
+        });
+        
+        // Listen for changes on text/url inputs
+        const textInputs = settingsForm.querySelectorAll('input[type="text"], input[type="url"]');
+        textInputs.forEach(input => {
+            input.addEventListener('input', markFormAsModified);
+        });
+        
+        // Listen for clicks on number increment/decrement buttons
+        const numberButtons = settingsForm.querySelectorAll('.number-increment, .number-decrement');
+        numberButtons.forEach(button => {
+            button.addEventListener('click', markFormAsModified);
+        });
+    }
+    
     // Initialize webhook field states based on current toggle value
     if (webhookEnabledInput && webhookUrlInput && testWebhookBtn) {
         updateWebhookFieldStates(webhookEnabledInput.value === 'true');
@@ -22,6 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update hidden input value
             webhookEnabledInput.value = newState.toString();
+            
+            // Mark form as modified
+            markFormAsModified();
             
             // Update button text and class
             if (newState) {
@@ -50,6 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update hidden input value
             includeErrorDebuggingInput.value = newState.toString();
             console.log('Updated includeErrorDebugging value =', includeErrorDebuggingInput.value);
+            
+            // Mark form as modified
+            markFormAsModified();
             
             // Update button text and class
             if (newState) {
@@ -145,6 +189,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // If URL is empty, delete the webhook if it exists
                     await deleteWebhookIfExists();
                 }
+                
+                // Reset modified state after successful save
+                resetModifiedState();
                 
                 window.showNotification('Settings saved successfully', 'success');
             } catch (error) {
