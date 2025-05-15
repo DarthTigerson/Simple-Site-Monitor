@@ -24,6 +24,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Restore sorting state if coming back from a refresh
     restoreSortingState();
     
+    // Set "All Sites" status card as active by default
+    const allSitesCard = document.querySelector('.status-card[data-filter="all"]');
+    if (allSitesCard) {
+        allSitesCard.classList.add('active');
+        
+        // Also set the filter dropdown to "All Sites"
+        const logFilter = document.getElementById('logFilter');
+        if (logFilter) {
+            logFilter.value = 'all';
+        }
+    }
+    
     // Refresh button functionality
     if (refreshBtn) {
         refreshBtn.addEventListener('click', function() {

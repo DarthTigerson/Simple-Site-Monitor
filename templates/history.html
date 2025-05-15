@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="history-dashboard">
+    <div class="search-container">
+        <div class="query-bar">
+            <div class="search-input-wrapper">
+                <div id="richSearchInput" contenteditable="true" spellcheck="false" role="textbox" aria-label="Search logs"></div>
+                <input type="text" id="searchQuery" placeholder="Search logs... (e.g. status:down name:example)" autocomplete="off" />
+            </div>
+            <button type="button" id="searchBtn" aria-label="Search">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+            <div class="autocomplete-container" id="autocomplete"></div>
+        </div>
+        
+        <div class="search-help-row">
+            <div class="search-help">
+                <div class="help-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Search Syntax Help
+                </div>
+                <div class="help-content">
+                    <h4>Search Syntax Examples:</h4>
+                    <div class="search-categories">
+                        <div class="search-category">
+                            <h5>Status Filters</h5>
+                            <ul>
+                                <li><code>status:down</code> - Find logs with down status</li>
+                                <li><code>status:slow</code> - Find logs with slow response</li>
+                                <li><code>status:healthy</code> - Find logs with healthy status</li>
+                                <li><code>status:expiring</code> - Find logs with expiring tokens</li>
+                            </ul>
+                        </div>
+                        <div class="search-category">
+                            <h5>Site Filters</h5>
+                            <ul>
+                                <li><code>name:example</code> - Find logs for a specific site name</li>
+                                <li><code>url:example.com</code> - Find logs for specific URLs</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="search-tip">
+                        <strong>Pro Tip:</strong> Combine multiple filters like <code>status:down name:api</code> for more specific results.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-info">
+                <span id="resultCount">{{ total_logs }}</span> results found
+            </div>
+        </div>
+    </div>
+    
+    <div class="logs-container">
+        <div class="logs-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Name</th>
+                        <th>URL</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody id="logResults">
+                    {% if logs|length > 0 %}
+                        {% for log in logs %}
+                        <tr class="log-row {{ log.status_class }}" data-id="{{ log.id }}">
+                            <td>
+                                <span class="status-indicator {{ log.status_class }}"></span>
+                                <span class="status-text">{{ log.status_display }}</span>
+                            </td>
+                            <td>{{ log.name }}</td>
+                            <td class="url-cell">
+                                <a href="{{ log.url }}" target="_blank">{{ log.url }}</a>
+                            </td>
+                            <td>{{ log.start_time }}</td>
+                            <td>{{ log.end_time }}</td>
+                            <td>{{ log.duration }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="no-logs-message">
+                                No log data found.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="pagination">
+            <button id="prevPage" class="btn-page" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">{{ (total_logs / 10)|round(0, 'ceil')|int }}</span></div>
+            <button id="nextPage" class="btn-page" {% if total_logs <= 10 %}disabled{% endif %}>
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/history.js"></script>
+{% endblock %}

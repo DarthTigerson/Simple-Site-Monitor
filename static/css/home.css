@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
+    width: 100%;
 }
 
 :root {
@@ -296,8 +297,9 @@
 td:first-child {
     display: flex;
     align-items: center;
+    justify-content: center;
     white-space: nowrap;
-    text-align: left;
+    text-align: center;
 }
 
 .logs-table tr:last-child td {

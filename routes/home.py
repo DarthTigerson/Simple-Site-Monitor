@@ -191,6 +191,110 @@ async def get_settings(request: Request):
     config = read_config()
     return templates.TemplateResponse("settings.html", {"request": request, "config": config})
 
+@router.get("/history")
+async def get_history(request: Request):
+    """Render the history page with logs from the database."""
+    config = read_config()
+    
+    # Get site data from database
+    db = SessionLocal()
+    try:
+        # Query for all logs, sorted by last_scan_time descending (most recent first)
+        all_logs = db.query(RunnerSiteLog).order_by(
+            RunnerSiteLog.last_scan_time.desc()
+        ).limit(500).all()  # Limit to 500 recent logs for performance
+        
+        # Prepare site data for the history view
+        display_logs = []
+        
+        for log in all_logs:
+            # Get the URL from the config for this site
+            site_url = ""
+            for site in config["sites"]:
+                if site["name"] == log.name:
+                    site_url = site["url"]
+                    break
+            
+            # Calculate start time by subtracting response time
+            # Since response_time is in seconds and created_at is a timestamp
+            # For more accurate start times you might want to store this separately in your model
+            start_time = log.created_at
+            end_time = log.last_scan_time
+            
+            # Calculate duration between start and end time
+            duration_seconds = (end_time - start_time).total_seconds()
+            
+            # Format duration for display
+            if duration_seconds < 60:
+                duration_display = f"{int(duration_seconds)}s"
+            elif duration_seconds < 3600:
+                minutes = int(duration_seconds // 60)
+                seconds = int(duration_seconds % 60)
+                duration_display = f"{minutes}m {seconds}s"
+            else:
+                hours = int(duration_seconds // 3600)
+                minutes = int((duration_seconds % 3600) // 60)
+                duration_display = f"{hours}h {minutes}m"
+            
+            # Format times for display
+            start_time_display = start_time.strftime("%Y-%m-%d %H:%M:%S")
+            end_time_display = end_time.strftime("%Y-%m-%d %H:%M:%S")
+            
+            # Format load time (response time)
+            if log.response_time < 1:  # Less than 1 second
+                load_time_display = f"{int(log.response_time * 1000)} ms"
+            else:
+                load_time_display = f"{log.response_time:.2f} s"
+            
+            # Map status to display status
+            status_display = "Unknown"
+            status_class = "unknown"
+            
+            if log.status == "up" or log.status == "healthy":
+                status_display = "Healthy"
+                status_class = "success"
+            elif log.status == "down":
+                status_display = "Down"
+                status_class = "error"
+            elif log.status == "slow":
+                status_display = "Slow"
+                status_class = "warning"
+            elif log.status == "token_alert":
+                status_display = "Token Expiring"
+                status_class = "expiring"
+            
+            # Create a log entry for display
+            display_logs.append({
+                "id": str(log.id),
+                "name": log.name,
+                "url": site_url,
+                "status": log.status,
+                "status_display": status_display,
+                "status_class": status_class,
+                "start_time": start_time_display,
+                "end_time": end_time_display,
+                "duration": duration_display,
+                "load_time": load_time_display,
+                "response_time": log.response_time,
+                "raw_start_time": start_time.timestamp(),
+                "raw_end_time": end_time.timestamp()
+            })
+        
+        # Get total count for display
+        total_logs = len(display_logs)
+        
+        return templates.TemplateResponse(
+            "history.html", 
+            {
+                "request": request, 
+                "config": config,
+                "logs": display_logs,
+                "total_logs": total_logs
+            }
+        )
+    finally:
+        db.close()
+
 @router.get("/api/sites")
 async def get_sites():
     """Get all monitored sites."""

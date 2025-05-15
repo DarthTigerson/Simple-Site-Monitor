@@ -40,13 +40,45 @@
 .navbar-item a {
     color: var(--text-color);
     text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    padding: 8px 15px;
+    border-radius: 6px;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: inline-block;
 }
 
 .navbar-item a:hover {
-    background-color: var(--hover-bg);
+    color: #9bc8ff;
+    background-color: rgba(78, 145, 223, 0.1);
+    transform: translateY(-2px);
+}
+
+.navbar-item a.active {
+    background: rgba(78, 145, 223, 0.15);
+    color: #9bc8ff;
+    font-weight: 500;
+    box-shadow: 0 0 10px rgba(78, 145, 223, 0.1);
+    padding: 8px 24px;
+    margin: 0 -9px;
+}
+
+.navbar-item a.active::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #4e91df, #75b2ff, #4e91df);
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .navbar-toggle {
@@ -97,5 +129,13 @@
 
     .navbar-item {
         margin: 15px 0;
+    }
+
+    .navbar-item a.active {
+        background: rgba(78, 145, 223, 0.15);
+        border-radius: 6px;
+        width: 100%;
+        padding: 10px 24px;
+        margin: 0;
     }
 }

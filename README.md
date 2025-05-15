@@ -10,14 +10,18 @@ A robust web application for monitoring website uptime, performance, and SSL cer
 - **SSL Certificate Monitoring**: Get alerted when SSL certificates are close to expiration
 - **Configurable Thresholds**: Set custom thresholds for response times and monitoring intervals
 - **Webhook Notifications**: Receive alerts via Discord, Slack, or custom webhooks when site status changes
-- **Historical Data**: Track and visualize historical performance data
-- **Docker Support**: Easy deployment with Docker and Docker Compose
+- **Advanced Log History**: View and search through historical monitoring data with powerful filtering
+- **Intelligent Search**: Smart syntax highlighting and autocomplete for search queries
 - **Responsive UI**: Clean, modern interface that works on desktop and mobile
+- **Docker Support**: Easy deployment with Docker and Docker Compose
 
 ## Screenshots
 
 ### Dashboard
 ![Dashboard](screenshot_1.png)
+
+### History
+![History](screenshot_5.png)
 
 ### Sites Management
 ![Sites Management](screenshot_2.png)
@@ -122,7 +126,23 @@ The web interface provides:
 - Dashboard with real-time site status
 - Site management interface
 - Settings configuration
+- History page with advanced search capabilities
 - API endpoints for the runner
+
+### History Page
+
+The history page offers sophisticated log viewing capabilities:
+
+- **Dynamic Pagination**: Automatically adjusts rows per page based on available screen height
+- **Advanced Search**: Filter logs with intuitive query syntax
+- **Syntax Highlighting**: Filter tags (status:, name:, url:) are highlighted in blue for better readability
+- **Keyboard Navigation**: Tab completion and arrow key navigation for efficient searching
+- **Real-time Filtering**: Instantly filter through hundreds of log entries
+
+Search syntax examples:
+- `status:down` - Find logs with down status
+- `name:example` - Find logs for a specific site name
+- `url:example.com` - Filter by URL
 
 ### Runner
 

@@ -9,6 +9,44 @@ document.addEventListener('DOMContentLoaded', function() {
     const debugToggleBtn = document.getElementById('debugToggleBtn');
     const includeErrorDebuggingInput = document.getElementById('includeErrorDebugging');
     
+    // Track if form has been modified
+    let formModified = false;
+    
+    // Function to mark form as modified
+    function markFormAsModified() {
+        if (!formModified) {
+            formModified = true;
+            saveSettingsBtn.classList.add('modified');
+        }
+    }
+    
+    // Function to reset modified state
+    function resetModifiedState() {
+        formModified = false;
+        saveSettingsBtn.classList.remove('modified');
+    }
+    
+    // Add change listeners to all form inputs
+    if (settingsForm) {
+        // Listen for changes on all number inputs
+        const numberInputs = settingsForm.querySelectorAll('input[type="number"]');
+        numberInputs.forEach(input => {
+            input.addEventListener('change', markFormAsModified);
+        });
+        
+        // Listen for changes on text/url inputs
+        const textInputs = settingsForm.querySelectorAll('input[type="text"], input[type="url"]');
+        textInputs.forEach(input => {
+            input.addEventListener('input', markFormAsModified);
+        });
+        
+        // Listen for clicks on number increment/decrement buttons
+        const numberButtons = settingsForm.querySelectorAll('.number-increment, .number-decrement');
+        numberButtons.forEach(button => {
+            button.addEventListener('click', markFormAsModified);
+        });
+    }
+    
     // Initialize webhook field states based on current toggle value
     if (webhookEnabledInput && webhookUrlInput && testWebhookBtn) {
         updateWebhookFieldStates(webhookEnabledInput.value === 'true');
@@ -22,6 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update hidden input value
             webhookEnabledInput.value = newState.toString();
+            
+            // Mark form as modified
+            markFormAsModified();
             
             // Update button text and class
             if (newState) {
@@ -51,6 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
             includeErrorDebuggingInput.value = newState.toString();
             console.log('Updated includeErrorDebugging value =', includeErrorDebuggingInput.value);
             
+            // Mark form as modified
+            markFormAsModified();
+            
             // Update button text and class
             if (newState) {
                 debugToggleBtn.textContent = 'Error Details Included';
@@ -66,16 +110,32 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to update webhook field states based on enabled/disabled state
     function updateWebhookFieldStates(isEnabled) {
-        if (webhookUrlInput && testWebhookBtn) {
+        // Get the cards we want to show/hide
+        const webhookDetailsCard = document.querySelector('.webhook-details-card');
+        const webhookUrlCard = document.querySelector('.webhook-url-card');
+        
+        if (webhookUrlInput) {
             if (isEnabled) {
-                // Enable the webhook URL input and show test button
+                // Enable the webhook URL input
                 webhookUrlInput.removeAttribute('disabled');
-                testWebhookBtn.style.display = 'flex'; // Use flex to maintain centering
+                
+                // Show the webhook details and URL cards
+                if (webhookDetailsCard) webhookDetailsCard.style.display = 'block';
+                if (webhookUrlCard) webhookUrlCard.style.display = 'block';
             } else {
-                // Disable the webhook URL input and hide test button
+                // Disable the webhook URL input
                 webhookUrlInput.setAttribute('disabled', 'disabled');
-                testWebhookBtn.style.display = 'none';
+                
+                // Hide the webhook details and URL cards
+                if (webhookDetailsCard) webhookDetailsCard.style.display = 'none';
+                if (webhookUrlCard) webhookUrlCard.style.display = 'none';
             }
+        }
+        
+        // Always ensure the test button is visible, but disable it when webhook is disabled
+        if (testWebhookBtn) {
+            testWebhookBtn.style.display = 'flex'; // Always show
+            testWebhookBtn.disabled = !isEnabled; // But disable when webhook is disabled
         }
     }
     
@@ -129,6 +189,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // If URL is empty, delete the webhook if it exists
                     await deleteWebhookIfExists();
                 }
+                
+                // Reset modified state after successful save
+                resetModifiedState();
                 
                 window.showNotification('Settings saved successfully', 'success');
             } catch (error) {

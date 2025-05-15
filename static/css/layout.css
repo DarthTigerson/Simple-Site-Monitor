@@ -56,9 +56,8 @@ body::before {
 .content {
     flex: 1;
     padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
     width: 100%;
+    /* max-width constraint removed to allow full-width layout */
     padding-top: calc(var(--navbar-height) + 20px);
     padding-bottom: calc(var(--footer-height) + 20px);
 }
