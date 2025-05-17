@@ -10,7 +10,7 @@ const suggestions = [
     { field: 'status', operators: [':', '!='], values: ['down', 'healthy', 'slow', 'expiring'], description: 'Filter by site status' },
     { field: 'name', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site name' },
     { field: 'url', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site URL' },
-    { field: 'tag', operators: [':', '!='], values: [], description: 'Filter by site tag' }
+    { field: 'tag', operators: [':', '!='], values: [], description: 'Filter by site tag (e.g. tag:production)' }
 ];
 
 // Initialize search help toggling functionality
@@ -85,8 +85,11 @@ function initSearchFunctionality() {
     
     if (!searchQuery || !richSearchInput) return;
     
+    // Populate tag suggestions from existing tags
+    populateTagSuggestions();
+    
     // Set placeholder text on rich input
-    richSearchInput.setAttribute('data-placeholder', 'Search logs... (e.g. status:down name:example)');
+    richSearchInput.setAttribute('data-placeholder', 'Search logs... (e.g. status:down name:example tag:production)');
     
     // When user types in contentEditable div
     richSearchInput.addEventListener('input', function() {
@@ -739,4 +742,26 @@ function updatePagination(visibleRowCount) {
             row.classList.remove('page-visible');
         }
     });
+}
+
+// Function to collect available tags from the table
+function populateTagSuggestions() {
+    const tagField = suggestions.find(s => s.field === 'tag');
+    if (!tagField) return;
+    
+    // Clear existing values
+    tagField.values = [];
+    
+    // Find all tag badges in the table
+    const tagBadges = document.querySelectorAll('.tags-cell .tag-badge');
+    const tagSet = new Set();
+    
+    // Collect all unique tag values
+    tagBadges.forEach(badge => {
+        const tagValue = badge.textContent.trim();
+        if (tagValue) tagSet.add(tagValue);
+    });
+    
+    // Add to suggestions
+    tagField.values = Array.from(tagSet).sort();
 }
