@@ -22,7 +22,8 @@
                 "value": "200"
             },
             "monitor_expiring_token": false,
-            "webhook": false
+            "webhook": false,
+            "tags": []
         }
     ]
 }

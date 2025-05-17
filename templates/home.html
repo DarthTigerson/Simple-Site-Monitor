@@ -65,6 +65,7 @@
                             <th>Status</th>
                             <th>Name</th>
                             <th>URL</th>
+                            <th>Tags</th>
                             <th>Load Time</th>
                             <th>Duration</th>
                             <th>Last Scan</th>
@@ -96,6 +97,15 @@
                             </td>
                             <td>{{ log.name }}</td>
                             <td class="url-cell"><a href="{{ log.url }}" target="_blank">{{ log.url }}</a></td>
+                            <td class="tags-cell">
+                                {% if log.tags %}
+                                    {% for tag in log.tags %}
+                                        <span class="tag-badge">{{ tag }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="no-tags">No tags</span>
+                                {% endif %}
+                            </td>
                             <td>{{ log.response_time }}</td>
                             <td>
                                 {% if log.status == 'unknown' %}
@@ -150,6 +160,14 @@
                 <div class="form-group">
                     <label for="siteUrl">URL</label>
                     <input type="url" id="siteUrl" name="siteUrl" placeholder="https://" required>
+                </div>
+                <div class="form-group">
+                    <label for="siteTags">Tags</label>
+                    <div class="tags-input-container" id="tagsContainer">
+                        <input type="text" class="tags-input" id="tagInput" placeholder="Add tags...">
+                    </div>
+                    <input type="hidden" id="siteTags" name="siteTags" value="">
+                    <small class="form-text text-muted">Press Enter or comma to add tags</small>
                 </div>
                 <div class="form-group">
                     <label for="siteTimeout">Timeout (0 for default)</label>

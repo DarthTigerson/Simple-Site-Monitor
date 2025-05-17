@@ -22,7 +22,14 @@ def read_config() -> Dict[str, Any]:
     """Read the configuration from the JSON file."""
     try:
         with open(CONFIG_PATH, 'r') as f:
-            return json.load(f)
+            config = json.load(f)
+            
+        # Check if sites have tags field, add if missing
+        for site in config["sites"]:
+            if "tags" not in site:
+                site["tags"] = []
+                
+        return config
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error reading config: {str(e)}")
 
@@ -137,7 +144,8 @@ async def get_home(request: Request):
                 "created_at": created_at_display,
                 "last_scan": last_scan_display,
                 "duration": human_duration,
-                "ssl_days_remaining": log.ssl_days_remaining
+                "ssl_days_remaining": log.ssl_days_remaining,
+                "tags": next((site["tags"] for site in config["sites"] if site["name"] == log.name), [])
             })
         
         # Add the unknown sites to the display logs
@@ -277,7 +285,8 @@ async def get_history(request: Request):
                 "load_time": load_time_display,
                 "response_time": log.response_time,
                 "raw_start_time": start_time.timestamp(),
-                "raw_end_time": end_time.timestamp()
+                "raw_end_time": end_time.timestamp(),
+                "tags": next((site["tags"] for site in config["sites"] if site["name"] == log.name), [])
             })
         
         # Get total count for display
@@ -335,6 +344,10 @@ async def add_site(site: Dict[str, Any] = Body(...)):
     if not all(key in site for key in ["name", "url", "trigger"]):
         raise HTTPException(status_code=400, detail="Missing required fields")
     
+    # Ensure tags is present
+    if "tags" not in site:
+        site["tags"] = []
+    
     # Add the new site
     config["sites"].append(site)
     write_config(config)
@@ -352,6 +365,10 @@ async def update_site(site_index: int, site: Dict[str, Any] = Body(...)):
     # Validate required fields
     if not all(key in site for key in ["name", "url", "trigger"]):
         raise HTTPException(status_code=400, detail="Missing required fields")
+    
+    # Ensure tags is present
+    if "tags" not in site:
+        site["tags"] = []
     
     # Update the site
     config["sites"][site_index] = site

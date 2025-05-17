@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
 const suggestions = [
     { field: 'status', operators: [':', '!='], values: ['down', 'healthy', 'slow', 'expiring'], description: 'Filter by site status' },
     { field: 'name', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site name' },
-    { field: 'url', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site URL' }
+    { field: 'url', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site URL' },
+    { field: 'tag', operators: [':', '!='], values: [], description: 'Filter by site tag (e.g. tag:production)' }
 ];
 
 // Initialize search help toggling functionality
@@ -84,8 +85,11 @@ function initSearchFunctionality() {
     
     if (!searchQuery || !richSearchInput) return;
     
+    // Populate tag suggestions from existing tags
+    populateTagSuggestions();
+    
     // Set placeholder text on rich input
-    richSearchInput.setAttribute('data-placeholder', 'Search logs... (e.g. status:down name:example)');
+    richSearchInput.setAttribute('data-placeholder', 'Search logs... (e.g. status:down name:example tag:production)');
     
     // When user types in contentEditable div
     richSearchInput.addEventListener('input', function() {
@@ -154,7 +158,7 @@ function initSearchFunctionality() {
 // Function to highlight filter tags in blue
 function highlightTags(element) {
     const text = element.innerText;
-    const tagRegex = /\b(status|name|url):/g;
+    const tagRegex = /\b(status|name|url|tag):/g;
     
     // Save cursor position
     const selection = window.getSelection();
@@ -509,9 +513,10 @@ function getRowValue(row, field) {
         'status': 0,
         'name': 1,
         'url': 2,
-        'start': 3,
-        'end': 4,
-        'duration': 5
+        'tag': 3,
+        'start': 4,
+        'end': 5,
+        'duration': 6
     };
     
     const index = fieldMap[field.toLowerCase()];
@@ -522,6 +527,16 @@ function getRowValue(row, field) {
         // Special handling for status
         if (field === 'status') {
             return cell.querySelector('.status-text').textContent.trim();
+        }
+        
+        // Special handling for tags
+        if (field === 'tag') {
+            // Get all tags in the cell
+            const tagElements = cell.querySelectorAll('.tag-badge');
+            if (tagElements.length === 0) return '';
+            
+            // Return a comma-separated string of tag values
+            return Array.from(tagElements).map(tag => tag.textContent.trim()).join(',');
         }
         
         return cell.textContent.trim();
@@ -727,4 +742,26 @@ function updatePagination(visibleRowCount) {
             row.classList.remove('page-visible');
         }
     });
+}
+
+// Function to collect available tags from the table
+function populateTagSuggestions() {
+    const tagField = suggestions.find(s => s.field === 'tag');
+    if (!tagField) return;
+    
+    // Clear existing values
+    tagField.values = [];
+    
+    // Find all tag badges in the table
+    const tagBadges = document.querySelectorAll('.tags-cell .tag-badge');
+    const tagSet = new Set();
+    
+    // Collect all unique tag values
+    tagBadges.forEach(badge => {
+        const tagValue = badge.textContent.trim();
+        if (tagValue) tagSet.add(tagValue);
+    });
+    
+    // Add to suggestions
+    tagField.values = Array.from(tagSet).sort();
 }

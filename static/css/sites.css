@@ -608,7 +608,7 @@
 
 .sites-list .sites-list-header {
     display: grid;
-    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
     padding: 12px 15px;
     background-color: rgba(0, 0, 0, 0.1);
@@ -636,7 +636,7 @@
 
 .sites-list .list-view-content {
     display: grid;
-    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
     padding: 12px 15px;
     align-items: center;
@@ -751,11 +751,11 @@
 
 @media (max-width: 1400px) {
     .sites-list .list-view-content {
-        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     }
     
     .sites-list .sites-list-header {
-        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     }
     
     .site-interval-col {
@@ -765,11 +765,11 @@
 
 @media (max-width: 1200px) {
     .sites-list .list-view-content {
-        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     }
     
     .sites-list .sites-list-header {
-        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+        grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     }
     
     .site-timeout-col {
@@ -779,11 +779,11 @@
 
 @media (max-width: 992px) {
     .sites-list .list-view-content {
-        grid-template-columns: minmax(120px, 1.2fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 0.8fr) 120px;
+        grid-template-columns: minmax(120px, 1.2fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) 120px;
     }
     
     .sites-list .sites-list-header {
-        grid-template-columns: minmax(120px, 1.2fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 0.8fr) 120px;
+        grid-template-columns: minmax(120px, 1.2fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) 120px;
     }
     
     .site-trigger-col {
@@ -802,7 +802,7 @@
         padding: 10px;
     }
     
-    .site-ssl-col, .site-webhook-col {
+    .site-tags-col, .site-ssl-col, .site-webhook-col {
         display: none;
     }
 }
@@ -1183,7 +1183,7 @@
 /* List view styling improvements to match home.html */
 .sites-list .sites-list-header {
     display: grid;
-    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
     padding: 12px 15px;
     background-color: rgba(0, 0, 0, 0.1);
@@ -1207,7 +1207,7 @@
 
 .sites-list .list-view-content {
     display: grid;
-    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
+    grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
     padding: 12px 15px;
     align-items: center;
@@ -1616,4 +1616,109 @@
     color: #ff9500;
     padding: 0 2px;
     border-radius: 2px;
+}
+
+/* Tags styling for site form */
+.tags-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    margin-bottom: 10px;
+    min-height: 38px;
+}
+
+.tags-input {
+    flex: 1;
+    padding: 5px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-color);
+}
+
+.tag-item {
+    display: inline-flex;
+    align-items: center;
+    margin: 2px;
+    padding: 2px 8px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.tag-text {
+    margin-right: 5px;
+}
+
+.tag-close {
+    margin-left: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+/* Tags display in list view */
+.list-cell.site-tags-col {
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    white-space: normal !important;
+}
+
+.list-cell.site-tags-col .list-tags-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+    flex-wrap: wrap;
+}
+
+.list-cell.site-tags-col .tag-badge {
+    margin: 2px auto !important;
+    display: inline-block !important;
+}
+
+.list-cell.site-tags-col .no-tags {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Tags container in grid view */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 3px;
+}
+
+/* Ensure normal alignment in card/grid view */
+.grid-view-content .tags-container {
+    justify-content: flex-start;
+}
+
+/* Grid span for tags row */
+.site-details-grid .detail-item[style*="grid-column"] {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid var(--border-color);
+}
+
+.list-tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 2px;
+}
+
+.list-tags-wrapper .tag-badge {
+    margin: 0;
 } 

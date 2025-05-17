@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize timeoutInput for use in other functions
     const timeoutInput = document.getElementById('timeout');
     
+    // Initialize tags input
+    initTagsInput();
+    
     // Initialize table sorting in list view
     initTableSorting();
     
@@ -437,6 +440,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Current notification toggle value:', webhookEnabledInput.value);
             console.log('Parsed notification value:', isWebhookEnabled);
             
+            // Get tags from UI
+            const tags = getTagsFromUI();
+            
             // Create basic site data object with only required fields
             let siteData = {
                 name: nameInput.value,
@@ -448,7 +454,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 timeout: parseInt(timeoutInput.value, 10) || 0,
                 scan_interval: parseInt(scanIntervalInput.value, 10) || 0,
                 monitor_expiring_token: isMonitoringToken,
-                webhook: isWebhookEnabled
+                webhook: isWebhookEnabled,
+                tags: tags
             };
             
             // Only add method, content_type, and body if they have values
@@ -781,6 +788,20 @@ function sortSiteCards(cards, columnIndex, ascending) {
         const aValue = getCellValue(aCell);
         const bValue = getCellValue(bCell);
         
+        // Special case for Tags column
+        if (aCell.classList.contains('site-tags-col')) {
+            // If both have "No tags", they're equal
+            const aNoTags = aValue.includes('No tags');
+            const bNoTags = bValue.includes('No tags');
+            
+            if (aNoTags && bNoTags) return 0;
+            if (aNoTags) return ascending ? 1 : -1;
+            if (bNoTags) return ascending ? -1 : 1;
+            
+            // Otherwise compare the tag text
+            return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        }
+        
         // Special case for SSL and Webhook columns
         if (aCell.classList.contains('site-ssl-col') || aCell.classList.contains('site-webhook-col')) {
             const aEnabled = aCell.textContent.trim().includes('Enabled');
@@ -905,6 +926,9 @@ function handleSiteAction(action, card, siteIndex) {
                     }
                 }
                 
+                // Load tags
+                loadTags(data.tags || []);
+                
                 // Make sure updateTriggerHelp function is accessible
                 if (typeof updateTriggerHelp === 'function') {
                     updateTriggerHelp();
@@ -926,4 +950,139 @@ function handleSiteAction(action, card, siteIndex) {
         document.getElementById('deleteIndex').value = siteIndexInt;
         deleteModal.style.display = 'flex';
     }
+}
+
+// Initialize tags input functionality
+function initTagsInput() {
+    const tagInput = document.getElementById('tagInput');
+    const tagsContainer = document.getElementById('tagsContainer');
+    const siteTagsInput = document.getElementById('siteTags');
+    
+    if (!tagInput || !tagsContainer || !siteTagsInput) return;
+    
+    // Handle input events
+    tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            addTag(this.value.trim());
+            this.value = '';
+        } else if (e.key === 'Backspace' && this.value === '') {
+            // Remove the last tag when backspace is pressed and input is empty
+            const tags = tagsContainer.querySelectorAll('.tag-item');
+            if (tags.length > 0) {
+                tags[tags.length - 1].remove();
+                updateHiddenInput();
+            }
+        }
+    });
+    
+    // Handle input blur to add any pending tag
+    tagInput.addEventListener('blur', function() {
+        if (this.value.trim() !== '') {
+            addTag(this.value.trim());
+            this.value = '';
+        }
+    });
+    
+    // Function to add a new tag
+    function addTag(tag) {
+        if (tag === '') return;
+        
+        // Check if tag already exists
+        const existingTags = Array.from(tagsContainer.querySelectorAll('.tag-item')).map(t => 
+            t.querySelector('.tag-text').textContent.toLowerCase()
+        );
+        
+        if (existingTags.includes(tag.toLowerCase())) return;
+        
+        // Create tag element
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag-item';
+        
+        const tagText = document.createElement('span');
+        tagText.className = 'tag-text';
+        tagText.textContent = tag;
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'tag-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', function() {
+            tagElement.remove();
+            updateHiddenInput();
+        });
+        
+        tagElement.appendChild(tagText);
+        tagElement.appendChild(closeBtn);
+        
+        // Insert before the input
+        tagsContainer.insertBefore(tagElement, tagInput);
+        
+        // Update the hidden input
+        updateHiddenInput();
+    }
+    
+    // Function to update the hidden input with current tags
+    function updateHiddenInput() {
+        const tags = Array.from(tagsContainer.querySelectorAll('.tag-item')).map(tag => 
+            tag.querySelector('.tag-text').textContent
+        );
+        siteTagsInput.value = JSON.stringify(tags);
+    }
+}
+
+// Function to load existing tags into the UI
+function loadTags(tags) {
+    const tagsContainer = document.getElementById('tagsContainer');
+    const tagInput = document.getElementById('tagInput');
+    const siteTagsInput = document.getElementById('siteTags');
+    
+    if (!tagsContainer || !tagInput || !siteTagsInput) return;
+    
+    // Clear existing tags
+    Array.from(tagsContainer.querySelectorAll('.tag-item')).forEach(tag => tag.remove());
+    
+    // Add each tag
+    tags.forEach(tag => {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag-item';
+        
+        const tagText = document.createElement('span');
+        tagText.className = 'tag-text';
+        tagText.textContent = tag;
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'tag-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', function() {
+            tagElement.remove();
+            updateHiddenInput();
+        });
+        
+        tagElement.appendChild(tagText);
+        tagElement.appendChild(closeBtn);
+        
+        // Insert before the input
+        tagsContainer.insertBefore(tagElement, tagInput);
+    });
+    
+    // Update the hidden input
+    updateHiddenInput();
+    
+    // Function to update the hidden input with current tags
+    function updateHiddenInput() {
+        const currentTags = Array.from(tagsContainer.querySelectorAll('.tag-item')).map(tag => 
+            tag.querySelector('.tag-text').textContent
+        );
+        siteTagsInput.value = JSON.stringify(currentTags);
+    }
+}
+
+// Function to get all tags from the UI
+function getTagsFromUI() {
+    const tagsContainer = document.getElementById('tagsContainer');
+    if (!tagsContainer) return [];
+    
+    return Array.from(tagsContainer.querySelectorAll('.tag-item')).map(tag => 
+        tag.querySelector('.tag-text').textContent
+    );
 } 

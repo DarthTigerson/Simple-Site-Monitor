@@ -37,6 +37,7 @@
             <div class="sites-list-header">
                 <div class="list-header-cell site-name">Name</div>
                 <div class="list-header-cell site-url-col">URL</div>
+                <div class="list-header-cell site-tags-col">Tags</div>
                 <div class="list-header-cell site-trigger-col">Trigger Type</div>
                 <div class="list-header-cell site-timeout-col">Timeout</div>
                 <div class="list-header-cell site-interval-col">Interval</div>
@@ -85,6 +86,18 @@
                                         {{ "Enabled" if site.webhook else "Disabled" }}
                                     </span>
                                 </div>
+                                <div class="detail-item" style="grid-column: 1 / -1;">
+                                    <span class="detail-label">Tags</span>
+                                    <div class="detail-value tags-container">
+                                        {% if site.tags and site.tags|length > 0 %}
+                                            {% for tag in site.tags %}
+                                                <span class="tag-badge">{{ tag }}</span>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="no-tags">No tags</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -95,6 +108,17 @@
                     <div class="list-cell site-name">{{ site.name }}</div>
                     <div class="list-cell site-url-col">
                         <a href="{{ site.url }}" target="_blank" title="{{ site.url }}">{{ site.url }}</a>
+                    </div>
+                    <div class="list-cell site-tags-col">
+                        <div class="list-tags-wrapper">
+                            {% if site.tags and site.tags|length > 0 %}
+                                {% for tag in site.tags %}
+                                    <span class="tag-badge">{{ tag }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="no-tags">No tags</span>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="list-cell site-trigger-col">{{ site.trigger.type }}</div>
                     <div class="list-cell site-timeout-col">
@@ -174,6 +198,21 @@
                                 URL
                             </label>
                             <input type="url" id="siteUrl" name="siteUrl" placeholder="https://" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteTags">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7.859 6c0-1.105.895-2 2-2h13.684v13.685c0 1.103-.897 2-2 2h-13.684c-1.105 0-2-.895-2-2v-11.685zm7.684 5.5h5v-2h-5v2zm0 4h5v-2h-5v2zm-4-4h2v-2h-2v2zm0 4h2v-2h-2v2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M3.359 11v10.5c0 1.38 1.12 2.5 2.5 2.5h10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Tags
+                            </label>
+                            <div class="tags-input-container" id="tagsContainer">
+                                <input type="text" class="tags-input" id="tagInput" placeholder="Add tags...">
+                            </div>
+                            <input type="hidden" id="siteTags" name="siteTags" value="">
+                            <small class="form-help">Press Enter or comma to add tags</small>
                         </div>
                         
                         <!-- Scan Interval control -->
