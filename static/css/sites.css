@@ -1665,31 +1665,29 @@
 
 /* Tags display in list view */
 .list-cell.site-tags-col {
-    white-space: nowrap;
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    white-space: normal !important;
 }
 
-.tag-badge {
-    display: inline-block;
-    padding: 3px 6px;
-    margin: 2px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: 4px;
-    background-color: var(--primary-color);
-    color: white;
+.list-cell.site-tags-col .list-tags-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+    flex-wrap: wrap;
 }
 
-.no-tags {
-    color: var(--secondary-text-color);
-    font-style: italic;
-    font-size: 0.85rem;
+.list-cell.site-tags-col .tag-badge {
+    margin: 2px auto !important;
+    display: inline-block !important;
+}
+
+.list-cell.site-tags-col .no-tags {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 auto !important;
 }
 
 /* Tags container in grid view */
@@ -1700,9 +1698,27 @@
     margin-top: 3px;
 }
 
+/* Ensure normal alignment in card/grid view */
+.grid-view-content .tags-container {
+    justify-content: flex-start;
+}
+
 /* Grid span for tags row */
 .site-details-grid .detail-item[style*="grid-column"] {
     margin-top: 5px;
     padding-top: 5px;
     border-top: 1px solid var(--border-color);
+}
+
+.list-tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 2px;
+}
+
+.list-tags-wrapper .tag-badge {
+    margin: 0;
 } 

@@ -110,13 +110,15 @@
                         <a href="{{ site.url }}" target="_blank" title="{{ site.url }}">{{ site.url }}</a>
                     </div>
                     <div class="list-cell site-tags-col">
-                        {% if site.tags and site.tags|length > 0 %}
-                            {% for tag in site.tags %}
-                                <span class="tag-badge">{{ tag }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <span class="no-tags">No tags</span>
-                        {% endif %}
+                        <div class="list-tags-wrapper">
+                            {% if site.tags and site.tags|length > 0 %}
+                                {% for tag in site.tags %}
+                                    <span class="tag-badge">{{ tag }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="no-tags">No tags</span>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="list-cell site-trigger-col">{{ site.trigger.type }}</div>
                     <div class="list-cell site-timeout-col">

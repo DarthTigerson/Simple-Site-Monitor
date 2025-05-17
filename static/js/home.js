@@ -565,23 +565,37 @@ function sortTable(rows, columnIndex, ascending) {
             return compareStatus(a, b, ascending);
         }
         
+        // Special case for Tags column (index 3)
+        if (columnIndex === 3) {
+            // Handle "No tags" case
+            const aNoTags = aValue.includes('No tags');
+            const bNoTags = bValue.includes('No tags');
+            
+            if (aNoTags && bNoTags) return 0;
+            if (aNoTags) return ascending ? 1 : -1;
+            if (bNoTags) return ascending ? -1 : 1;
+            
+            // For rows with tags, sort alphabetically
+            return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        }
+        
         // Special handling for Load Time column - parse numeric value
-        if (columnIndex === 3) { // Load Time column
+        if (columnIndex === 4) { // Load Time column
             return compareNumeric(aValue, bValue, ascending);
         }
         
         // Special handling for Duration column - convert to seconds for comparison
-        if (columnIndex === 4) { // Duration column
+        if (columnIndex === 5) { // Duration column
             return compareDuration(aValue, bValue, ascending);
         }
         
         // Special handling for Last Scan column - "X ago" format
-        if (columnIndex === 5) { // Last Scan column
+        if (columnIndex === 6) { // Last Scan column
             return compareDuration(aValue, bValue, ascending);
         }
         
         // Special handling for SSL Expiry column
-        if (columnIndex === 6) { // SSL Expiry column
+        if (columnIndex === 7) { // SSL Expiry column
             return compareSSLExpiry(aValue, bValue, ascending);
         }
         
@@ -609,8 +623,24 @@ function getCellValue(row, index) {
         return link ? link.textContent.trim() : '';
     }
     
+    // For tags cell, get all tag badges or "No tags"
+    if (index === 3) {
+        const noTags = cell.querySelector('.no-tags');
+        if (noTags) {
+            return "No tags";
+        }
+        
+        const tagBadges = cell.querySelectorAll('.tag-badge');
+        if (tagBadges && tagBadges.length > 0) {
+            return Array.from(tagBadges)
+                .map(badge => badge.textContent.trim())
+                .join(", ");
+        }
+        return '';
+    }
+    
     // For SSL cell, handle special cases
-    if (index === 6) {
+    if (index === 7) {
         const sslDays = cell.querySelector('.ssl-days');
         if (sslDays && !sslDays.classList.contains('not-monitored')) {
             return sslDays.textContent.trim();
