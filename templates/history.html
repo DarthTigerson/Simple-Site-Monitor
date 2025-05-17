@@ -44,11 +44,12 @@
                             <ul>
                                 <li><code>name:example</code> - Find logs for a specific site name</li>
                                 <li><code>url:example.com</code> - Find logs for specific URLs</li>
+                                <li><code>tag:production</code> - Find logs for sites with a specific tag</li>
                             </ul>
                         </div>
                     </div>
                     <div class="search-tip">
-                        <strong>Pro Tip:</strong> Combine multiple filters like <code>status:down name:api</code> for more specific results.
+                        <strong>Pro Tip:</strong> Combine multiple filters like <code>status:down tag:production</code> for more specific results.
                     </div>
                 </div>
             </div>
@@ -67,6 +68,7 @@
                         <th>Status</th>
                         <th>Name</th>
                         <th>URL</th>
+                        <th>Tags</th>
                         <th>Start Time</th>
                         <th>End Time</th>
                         <th>Duration</th>
@@ -83,6 +85,15 @@
                             <td>{{ log.name }}</td>
                             <td class="url-cell">
                                 <a href="{{ log.url }}" target="_blank">{{ log.url }}</a>
+                            </td>
+                            <td class="tags-cell">
+                                {% if log.tags %}
+                                    {% for tag in log.tags %}
+                                        <span class="tag-badge">{{ tag }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="no-tags">No tags</span>
+                                {% endif %}
                             </td>
                             <td>{{ log.start_time }}</td>
                             <td>{{ log.end_time }}</td>

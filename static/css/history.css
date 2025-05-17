@@ -716,3 +716,44 @@ tr.page-visible {
     pointer-events: none;
     display: block;
 }
+
+/* Tags styling */
+.tags-cell {
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tag-badge {
+    display: inline-block;
+    padding: 3px 6px;
+    margin: 2px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.no-tags {
+    color: var(--secondary-text-color);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tags-cell {
+        max-width: 100px;
+    }
+    
+    .tag-badge {
+        padding: 2px 4px;
+        font-size: 0.7rem;
+    }
+}

@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const refreshBtn = document.getElementById('refreshDashboardBtn');
     const addFirstSiteBtn = document.getElementById('addFirstSiteBtn');
     
+    // Tags input
+    initTagsInput();
+    
     // Table sorting functionality
     initTableSorting();
     
@@ -117,6 +120,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             document.getElementById('triggerValue').value = data.trigger.value;
                             document.getElementById('webhookEnabled').checked = data.webhook;
                             
+                            // Load tags
+                            loadTags(data.tags || []);
+                            
                             // Update modal title
                             document.getElementById('modalTitle').textContent = 'Edit Site';
                             
@@ -158,6 +164,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('triggerType').value = data.trigger.type;
                     document.getElementById('triggerValue').value = data.trigger.value;
                     document.getElementById('webhookEnabled').checked = data.webhook;
+                    
+                    // Load tags
+                    loadTags(data.tags || []);
                     
                     // Update modal title
                     document.getElementById('modalTitle').textContent = 'Edit Site';
@@ -213,6 +222,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Get tags from UI
+            const tags = getTagsFromUI();
+            
             const formData = {
                 name: document.getElementById('siteName').value,
                 url: siteUrl,
@@ -221,7 +233,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: document.getElementById('triggerType').value,
                     value: document.getElementById('triggerValue').value
                 },
-                webhook: document.getElementById('webhookEnabled').checked
+                webhook: document.getElementById('webhookEnabled').checked,
+                tags: tags
             };
             
             const url = isNew ? '/api/sites' : `/api/sites/${siteIndex}`;
@@ -709,4 +722,139 @@ function openAddSiteModal() {
     document.getElementById('siteUrl').value = 'https://';
     
     siteModal.style.display = 'flex';
+}
+
+// Initialize tags input functionality
+function initTagsInput() {
+    const tagInput = document.getElementById('tagInput');
+    const tagsContainer = document.getElementById('tagsContainer');
+    const siteTagsInput = document.getElementById('siteTags');
+    
+    if (!tagInput || !tagsContainer || !siteTagsInput) return;
+    
+    // Handle input events
+    tagInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            addTag(this.value.trim());
+            this.value = '';
+        } else if (e.key === 'Backspace' && this.value === '') {
+            // Remove the last tag when backspace is pressed and input is empty
+            const tags = tagsContainer.querySelectorAll('.tag-item');
+            if (tags.length > 0) {
+                tags[tags.length - 1].remove();
+                updateHiddenInput();
+            }
+        }
+    });
+    
+    // Handle input blur to add any pending tag
+    tagInput.addEventListener('blur', function() {
+        if (this.value.trim() !== '') {
+            addTag(this.value.trim());
+            this.value = '';
+        }
+    });
+    
+    // Function to add a new tag
+    function addTag(tag) {
+        if (tag === '') return;
+        
+        // Check if tag already exists
+        const existingTags = Array.from(tagsContainer.querySelectorAll('.tag-item')).map(t => 
+            t.querySelector('.tag-text').textContent.toLowerCase()
+        );
+        
+        if (existingTags.includes(tag.toLowerCase())) return;
+        
+        // Create tag element
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag-item';
+        
+        const tagText = document.createElement('span');
+        tagText.className = 'tag-text';
+        tagText.textContent = tag;
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'tag-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', function() {
+            tagElement.remove();
+            updateHiddenInput();
+        });
+        
+        tagElement.appendChild(tagText);
+        tagElement.appendChild(closeBtn);
+        
+        // Insert before the input
+        tagsContainer.insertBefore(tagElement, tagInput);
+        
+        // Update the hidden input
+        updateHiddenInput();
+    }
+    
+    // Function to update the hidden input with current tags
+    function updateHiddenInput() {
+        const tags = Array.from(tagsContainer.querySelectorAll('.tag-item')).map(tag => 
+            tag.querySelector('.tag-text').textContent
+        );
+        siteTagsInput.value = JSON.stringify(tags);
+    }
+}
+
+// Function to load existing tags into the UI
+function loadTags(tags) {
+    const tagsContainer = document.getElementById('tagsContainer');
+    const tagInput = document.getElementById('tagInput');
+    const siteTagsInput = document.getElementById('siteTags');
+    
+    if (!tagsContainer || !tagInput || !siteTagsInput) return;
+    
+    // Clear existing tags
+    Array.from(tagsContainer.querySelectorAll('.tag-item')).forEach(tag => tag.remove());
+    
+    // Add each tag
+    tags.forEach(tag => {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag-item';
+        
+        const tagText = document.createElement('span');
+        tagText.className = 'tag-text';
+        tagText.textContent = tag;
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'tag-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', function() {
+            tagElement.remove();
+            updateHiddenInput();
+        });
+        
+        tagElement.appendChild(tagText);
+        tagElement.appendChild(closeBtn);
+        
+        // Insert before the input
+        tagsContainer.insertBefore(tagElement, tagInput);
+    });
+    
+    // Update the hidden input
+    updateHiddenInput();
+    
+    // Function to update the hidden input with current tags
+    function updateHiddenInput() {
+        const currentTags = Array.from(tagsContainer.querySelectorAll('.tag-item')).map(tag => 
+            tag.querySelector('.tag-text').textContent
+        );
+        siteTagsInput.value = JSON.stringify(currentTags);
+    }
+}
+
+// Function to get all tags from the UI
+function getTagsFromUI() {
+    const tagsContainer = document.getElementById('tagsContainer');
+    if (!tagsContainer) return [];
+    
+    return Array.from(tagsContainer.querySelectorAll('.tag-item')).map(tag => 
+        tag.querySelector('.tag-text').textContent
+    );
 }
