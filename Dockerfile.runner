@@ -9,7 +9,11 @@ ENV PYTHONUNBUFFERED=1
 
 RUN pip install --no-cache-dir pdm && \
     pdm install --no-self && \
-    chmod -R 777 /app/data
+    chmod -R 777 /app/data && \
+    chmod +x /app/docker-entrypoint.sh
 
-# Set the entrypoint to run the runner script
+# Add entrypoint
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+
+# Set the command to run the runner script
 CMD ["pdm", "run", "python", "runner.py"] 
