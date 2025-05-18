@@ -494,7 +494,7 @@ function initTableSorting() {
     if (!table) return;
     
     const headers = table.querySelectorAll('th');
-    const tableBody = table.querySelector('tbody');
+    const tableBody = document.querySelector('.table-scroll-container tbody'); // Updated selector
     const rows = tableBody.querySelectorAll('tr');
     
     // Skip the no-sites message row for sorting
@@ -504,7 +504,17 @@ function initTableSorting() {
     headers.forEach((header, index) => {
         // Add sort icons and make headers look clickable
         header.classList.add('sortable');
-        header.innerHTML = `<div class="sort-header">${header.textContent}<span class="sort-icon"></span></div>`;
+        
+        // Get header text
+        const headerText = header.textContent.trim();
+        
+        // Create sort header with center alignment
+        header.innerHTML = `
+            <div class="sort-header">
+                ${headerText}
+                <span class="sort-icon"></span>
+            </div>
+        `;
         
         // Add click handler for sorting
         header.addEventListener('click', () => {

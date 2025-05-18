@@ -12,8 +12,9 @@
     <link rel="stylesheet" href="/static/css/sites.css">
     {% elif request.url.path == '/settings' %}
     <link rel="stylesheet" href="/static/css/settings.css">
-    {% endif %}
+    {% elif request.url.path == '/history' %}
     <link rel="stylesheet" href="/static/css/history.css">
+    {% endif %}
 </head>
 <body>
     <div class="container">
