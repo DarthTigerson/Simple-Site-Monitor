@@ -1,5 +1,11 @@
 # Simple Site Monitor
 
+## v0.1.3 - Added Tags, UI Table Improvement and Bug Fixes
+### UI
+- [#6] Added Site Tags
+- [#7] Tables UI improvement across `Monitoring`, `History` and `Sites`
+- [#8] Docker first startup bug fix
+
 
 ## v0.1.2 - History Page and UI improvements
 ### UI

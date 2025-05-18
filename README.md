@@ -12,6 +12,7 @@ A robust web application for monitoring website uptime, performance, and SSL cer
 - **Webhook Notifications**: Receive alerts via Discord, Slack, or custom webhooks when site status changes
 - **Advanced Log History**: View and search through historical monitoring data with powerful filtering
 - **Intelligent Search**: Smart syntax highlighting and autocomplete for search queries
+- **Tagging System**: Organize and filter sites with custom tags for better categorization
 - **Responsive UI**: Clean, modern interface that works on desktop and mobile
 - **Docker Support**: Easy deployment with Docker and Docker Compose
 
@@ -21,14 +22,14 @@ A robust web application for monitoring website uptime, performance, and SSL cer
 ![Dashboard](screenshot_1.png)
 
 ### History
-![History](screenshot_5.png)
+![History](screenshot_2.png)
 
 ### Sites Management
-![Sites Management](screenshot_2.png)
-![Site Configuration](screenshot_3.png)
+![Sites Management](screenshot_3.png)
+![Site Configuration](screenshot_4.png)
 
 ### Settings
-![Settings](screenshot_4.png)
+![Settings](screenshot_5.png)
 
 ## Architecture
 
@@ -116,6 +117,7 @@ Each site configuration includes:
 - **Scan Interval**: Custom scan frequency in seconds (0 to use default)
 - **SSL Monitoring**: Enable/disable SSL certificate expiration monitoring
 - **Webhook**: Enable/disable webhook notifications for this site
+- **Tags**: Custom tags to categorize and filter sites (e.g., "production", "development", "client-name")
 
 ## Components
 
@@ -135,7 +137,7 @@ The history page offers sophisticated log viewing capabilities:
 
 - **Dynamic Pagination**: Automatically adjusts rows per page based on available screen height
 - **Advanced Search**: Filter logs with intuitive query syntax
-- **Syntax Highlighting**: Filter tags (status:, name:, url:) are highlighted in blue for better readability
+- **Syntax Highlighting**: Filter tags (status:, name:, url:, tag:) are highlighted in blue for better readability
 - **Keyboard Navigation**: Tab completion and arrow key navigation for efficient searching
 - **Real-time Filtering**: Instantly filter through hundreds of log entries
 
@@ -143,6 +145,7 @@ Search syntax examples:
 - `status:down` - Find logs with down status
 - `name:example` - Find logs for a specific site name
 - `url:example.com` - Filter by URL
+- `tag:production` - Find logs for sites with a specific tag
 
 ### Runner
 
@@ -180,8 +183,10 @@ The project includes Docker support with two services:
    COPY . .
    RUN pip install --no-cache-dir pdm && \
        pdm install --no-self && \
-       chmod -R 777 /app/data
+       chmod -R 777 /app/data && \
+       chmod +x /app/docker-entrypoint.sh
    EXPOSE 8000
+   ENTRYPOINT ["/app/docker-entrypoint.sh"]
    CMD ["pdm", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
    ```
 
@@ -193,7 +198,9 @@ The project includes Docker support with two services:
    ENV PYTHONUNBUFFERED=1
    RUN pip install --no-cache-dir pdm && \
        pdm install --no-self && \
-       chmod -R 777 /app/data
+       chmod -R 777 /app/data && \
+       chmod +x /app/docker-entrypoint.sh
+   ENTRYPOINT ["/app/docker-entrypoint.sh"]
    CMD ["pdm", "run", "python", "runner.py"]
    ```
 
@@ -211,7 +218,7 @@ services:
       - ./data:/app/data
     restart: unless-stopped
     environment:
-      - TZ=Europe/Malta  # Set to your timezone
+      - TZ=UTC  # Set to your timezone
 
   runner:
     build: 
@@ -221,7 +228,7 @@ services:
       - ./data:/app/data
     restart: unless-stopped
     environment:
-      - TZ=Europe/Malta  # Set to your timezone
+      - TZ=UTC  # Set to your timezone
       - PYTHONUNBUFFERED=1
     depends_on:
       - web
@@ -240,6 +247,10 @@ The application requires write permissions to the `data` directory. If running w
 ### Webhook Testing
 
 You can test webhook notifications from the Settings page without triggering actual alerts.
+
+### First Run Configuration
+
+On first run, the Docker containers will automatically create a `config.json` file from the sample configuration if one doesn't exist. You can then customize this file through the web interface or by directly editing it.
 
 ## License
 
