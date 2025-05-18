@@ -551,16 +551,18 @@ function initTableSorting() {
         });
     });
     
-    // Default sort by status (0) and then name (1)
-    if (dataRows.length > 0 && headers.length > 1) {
+    // Default sort by status (0) column - show critical issues first
+    if (dataRows.length > 0 && headers.length > 0) {
         // Set status column as initial sort
         headers[0].classList.add('sorting-asc');
-        sortTable(dataRows, 0, true); // Sort by status ascending
+        sortTable(dataRows, 0, true); // Sort by status ascending (critical issues first)
         
         // Re-append rows to update the display
         dataRows.forEach(row => {
             tableBody.appendChild(row);
         });
+        
+        console.log('Applied default sort by Status - critical issues first');
     }
 }
 
@@ -665,18 +667,18 @@ function getCellValue(row, index) {
 function compareStatus(rowA, rowB, ascending) {
     // Get status priority based on class names
     const statusPriority = {
-        'success': 1,   // Healthy
-        'error': 2,     // Down
+        'error': 1,     // Down - highest priority (most critical)
+        'expiring': 2,  // Token Expiring 
         'warning': 3,   // Slow
-        'expiring': 4,  // Token Expiring
-        'unknown': 5    // Unknown/Pending
+        'unknown': 4,   // Unknown/Pending
+        'success': 5    // Healthy - lowest priority (least critical)
     };
     
     // Determine row status from the class
     const getRowStatus = (row) => {
         if (row.classList.contains('error')) return 'error';
-        if (row.classList.contains('warning')) return 'warning';
         if (row.classList.contains('expiring')) return 'expiring';
+        if (row.classList.contains('warning')) return 'warning';
         if (row.classList.contains('unknown')) return 'unknown';
         return 'success';
     };
@@ -687,11 +689,11 @@ function compareStatus(rowA, rowB, ascending) {
     // Compare by status priority
     const result = statusPriority[statusA] - statusPriority[statusB];
     
-    // If statuses are equal, compare by name (2nd column)
+    // If statuses are equal, always compare by name alphabetically (A-Z)
     if (result === 0) {
         const nameA = getCellValue(rowA, 1);
         const nameB = getCellValue(rowB, 1);
-        return ascending ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+        return nameA.localeCompare(nameB); // Always alphabetical order regardless of status sort direction
     }
     
     return ascending ? result : -result;
