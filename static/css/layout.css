@@ -406,3 +406,87 @@ footer {
         transform: scaleX(0);
     }
 }
+
+/* Easter Egg Animation */
+.easter-boat {
+    position: absolute;
+    bottom: 38px; /* Position above the footer */
+    right: -100px; /* Start off-screen to the right */
+    z-index: 1001;
+    pointer-events: none;
+    animation: sailBoat 10s linear forwards;
+}
+
+.easter-boat img {
+    width: 80px;
+    height: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+@keyframes sailBoat {
+    0% {
+        right: -100px;
+        transform: translateY(5px) rotate(0deg);
+    }
+    5% {
+        transform: translateY(0) rotate(2deg);
+    }
+    10% {
+        transform: translateY(5px) rotate(-2deg);
+    }
+    15% {
+        transform: translateY(0) rotate(1deg);
+    }
+    20% {
+        transform: translateY(5px) rotate(-1deg);
+    }
+    25% {
+        transform: translateY(0) rotate(2deg);
+    }
+    30% {
+        transform: translateY(5px) rotate(-2deg);
+    }
+    35% {
+        transform: translateY(0) rotate(1deg);
+    }
+    40% {
+        transform: translateY(5px) rotate(-1deg);
+    }
+    45% {
+        transform: translateY(0) rotate(2deg);
+    }
+    50% {
+        transform: translateY(5px) rotate(-2deg);
+    }
+    55% {
+        transform: translateY(0) rotate(1deg);
+    }
+    60% {
+        transform: translateY(5px) rotate(-1deg);
+    }
+    65% {
+        transform: translateY(0) rotate(2deg);
+    }
+    70% {
+        transform: translateY(5px) rotate(-2deg);
+    }
+    75% {
+        transform: translateY(0) rotate(1deg);
+    }
+    80% {
+        transform: translateY(5px) rotate(-1deg);
+    }
+    85% {
+        transform: translateY(0) rotate(2deg);
+    }
+    90% {
+        transform: translateY(5px) rotate(-2deg);
+    }
+    95% {
+        transform: translateY(0) rotate(1deg);
+    }
+    100% {
+        right: calc(100% + 100px);
+        transform: translateY(5px) rotate(0deg);
+    }
+}

@@ -2,6 +2,60 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Add any global event listeners or initializations here
     console.log('Layout script loaded');
+    
+    // Konami
+    let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiPosition = 0;
+    
+    document.addEventListener('keydown', function(e) {
+        // Get the key pressed
+        const key = e.key;
+        
+        // Check if the key matches the expected key in the Konami sequence
+        if (key === konamiCode[konamiPosition]) {
+            // Move to the next position in the sequence
+            konamiPosition++;
+            
+            // Check if the full sequence has been entered
+            if (konamiPosition === konamiCode.length) {
+                // Reset the position
+                konamiPosition = 0;
+                
+                // Trigger the Easter egg
+                activateBoatEasterEgg();
+            }
+        } else {
+            // Reset if wrong key pressed
+            konamiPosition = 0;
+        }
+    });
+    
+    function activateBoatEasterEgg() {
+        console.log('Easter egg activated! 🚢');
+        
+        // Create boat element
+        const boat = document.createElement('div');
+        boat.className = 'easter-boat';
+        
+        // Create boat image
+        const boatImg = document.createElement('img');
+        boatImg.src = '/static/images/easter-boat.png';
+        boatImg.alt = 'Sailing boat';
+        
+        // Append image to boat div
+        boat.appendChild(boatImg);
+        
+        // Get footer element
+        const footer = document.querySelector('footer');
+        
+        // Add boat to footer
+        footer.appendChild(boat);
+        
+        // Listen for animation end to remove the boat
+        boat.addEventListener('animationend', function() {
+            boat.remove();
+        });
+    }
 });
 
 // Global notification system

@@ -15,17 +15,75 @@
     z-index: 1000;
 }
 
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
 .navbar-brand a {
     color: var(--text-color);
     text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-shadow: 0 0 10px rgba(78, 145, 223, 0.3);
-    background: linear-gradient(90deg, var(--text-color) 0%, #9bc8ff 100%);
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-shadow: 0 0 1px rgba(78, 145, 223, 0.2);
+    position: relative;
+    background: linear-gradient(90deg, 
+        var(--text-color) 0%, 
+        #9bc8ff 20%, 
+        #4e91df 40%, 
+        #5a94e0 60%,
+        #75b2ff 80%,
+        var(--text-color) 100%);
+    background-size: 300% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
+    animation: waveColors 8s ease infinite;
+    transition: text-shadow 0.3s ease;
+    letter-spacing: 0.01em;
+    transform: translateZ(0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    white-space: nowrap;
+    backface-visibility: hidden;
+}
+
+.navbar-brand a:hover {
+    text-shadow: 0 0 2px rgba(78, 145, 223, 0.3);
+}
+
+.navbar-brand a::before {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.05) 25%, 
+        rgba(255, 255, 255, 0.1) 50%, 
+        rgba(255, 255, 255, 0.05) 75%,
+        transparent 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmerEffect 4s linear infinite;
+    pointer-events: none;
+    will-change: transform;
+}
+
+@keyframes waveColors {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmerEffect {
+    0% { background-position: -100% 50%; }
+    100% { background-position: 200% 50%; }
 }
 
 .navbar-items {
