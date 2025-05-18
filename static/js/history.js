@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSearchHelp();
     initPagination();
     initSearchFunctionality();
+    initTableSorting();
 });
 
 // Autocomplete suggestions data
@@ -752,4 +753,366 @@ function populateTagSuggestions() {
     
     // Add to suggestions
     tagField.values = Array.from(tagSet).sort();
+}
+
+// Table sorting functionality
+function initTableSorting() {
+    // The table is split into two parts: header table and body table
+    const headerTable = document.querySelector('.logs-table > table');
+    const bodyTable = document.querySelector('.table-scroll-container > table');
+    
+    if (!headerTable || !bodyTable) {
+        console.error("Could not find header or body tables");
+        return;
+    }
+    
+    const headers = headerTable.querySelectorAll('th');
+    const tableBody = bodyTable.querySelector('tbody');
+    const rows = tableBody.querySelectorAll('tr.log-row');
+    
+    // Skip the no-logs message row for sorting
+    const dataRows = Array.from(rows).filter(row => !row.classList.contains('no-logs-message'));
+    
+    // Add sort direction indicators and click handlers to all headers
+    headers.forEach((header, index) => {
+        // Add sort icons and make headers look clickable
+        header.classList.add('sortable');
+        
+        // Get header text
+        const headerText = header.textContent.trim();
+        
+        // Create sort header with center alignment
+        header.innerHTML = `
+            <div class="sort-header">
+                ${headerText}
+                <span class="sort-icon"></span>
+            </div>
+        `;
+        
+        // Add click handler for sorting
+        header.addEventListener('click', function() {
+            console.log(`Header clicked: ${headerText} (column index: ${index})`);
+            
+            // Determine sort direction based on current state of the clicked header
+            let isAscending = true;
+            
+            // If this header is already being used for sorting
+            if (header.classList.contains('sorting-asc')) {
+                // Was ascending, now should be descending
+                isAscending = false;
+            } else if (header.classList.contains('sorting-desc')) {
+                // Was descending, now should be ascending
+                isAscending = true;
+            } else {
+                // Not currently sorted, default to ascending
+                isAscending = true;
+            }
+            
+            // Remove sorting classes from all headers
+            headers.forEach(h => {
+                h.classList.remove('sorting-asc', 'sorting-desc');
+            });
+            
+            // Add the appropriate class to the clicked header
+            header.classList.add(isAscending ? 'sorting-asc' : 'sorting-desc');
+            
+            // Sort the table rows
+            sortTable(dataRows, index, isAscending);
+            
+            // Re-append rows to update the display
+            dataRows.forEach(row => {
+                tableBody.appendChild(row);
+            });
+            
+            // Update pagination after sorting
+            updatePagination(dataRows.length);
+            
+            // Reset to first page
+            goToPage(1);
+            
+            // Save sort state to localStorage
+            saveSortingState();
+        });
+    });
+    
+    // Check for saved sort state
+    const savedState = localStorage.getItem('historyTableSortState');
+    
+    if (savedState) {
+        // If we have a saved state, restore it
+        restoreSortingState();
+    } else {
+        // Default sort by Start Time (index 4) in descending order (newest first)
+        if (dataRows.length > 0 && headers.length > 4) {
+            // Get the Start Time header
+            const startTimeHeader = headers[4];
+            
+            // Apply the sorting class
+            headers.forEach(h => {
+                h.classList.remove('sorting-asc', 'sorting-desc');
+            });
+            startTimeHeader.classList.add('sorting-desc');
+            
+            // Sort the table
+            sortTable(dataRows, 4, false); // false for descending
+            
+            // Re-append rows to update the display
+            dataRows.forEach(row => {
+                tableBody.appendChild(row);
+            });
+            
+            // Update pagination
+            updatePagination(dataRows.length);
+            
+            // Reset to first page
+            goToPage(1);
+            
+            // Save this as the default state
+            saveSortingState();
+        }
+    }
+}
+
+// Sort table rows based on column index and direction
+function sortTable(rows, columnIndex, ascending) {
+    rows.sort((a, b) => {
+        // Get the cell content to compare
+        const aValue = getCellValue(a, columnIndex);
+        const bValue = getCellValue(b, columnIndex);
+        
+        // Special case for status column - use custom status priority
+        if (columnIndex === 0) {
+            return compareStatus(a, b, ascending);
+        }
+        
+        // Special case for Tags column (index 3)
+        if (columnIndex === 3) {
+            // Handle "No tags" case
+            const aNoTags = aValue.includes('No tags');
+            const bNoTags = bValue.includes('No tags');
+            
+            if (aNoTags && bNoTags) return 0;
+            if (aNoTags) return ascending ? 1 : -1;
+            if (bNoTags) return ascending ? -1 : 1;
+            
+            // For rows with tags, sort alphabetically
+            return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        }
+        
+        // Special handling for time columns - Start Time and End Time (index 4 and 5)
+        if (columnIndex === 4 || columnIndex === 5) {
+            return compareDates(aValue, bValue, ascending);
+        }
+        
+        // Special handling for Duration column (index 6)
+        if (columnIndex === 6) {
+            return compareDuration(aValue, bValue, ascending);
+        }
+        
+        // Default string comparison
+        if (ascending) {
+            return aValue.localeCompare(bValue);
+        } else {
+            return bValue.localeCompare(aValue);
+        }
+    });
+}
+
+// Get value from a table cell for sorting
+function getCellValue(row, index) {
+    const cell = row.cells[index];
+    
+    // If it's the status cell, get the status text
+    if (index === 0) {
+        const statusText = cell.querySelector('.status-text');
+        return statusText ? statusText.textContent.trim() : '';
+    }
+    
+    // For URL cell, get the URL text
+    if (index === 2) {
+        const link = cell.querySelector('a');
+        return link ? link.textContent.trim() : '';
+    }
+    
+    // For tags cell, get all tag badges or "No tags"
+    if (index === 3) {
+        const noTags = cell.querySelector('.no-tags');
+        if (noTags) {
+            return "No tags";
+        }
+        
+        const tagBadges = cell.querySelectorAll('.tag-badge');
+        if (tagBadges && tagBadges.length > 0) {
+            return Array.from(tagBadges)
+                .map(badge => badge.textContent.trim())
+                .join(", ");
+        }
+        return '';
+    }
+    
+    // For other cells, get the text content
+    return cell ? cell.textContent.trim() : '';
+}
+
+// Compare status values for sorting
+function compareStatus(rowA, rowB, ascending) {
+    // Get status priority based on class names
+    const statusPriority = {
+        'success': 1,   // Healthy
+        'error': 2,     // Down
+        'warning': 3,   // Slow
+        'expiring': 4,  // Token Expiring
+        'unknown': 5    // Unknown/Pending
+    };
+    
+    // Determine row status from the class
+    const getRowStatus = (row) => {
+        if (row.classList.contains('error')) return 'error';
+        if (row.classList.contains('warning')) return 'warning';
+        if (row.classList.contains('expiring')) return 'expiring';
+        if (row.classList.contains('unknown')) return 'unknown';
+        return 'success';
+    };
+    
+    const statusA = getRowStatus(rowA);
+    const statusB = getRowStatus(rowB);
+    
+    // Compare by status priority
+    const result = statusPriority[statusA] - statusPriority[statusB];
+    
+    // If statuses are equal, compare by name (2nd column)
+    if (result === 0) {
+        const nameA = getCellValue(rowA, 1);
+        const nameB = getCellValue(rowB, 1);
+        return ascending ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+    }
+    
+    return ascending ? result : -result;
+}
+
+// Compare date values
+function compareDates(a, b, ascending) {
+    // Try to create Date objects
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    
+    // Check if both are valid dates
+    if (!isNaN(dateA) && !isNaN(dateB)) {
+        const timeA = dateA.getTime();
+        const timeB = dateB.getTime();
+        return ascending ? timeA - timeB : timeB - timeA;
+    }
+    
+    // Fallback to string comparison
+    return ascending ? a.localeCompare(b) : b.localeCompare(a);
+}
+
+// Compare duration strings like "2m 15s"
+function compareDuration(a, b, ascending) {
+    // Extract duration in seconds
+    const getSeconds = (str) => {
+        if (!str) return 0;
+        if (str === 'Pending') return 0;
+        
+        let totalSeconds = 0;
+        
+        // Parse hours if present
+        const hourMatch = str.match(/(\d+)h/);
+        if (hourMatch) {
+            totalSeconds += parseInt(hourMatch[1]) * 3600;
+        }
+        
+        // Parse minutes if present
+        const minMatch = str.match(/(\d+)m/);
+        if (minMatch) {
+            totalSeconds += parseInt(minMatch[1]) * 60;
+        }
+        
+        // Parse seconds if present
+        const secMatch = str.match(/(\d+)s/);
+        if (secMatch) {
+            totalSeconds += parseInt(secMatch[1]);
+        }
+        
+        return totalSeconds;
+    };
+    
+    const secondsA = getSeconds(a);
+    const secondsB = getSeconds(b);
+    
+    return ascending ? secondsA - secondsB : secondsB - secondsA;
+}
+
+// Save the current sorting state to localStorage
+function saveSortingState() {
+    const sortingState = {
+        columnIndex: -1,
+        isAscending: true
+    };
+    
+    // Find which header has sorting class
+    const headers = document.querySelectorAll('.logs-table th');
+    headers.forEach((header, index) => {
+        if (header.classList.contains('sorting-asc')) {
+            sortingState.columnIndex = index;
+            sortingState.isAscending = true;
+        } else if (header.classList.contains('sorting-desc')) {
+            sortingState.columnIndex = index;
+            sortingState.isAscending = false;
+        }
+    });
+    
+    // Save to localStorage
+    localStorage.setItem('historyTableSortState', JSON.stringify(sortingState));
+}
+
+// Restore sorting state from localStorage
+function restoreSortingState() {
+    try {
+        const savedState = localStorage.getItem('historyTableSortState');
+        if (!savedState) return;
+        
+        const sortingState = JSON.parse(savedState);
+        if (sortingState.columnIndex === -1) return;
+        
+        // Find and click the appropriate header to restore sort
+        const headers = document.querySelectorAll('.logs-table th');
+        if (headers.length > sortingState.columnIndex) {
+            const targetHeader = headers[sortingState.columnIndex];
+            
+            // Apply the proper class first
+            headers.forEach(h => {
+                h.classList.remove('sorting-asc', 'sorting-desc');
+            });
+            
+            // Add appropriate class based on the saved state
+            targetHeader.classList.add(sortingState.isAscending ? 'sorting-asc' : 'sorting-desc');
+            
+            // Get tables and rows
+            const bodyTable = document.querySelector('.table-scroll-container > table');
+            const tableBody = bodyTable.querySelector('tbody');
+            const rows = tableBody.querySelectorAll('tr.log-row');
+            
+            // Skip the no-logs message row for sorting
+            const dataRows = Array.from(rows).filter(row => !row.classList.contains('no-logs-message'));
+            
+            // Sort the table
+            sortTable(dataRows, sortingState.columnIndex, sortingState.isAscending);
+            
+            // Re-append rows to update the display
+            dataRows.forEach(row => {
+                tableBody.appendChild(row);
+            });
+            
+            // Update pagination
+            updatePagination(dataRows.length);
+            
+            // Go to first page
+            goToPage(1);
+        }
+    } catch (e) {
+        console.error('Error restoring sort state:', e);
+        // Clean up potentially corrupted state
+        localStorage.removeItem('historyTableSortState');
+    }
 }

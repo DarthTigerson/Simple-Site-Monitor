@@ -931,3 +931,67 @@ tr.page-visible {
 .logs-table td:nth-child(4) {
     text-align: left;
 }
+
+/* Sortable table headers */
+.logs-table th.sortable {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.logs-table th.sortable:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.sort-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Status header remains centered */
+.logs-table th:first-child .sort-header {
+    justify-content: center;
+}
+
+/* Left-aligned headers (Name, URL, Tags) */
+.logs-table th:nth-child(2) .sort-header,
+.logs-table th:nth-child(3) .sort-header,
+.logs-table th:nth-child(4) .sort-header {
+    justify-content: flex-start;
+}
+
+/* Time/duration column headers remain centered */
+.logs-table th:nth-child(5) .sort-header,
+.logs-table th:nth-child(6) .sort-header,
+.logs-table th:nth-child(7) .sort-header {
+    justify-content: center;
+}
+
+/* Sorting indicators */
+th.sorting-asc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    margin-top: -2px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--text-color);
+}
+
+th.sorting-desc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    margin-top: -2px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--text-color);
+}
+
+/* Ensure sortable headers have padding for indicators */
+.logs-table th.sortable {
+    padding-right: 24px;
+}
