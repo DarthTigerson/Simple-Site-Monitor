@@ -264,50 +264,145 @@
 }
 
 /* Logs Table */
+.logs-container {
+    display: flex;
+    flex-direction: column;
+}
+
 .logs-table {
     overflow-x: auto;
+    overflow-y: hidden;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     background-color: var(--light-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
 }
 
-.logs-table table {
+.table-scroll-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.logs-table table,
+.table-scroll-container table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
 }
 
 .logs-table th {
     background-color: rgba(0, 0, 0, 0.1);
-    padding: 12px 15px;
+    padding: 14px 15px;
     text-align: center;
     font-weight: 600;
     color: var(--text-color);
     border-bottom: 1px solid var(--border-color);
     white-space: nowrap;
+    position: relative;
+}
+
+.logs-table th:first-child {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+    border-top-left-radius: 8px;
+}
+
+.logs-table th:last-child {
+    border-top-right-radius: 8px;
 }
 
 .logs-table td {
-    padding: 12px 15px;
+    padding: 10px 15px;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-color);
-    text-align: center;
+    vertical-align: middle;
+    height: 52px;
 }
 
-td:first-child {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    text-align: center;
+.logs-table td:first-child {
+    position: relative;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: left;
+    padding-left: 35px;
 }
 
-.logs-table tr:last-child td {
-    border-bottom: none;
+.sort-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    position: relative;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+tr:hover .status-indicator {
+    transform: translateY(-50%) scale(1.2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.status-indicator.error {
+    background-color: var(--danger-color);
+    box-shadow: 0 0 5px rgba(255, 69, 58, 0.5);
+}
+
+.status-indicator.warning {
+    background-color: var(--warning-color);
+    box-shadow: 0 0 5px rgba(255, 196, 0, 0.5);
+}
+
+.status-indicator.success {
+    background-color: var(--success-color);
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.5);
+}
+
+.status-indicator.expiring {
+    background-color: var(--expiring-color);
+    box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
+}
+
+.status-indicator.unknown {
+    background-color: var(--unknown-color);
+    box-shadow: 0 0 5px rgba(158, 158, 158, 0.5);
+}
+
+.log-row {
+    transition: all 0.2s ease;
 }
 
 .log-row:hover {
     background-color: rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.log-row.error {
+    background-color: rgba(255, 69, 58, 0.05);
+}
+
+.log-row.warning {
+    background-color: rgba(255, 196, 0, 0.05);
+}
+
+.log-row.success {
+    background-color: rgba(52, 199, 89, 0.05);
 }
 
 .log-row.expiring {
@@ -318,50 +413,22 @@ td:first-child {
     background-color: rgba(158, 158, 158, 0.05);
 }
 
-/* Status indicators */
-.status-indicator {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-.status-indicator.error {
-    background-color: var(--danger-color);
-}
-
-.status-indicator.warning {
-    background-color: var(--warning-color);
-}
-
-.status-indicator.success {
-    background-color: var(--success-color);
-}
-
-.status-indicator.expiring {
-    background-color: var(--expiring-color);
-}
-
-.status-indicator.unknown {
-    background-color: var(--unknown-color);
-}
-
 .url-cell {
     max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
 }
 
 .url-cell a {
     color: var(--primary-color);
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 .url-cell a:hover {
     text-decoration: underline;
-    color: var(--primary-color);
 }
 
 /* Site Grid and Cards */
@@ -700,15 +767,6 @@ td:first-child {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-}
-
-.sort-icon {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 8px;
-    position: relative;
 }
 
 th.sorting-asc .sort-icon:after {
@@ -740,9 +798,9 @@ th.sorting-desc .sort-icon:after {
 /* Tags styling */
 .tags-cell {
     white-space: nowrap;
-    max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 150px;
 }
 
 .tag-badge {
@@ -817,4 +875,519 @@ th.sorting-desc .sort-icon:after {
         padding: 2px 4px;
         font-size: 0.7rem;
     }
+}
+
+/* Enhanced status text */
+.status-text {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: left;
+}
+
+/* Table and Status Styles - Comprehensive implementation */
+
+/* Table container */
+.logs-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Logs Table enhanced styling */
+.logs-table {
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--light-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scroll container for the table body */
+.table-scroll-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Table styling */
+.logs-table table,
+.table-scroll-container table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+/* Header styling */
+.logs-table th {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 14px 15px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+    position: relative;
+}
+
+/* Rounded corners for header */
+.logs-table th:first-child {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+    border-top-left-radius: 8px;
+}
+
+.logs-table th:last-child {
+    border-top-right-radius: 8px;
+}
+
+/* Cell styling */
+.logs-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    vertical-align: middle;
+    height: 52px;
+}
+
+/* Ensure alignment between header and body */
+.logs-table thead th,
+.table-scroll-container td {
+    width: auto;
+    text-align: center;
+}
+
+/* Status column styling */
+.logs-table td:first-child {
+    position: relative;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: left;
+    padding-left: 35px;
+}
+
+/* Text-based columns (name, url, tags) alignment */
+.logs-table th:nth-child(2),
+.logs-table th:nth-child(3),
+.logs-table th:nth-child(4) {
+    text-align: left;
+}
+
+/* Data columns remain center-aligned */
+.logs-table th:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table th:nth-child(7),
+.logs-table th:nth-child(8) {
+    text-align: center;
+}
+
+/* Status text styling */
+.status-text {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: left;
+}
+
+/* Status indicator - the colored dot */
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Status indicator hover effect */
+tr:hover .status-indicator {
+    transform: translateY(-50%) scale(1.2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Status indicator colors */
+.status-indicator.error {
+    background-color: var(--danger-color);
+    box-shadow: 0 0 5px rgba(255, 69, 58, 0.5);
+}
+
+.status-indicator.warning {
+    background-color: var(--warning-color);
+    box-shadow: 0 0 5px rgba(255, 196, 0, 0.5);
+}
+
+.status-indicator.success {
+    background-color: var(--success-color);
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.5);
+}
+
+.status-indicator.expiring {
+    background-color: var(--expiring-color);
+    box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
+}
+
+.status-indicator.unknown {
+    background-color: var(--unknown-color);
+    box-shadow: 0 0 5px rgba(158, 158, 158, 0.5);
+}
+
+/* Row styling */
+.log-row {
+    transition: all 0.2s ease;
+}
+
+.log-row:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Row background colors based on status */
+.log-row.error {
+    background-color: rgba(255, 69, 58, 0.05);
+}
+
+.log-row.warning {
+    background-color: rgba(255, 196, 0, 0.05);
+}
+
+.log-row.success {
+    background-color: rgba(52, 199, 89, 0.05);
+}
+
+.log-row.expiring {
+    background-color: rgba(230, 126, 34, 0.05);
+}
+
+.log-row.unknown {
+    background-color: rgba(158, 158, 158, 0.05);
+}
+
+/* URL styling */
+.url-cell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.url-cell a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.url-cell a:hover {
+    text-decoration: underline;
+}
+
+/* SSL styling */
+.ssl-days-cell {
+    white-space: nowrap;
+}
+
+.ssl-days {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.ssl-days.expiring {
+    background-color: rgba(230, 126, 34, 0.2);
+    color: var(--expiring-color);
+    border: 1px solid rgba(230, 126, 34, 0.3);
+}
+
+.ssl-days.not-monitored {
+    color: var(--secondary-text-color);
+    font-style: italic;
+}
+
+/* Sort header styling */
+.sort-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sort-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    position: relative;
+}
+
+th.sorting-asc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--text-color);
+}
+
+th.sorting-desc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--text-color);
+}
+
+/* Last row styling */
+.logs-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* No sites message */
+.no-sites-message {
+    padding: 30px !important;
+    text-align: center;
+    color: var(--secondary-text-color);
+    font-style: italic;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Tags styling */
+.tags-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+/* Make sortable headers look clickable */
+.logs-table th.sortable {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.logs-table th.sortable:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Pending scan styling */
+.pending-scan {
+    color: var(--secondary-text-color);
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .logs-table th:nth-child(5),
+    .logs-table td:nth-child(5),
+    .logs-table th:nth-child(6),
+    .logs-table td:nth-child(6) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .logs-table th:nth-child(4),
+    .logs-table td:nth-child(4) {
+        display: none;
+    }
+    
+    .logs-table td:first-child {
+        padding-left: 30px;
+    }
+    
+    .status-indicator {
+        left: 10px;
+    }
+    
+    .sites-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .site-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .site-actions {
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .btn-edit, .btn-delete {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .site-details strong {
+        min-width: 80px;
+    }
+    
+    .status-summary {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .status-card {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .logs-table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .filter-controls {
+        width: 100%;
+    }
+    
+    .form-control {
+        width: 100%;
+    }
+    
+    .logs-table th, 
+    .logs-table td {
+        padding: 8px 10px;
+    }
+    
+    .tags-cell {
+        max-width: 100px;
+    }
+    
+    .tag-badge {
+        padding: 2px 4px;
+        font-size: 0.7rem;
+    }
+}
+
+/* Column alignment - comprehensive rules */
+
+/* Headers alignment */
+.logs-table th {
+    text-align: center; /* Default center alignment for headers */
+}
+
+/* Status column */
+.logs-table th:first-child {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+    border-top-left-radius: 8px;
+}
+
+.logs-table td:first-child {
+    position: relative;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: left; /* Content is left-aligned */
+    padding-left: 35px;
+}
+
+/* Text columns (name, url, tags) */
+.logs-table th:nth-child(2),
+.logs-table th:nth-child(3),
+.logs-table th:nth-child(4) {
+    text-align: left;
+}
+
+.logs-table td:nth-child(2),
+.logs-table td:nth-child(3),
+.logs-table td:nth-child(4) {
+    text-align: left;
+}
+
+/* Data columns (times, load time, etc.) */
+.logs-table th:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table th:nth-child(7),
+.logs-table th:nth-child(8) {
+    text-align: center;
+}
+
+.logs-table td:nth-child(5),
+.logs-table td:nth-child(6),
+.logs-table td:nth-child(7),
+.logs-table td:nth-child(8) {
+    text-align: center;
+}
+
+/* Let's create a new file with only the comprehensive column alignment rules */
+/* Sort header alignment for text vs numeric columns */
+.sort-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Default center alignment */
+}
+
+/* Text columns (Status content, Name, URL, Tags) get left-aligned content */
+.logs-table td:nth-child(1),
+.logs-table td:nth-child(2),
+.logs-table td:nth-child(3),
+.logs-table td:nth-child(4) {
+    text-align: left;
+}
+
+/* Status header remains centered */
+.logs-table th:first-child {
+    text-align: center;
+}
+
+/* Text column headers (Name, URL, Tags) get left alignment */
+.logs-table th:nth-child(2),
+.logs-table th:nth-child(3),
+.logs-table th:nth-child(4) {
+    text-align: left;
+}
+
+/* Data column headers and content (times, load time, etc.) get center alignment */
+.logs-table th:nth-child(5),
+.logs-table th:nth-child(6), 
+.logs-table th:nth-child(7),
+.logs-table th:nth-child(8),
+.logs-table td:nth-child(5),
+.logs-table td:nth-child(6),
+.logs-table td:nth-child(7),
+.logs-table td:nth-child(8) {
+    text-align: center;
+}
+
+/* Update sort headers for left-aligned columns */
+.logs-table th:nth-child(2) .sort-header,
+.logs-table th:nth-child(3) .sort-header,
+.logs-table th:nth-child(4) .sort-header {
+    justify-content: flex-start; /* Left alignment for sort header content */
+}
+
+/* Status text explicit left alignment */
+.status-text {
+    text-align: left;
 }

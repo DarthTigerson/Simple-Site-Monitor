@@ -646,22 +646,21 @@ function initPagination() {
     
     // Calculate rows per page based on available height
     function calculateRowsPerPage() {
-        const tableContainer = document.querySelector('.logs-table');
-        if (!tableContainer) return 10;
+        const scrollContainer = document.querySelector('.table-scroll-container');
+        if (!scrollContainer) return 10;
         
-        const containerHeight = tableContainer.clientHeight;
-        const headerHeight = tableContainer.querySelector('thead')?.offsetHeight || 0;
-        const availableHeight = containerHeight - headerHeight - 20; // 20px buffer
+        const containerHeight = scrollContainer.clientHeight;
+        const availableHeight = containerHeight - 20; // 20px buffer
         
         // Get row height from a sample row or use default
-        const sampleRow = tableContainer.querySelector('tbody tr');
-        const rowHeight = sampleRow ? sampleRow.offsetHeight : 50;
+        const sampleRow = scrollContainer.querySelector('tbody tr');
+        const rowHeight = sampleRow ? sampleRow.offsetHeight : 52;
         
         // Calculate how many rows can fit
         let calculatedRows = Math.floor(availableHeight / rowHeight);
         
-        // Ensure at least 5 rows and at most 50 rows
-        return Math.max(5, Math.min(50, calculatedRows));
+        // For full height display, return a high number to fit all rows
+        return 1000; // This essentially disables pagination by page size
     }
     
     // Get count of visible rows
@@ -688,15 +687,11 @@ function initPagination() {
 
 // Update pagination based on visible rows count
 function updatePagination(visibleRowCount) {
-    const tableContainer = document.querySelector('.logs-table');
-    if (!tableContainer) return;
+    const scrollContainer = document.querySelector('.table-scroll-container');
+    if (!scrollContainer) return;
     
-    // Calculate rows per page dynamically
-    const headerHeight = tableContainer.querySelector('thead')?.offsetHeight || 0;
-    const availableHeight = tableContainer.clientHeight - headerHeight - 20;
-    const sampleRow = tableContainer.querySelector('tbody tr');
-    const rowHeight = sampleRow ? sampleRow.offsetHeight : 50;
-    const rowsPerPage = Math.max(5, Math.min(50, Math.floor(availableHeight / rowHeight)));
+    // For full height display, we want all rows visible on one page
+    const rowsPerPage = 1000; // Large enough to show all rows
     
     const totalPages = Math.max(1, Math.ceil(visibleRowCount / rowsPerPage));
     
@@ -723,20 +718,13 @@ function updatePagination(visibleRowCount) {
         nextPageBtn.disabled = totalPages <= 1;
     }
     
-    // Apply pagination to visible rows
+    // Apply pagination to visible rows - show all rows for scrolling
     const logRows = document.querySelectorAll('#logResults tr.log-row');
-    let visibleIndex = 0;
     
     logRows.forEach(row => {
         if (row.style.display !== 'none') {
-            if (visibleIndex < rowsPerPage) {
-                row.classList.add('page-visible');
-                row.classList.remove('page-hidden');
-            } else {
-                row.classList.add('page-hidden');
-                row.classList.remove('page-visible');
-            }
-            visibleIndex++;
+            row.classList.add('page-visible');
+            row.classList.remove('page-hidden');
         } else {
             row.classList.add('page-hidden');
             row.classList.remove('page-visible');

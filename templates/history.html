@@ -74,41 +74,45 @@
                         <th>Duration</th>
                     </tr>
                 </thead>
-                <tbody id="logResults">
-                    {% if logs|length > 0 %}
-                        {% for log in logs %}
-                        <tr class="log-row {{ log.status_class }}" data-id="{{ log.id }}">
-                            <td>
-                                <span class="status-indicator {{ log.status_class }}"></span>
-                                <span class="status-text">{{ log.status_display }}</span>
-                            </td>
-                            <td>{{ log.name }}</td>
-                            <td class="url-cell">
-                                <a href="{{ log.url }}" target="_blank">{{ log.url }}</a>
-                            </td>
-                            <td class="tags-cell">
-                                {% if log.tags %}
-                                    {% for tag in log.tags %}
-                                        <span class="tag-badge">{{ tag }}</span>
-                                    {% endfor %}
-                                {% else %}
-                                    <span class="no-tags">No tags</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ log.start_time }}</td>
-                            <td>{{ log.end_time }}</td>
-                            <td>{{ log.duration }}</td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="6" class="no-logs-message">
-                                No log data found.
-                            </td>
-                        </tr>
-                    {% endif %}
-                </tbody>
             </table>
+            <div class="table-scroll-container">
+                <table>
+                    <tbody id="logResults">
+                        {% if logs|length > 0 %}
+                            {% for log in logs %}
+                            <tr class="log-row {{ log.status_class }}" data-id="{{ log.id }}">
+                                <td>
+                                    <span class="status-indicator {{ log.status_class }}"></span>
+                                    <span class="status-text">{{ log.status_display }}</span>
+                                </td>
+                                <td>{{ log.name }}</td>
+                                <td class="url-cell">
+                                    <a href="{{ log.url }}" target="_blank">{{ log.url }}</a>
+                                </td>
+                                <td class="tags-cell">
+                                    {% if log.tags %}
+                                        {% for tag in log.tags %}
+                                            <span class="tag-badge">{{ tag }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="no-tags">No tags</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ log.start_time }}</td>
+                                <td>{{ log.end_time }}</td>
+                                <td>{{ log.duration }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="no-logs-message">
+                                    No log data found.
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
         </div>
         
         <div class="pagination">

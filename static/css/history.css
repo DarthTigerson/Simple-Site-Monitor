@@ -12,6 +12,12 @@
     min-height: 500px; /* Minimum height for smaller screens */
 }
 
+/* Variables needed for status colors */
+:root {
+    --expiring-color: #e67e22;
+    --unknown-color: #9e9e9e;  /* Gray color for unknown status */
+}
+
 /* Search Container */
 .search-container {
     flex: 0 0 auto;
@@ -338,23 +344,60 @@
 /* Logs Table */
 .logs-table {
     overflow-x: auto;
-    overflow-y: auto;
-    flex: 1;
+    overflow-y: hidden; /* Scroll happens in inner container */
+    flex: 1; /* Take all available space */
     border-radius: 8px;
     border: 1px solid var(--border-color);
     background-color: var(--light-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin-bottom: 15px;
+    width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.logs-table table {
+.table-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0; /* Critical for nested flex containers */
+    display: flex;
+    flex-direction: column;
+}
+
+.table-scroll-container table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: fixed;
 }
 
+.logs-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+/* Ensure header columns and body columns align perfectly */
+.logs-table thead th,
+.table-scroll-container td {
+    width: auto;
+}
+
+.logs-table thead th:first-child,
+.table-scroll-container td:first-child {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+/* Remove the overflowing tbody style as we now have a dedicated scroll container */
+.logs-table tbody {
+    /* Removed overflow-y: auto and flex: 1 as they're now on the container */
+}
+
+/* Sticky header */
 .logs-table thead {
     position: sticky;
     top: 0;
@@ -362,35 +405,92 @@
     background-color: var(--card-bg);
 }
 
-.logs-table tbody {
-    overflow-y: auto;
-}
-
 .logs-table th {
     background-color: rgba(0, 0, 0, 0.1);
-    padding: 12px 15px;
-    text-align: center;
+    padding: 14px 15px;
+    text-align: left;
     font-weight: 600;
     color: var(--text-color);
     border-bottom: 1px solid var(--border-color);
     white-space: nowrap;
+    position: relative;
+}
+
+.logs-table th:first-child {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center;
+    border-top-left-radius: 8px;
+}
+
+.logs-table th:last-child {
+    border-top-right-radius: 8px;
 }
 
 .logs-table td {
-    padding: 12px 15px;
+    padding: 10px 15px;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-color);
-    text-align: center;
+    text-align: left;
+    vertical-align: middle;
+    height: 52px; /* Slightly increased for better spacing */
 }
 
-.logs-table tr:last-child td {
-    border-bottom: none;
+/* Status column styling */
+.logs-table td:first-child {
+    position: relative;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: left;
+    padding-left: 35px;
+}
+
+/* Status text styling */
+.status-text {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: left;
+}
+
+/* Perfect status indicator positioning */
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Make status indicators slightly larger on hover for interactivity */
+tr:hover .status-indicator {
+    transform: translateY(-50%) scale(1.2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.log-row {
+    transition: all 0.2s ease;
 }
 
 .log-row:hover {
     background-color: rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Remove zebra striping and ensure last row has no border */
+.logs-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status-based background colors */
 .log-row.error {
     background-color: rgba(255, 69, 58, 0.05);
 }
@@ -400,11 +500,15 @@
 }
 
 .log-row.success {
-    background-color: rgba(0, 128, 0, 0.05);
+    background-color: rgba(52, 199, 89, 0.05); /* Slightly greener for healthy status */
 }
 
 .log-row.expiring {
     background-color: rgba(230, 126, 34, 0.05);
+}
+
+.log-row.unknown {
+    background-color: rgba(158, 158, 158, 0.05);
 }
 
 /* URL cell styling */
@@ -418,10 +522,12 @@
 .url-cell a {
     color: var(--primary-color);
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 .url-cell a:hover {
     text-decoration: underline;
+    color: var(--primary-color);
 }
 
 /* Status indicators and text */
@@ -433,25 +539,29 @@
     margin-right: 8px;
 }
 
-.status-text {
-    display: inline-block;
-    vertical-align: middle;
-}
-
 .status-indicator.error {
     background-color: var(--danger-color);
+    box-shadow: 0 0 5px rgba(255, 69, 58, 0.5);
 }
 
 .status-indicator.warning {
     background-color: var(--warning-color);
+    box-shadow: 0 0 5px rgba(255, 196, 0, 0.5);
 }
 
 .status-indicator.success {
     background-color: var(--success-color);
+    box-shadow: 0 0 5px rgba(0, 128, 0, 0.5);
 }
 
 .status-indicator.expiring {
     background-color: var(--expiring-color);
+    box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
+}
+
+.status-indicator.unknown {
+    background-color: var(--unknown-color, #9e9e9e);
+    box-shadow: 0 0 5px rgba(158, 158, 158, 0.5);
 }
 
 /* SSL Days styling */
@@ -499,7 +609,7 @@
     justify-content: center;
     align-items: center;
     gap: 15px;
-    margin-top: 0;
+    margin-top: 10px;
 }
 
 .btn-page {
@@ -660,6 +770,7 @@ tr.page-visible {
     text-align: center;
     color: var(--secondary-text-color);
     font-style: italic;
+    background-color: rgba(0, 0, 0, 0.02);
 }
 
 /* Search input highlighting */
@@ -720,9 +831,9 @@ tr.page-visible {
 /* Tags styling */
 .tags-cell {
     white-space: nowrap;
-    max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 150px;
 }
 
 .tag-badge {
@@ -756,4 +867,67 @@ tr.page-visible {
         padding: 2px 4px;
         font-size: 0.7rem;
     }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .logs-table th:nth-child(5),
+    .logs-table td:nth-child(5),
+    .logs-table th:nth-child(6),
+    .logs-table td:nth-child(6) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .logs-table th:nth-child(4),
+    .logs-table td:nth-child(4) {
+        display: none;
+    }
+    
+    .logs-table td:first-child {
+        padding-left: 30px;
+    }
+    
+    .status-indicator {
+        left: 10px;
+    }
+}
+
+/* Align the time columns to center */
+.logs-table th:nth-child(5),
+.logs-table td:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table td:nth-child(6),
+.logs-table th:nth-child(7),
+.logs-table td:nth-child(7) {
+    text-align: center;
+}
+
+/* Status column specific alignment */
+.logs-table th:first-child {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: center; /* Keep header centered */
+    border-top-left-radius: 8px;
+}
+
+.logs-table td:first-child {
+    position: relative;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    text-align: left; /* Content left aligned */
+    padding-left: 35px;
+}
+
+/* Ensure Name, URL, and Tags columns are consistently left-aligned */
+.logs-table th:nth-child(2),
+.logs-table td:nth-child(2),
+.logs-table th:nth-child(3),
+.logs-table td:nth-child(3),
+.logs-table th:nth-child(4),
+.logs-table td:nth-child(4) {
+    text-align: left;
 }

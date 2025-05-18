@@ -72,76 +72,80 @@
                             <th>SSL Expiry</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for log in logs %}
-                        <tr class="log-row 
-                            {% if log.status == 'down' %}error
-                            {% elif log.status == 'slow' %}warning
-                            {% elif log.status == 'token_alert' %}expiring
-                            {% elif log.status == 'unknown' %}unknown
-                            {% else %}success{% endif %}">
-                            <td>
-                                <span class="status-indicator 
-                                    {% if log.status == 'down' %}error
-                                    {% elif log.status == 'slow' %}warning
-                                    {% elif log.status == 'token_alert' %}expiring
-                                    {% elif log.status == 'unknown' %}unknown
-                                    {% else %}success{% endif %}"></span>
-                                <span class="status-text">
-                                    {% if log.status == 'down' %}Down
-                                    {% elif log.status == 'slow' %}Slow
-                                    {% elif log.status == 'token_alert' %}Token Expiring
-                                    {% elif log.status == 'unknown' %}Unknown
-                                    {% else %}Healthy{% endif %}
-                                </span>
-                            </td>
-                            <td>{{ log.name }}</td>
-                            <td class="url-cell"><a href="{{ log.url }}" target="_blank">{{ log.url }}</a></td>
-                            <td class="tags-cell">
-                                {% if log.tags %}
-                                    {% for tag in log.tags %}
-                                        <span class="tag-badge">{{ tag }}</span>
-                                    {% endfor %}
-                                {% else %}
-                                    <span class="no-tags">No tags</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ log.response_time }}</td>
-                            <td>
-                                {% if log.status == 'unknown' %}
-                                <span class="pending-scan">Pending scan</span>
-                                {% else %}
-                                {{ log.duration }}
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if log.status == 'unknown' %}
-                                <span class="pending-scan">Pending scan</span>
-                                {% else %}
-                                {{ log.last_scan }}
-                                {% endif %}
-                            </td>
-                            <td class="ssl-days-cell">
-                                {% if log.ssl_days_remaining is not none and log.ssl_days_remaining > 0 %}
-                                    <span class="ssl-days {% if log.ssl_days_remaining <= 30 %}expiring{% endif %}">
-                                        {{ log.ssl_days_remaining }} days
-                                    </span>
-                                {% else %}
-                                    <span class="ssl-days not-monitored">Not Monitored</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        
-                        {% if logs|length == 0 %}
-                        <tr>
-                            <td colspan="7" class="no-sites-message">
-                                No monitored sites found. Add sites in the settings.
-                            </td>
-                        </tr>
-                        {% endif %}
-                    </tbody>
                 </table>
+                <div class="table-scroll-container">
+                    <table>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr class="log-row 
+                                {% if log.status == 'down' %}error
+                                {% elif log.status == 'slow' %}warning
+                                {% elif log.status == 'token_alert' %}expiring
+                                {% elif log.status == 'unknown' %}unknown
+                                {% else %}success{% endif %}">
+                                <td>
+                                    <span class="status-indicator 
+                                        {% if log.status == 'down' %}error
+                                        {% elif log.status == 'slow' %}warning
+                                        {% elif log.status == 'token_alert' %}expiring
+                                        {% elif log.status == 'unknown' %}unknown
+                                        {% else %}success{% endif %}"></span>
+                                    <span class="status-text">
+                                        {% if log.status == 'down' %}Down
+                                        {% elif log.status == 'slow' %}Slow
+                                        {% elif log.status == 'token_alert' %}Token Expiring
+                                        {% elif log.status == 'unknown' %}Unknown
+                                        {% else %}Healthy{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ log.name }}</td>
+                                <td class="url-cell"><a href="{{ log.url }}" target="_blank">{{ log.url }}</a></td>
+                                <td class="tags-cell">
+                                    {% if log.tags %}
+                                        {% for tag in log.tags %}
+                                            <span class="tag-badge">{{ tag }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="no-tags">No tags</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ log.response_time }}</td>
+                                <td>
+                                    {% if log.status == 'unknown' %}
+                                    <span class="pending-scan">Pending scan</span>
+                                    {% else %}
+                                    {{ log.duration }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.status == 'unknown' %}
+                                    <span class="pending-scan">Pending scan</span>
+                                    {% else %}
+                                    {{ log.last_scan }}
+                                    {% endif %}
+                                </td>
+                                <td class="ssl-days-cell">
+                                    {% if log.ssl_days_remaining is not none and log.ssl_days_remaining > 0 %}
+                                        <span class="ssl-days {% if log.ssl_days_remaining <= 30 %}expiring{% endif %}">
+                                            {{ log.ssl_days_remaining }} days
+                                        </span>
+                                    {% else %}
+                                        <span class="ssl-days not-monitored">Not Monitored</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            {% if logs|length == 0 %}
+                            <tr>
+                                <td colspan="8" class="no-sites-message">
+                                    No monitored sites found. Add sites in the settings.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
