@@ -42,8 +42,59 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize table sorting in list view
     initTableSorting();
     
-    // Attach event listeners to site cards
-    attachSiteCardEvents();
+    // Function to sort by name column (A-Z) immediately
+    function sortNameColumn() {
+        // Make sure we're in list view
+        if (!sitesContainer || !sitesContainer.classList.contains('sites-list')) return;
+        
+        console.log("Sorting by Name column (A-Z)");
+        
+        // Get the name header (first column)
+        const headerCells = document.querySelectorAll('.sites-list-header .list-header-cell');
+        if (headerCells.length === 0) return;
+        
+        const nameHeader = headerCells[0];
+        
+        // Clear any existing sort indicators
+        headerCells.forEach(h => {
+            h.classList.remove('sorting-asc', 'sorting-desc');
+        });
+        
+        // Set ascending sort on Name column
+        nameHeader.classList.add('sorting-asc');
+        
+        // Sort by Name (ascending)
+        const siteCards = Array.from(document.querySelectorAll('.site-card'));
+        siteCards.sort((a, b) => {
+            // Get name cells
+            const aNameCell = a.querySelector('.list-view-content .site-name');
+            const bNameCell = b.querySelector('.list-view-content .site-name');
+            
+            // Get text values for comparison
+            const aValue = aNameCell ? aNameCell.textContent.trim() : '';
+            const bValue = bNameCell ? bNameCell.textContent.trim() : '';
+            
+            // Compare alphabetically
+            return aValue.localeCompare(bValue);
+        });
+        
+        // Reappend the sorted cards
+        siteCards.forEach(card => {
+            sitesContainer.appendChild(card);
+        });
+        
+        // Save this as the sort state
+        const sortState = {
+            columnIndex: 0,
+            isAscending: true
+        };
+        localStorage.setItem('sitesTableSortState', JSON.stringify(sortState));
+    }
+    
+    // Sort immediately if we're in list view on page load
+    if (sitesContainer && sitesContainer.classList.contains('sites-list')) {
+        sortNameColumn();
+    }
     
     // View toggle functionality
     if (gridViewBtn && listViewBtn && sitesContainer) {
@@ -56,6 +107,9 @@ document.addEventListener('DOMContentLoaded', function() {
             sitesContainer.classList.add('sites-list');
             gridViewBtn.classList.remove('active');
             listViewBtn.classList.add('active');
+            
+            // Sort immediately after setting list view
+            sortNameColumn();
         }
         
         gridViewBtn.addEventListener('click', function() {
@@ -72,6 +126,9 @@ document.addEventListener('DOMContentLoaded', function() {
             gridViewBtn.classList.remove('active');
             listViewBtn.classList.add('active');
             localStorage.setItem('sitesViewPreference', 'list');
+            
+            // Sort immediately after switching to list view
+            sortNameColumn();
         });
     }
     
@@ -740,7 +797,7 @@ function initTableSorting() {
         header.innerHTML = `<div class="sort-header">${originalText}<span class="sort-icon"></span></div>`;
         
         // Add click handler for sorting
-        header.addEventListener('click', () => {
+        header.addEventListener('click', function() {
             // Determine sort direction based on current state
             let isAscending = true;
             
@@ -774,8 +831,150 @@ function initTableSorting() {
             siteCards.forEach(card => {
                 sitesContainer.appendChild(card);
             });
+            
+            // Save sort state to localStorage
+            saveSortingState();
         });
     });
+    
+    // Check for saved sort state
+    const savedState = localStorage.getItem('sitesTableSortState');
+    
+    if (savedState) {
+        // If we have a saved state, restore it
+        try {
+            const state = JSON.parse(savedState);
+            if (state && state.columnIndex !== undefined) {
+                console.log('Restoring saved sort state:', state);
+                restoreSortingState();
+            } else {
+                // Invalid state, sort by name ascending
+                applyDefaultSort();
+            }
+        } catch (e) {
+            console.error('Error parsing saved sort state:', e);
+            applyDefaultSort();
+        }
+    } else {
+        // No saved state, sort by Name (A-Z)
+        applyDefaultSort();
+    }
+}
+
+// Apply default sort - Name (A-Z)
+function applyDefaultSort() {
+    console.log('Applying default sort: Name (A-Z)');
+    const headerCells = document.querySelectorAll('.sites-list-header .list-header-cell');
+    if (!headerCells.length) return;
+    
+    const sitesContainer = document.querySelector('.sites-grid');
+    if (!sitesContainer) return;
+    
+    // Default sort by Name (index 0) in ascending order (A-Z)
+    if (headerCells.length > 0) {
+        // Get the Name header (first column)
+        const nameHeader = headerCells[0];
+        
+        // Apply the sorting class
+        headerCells.forEach(h => {
+            h.classList.remove('sorting-asc', 'sorting-desc');
+        });
+        nameHeader.classList.add('sorting-asc');
+        
+        // Get all site cards
+        const siteCards = Array.from(document.querySelectorAll('.site-card'));
+        
+        // Sort the site cards by name (ascending)
+        sortSiteCards(siteCards, 0, true);
+        
+        // Reappend the sorted site cards to update the display
+        siteCards.forEach(card => {
+            sitesContainer.appendChild(card);
+        });
+        
+        // Save this as the default state
+        const sortingState = {
+            columnIndex: 0,
+            isAscending: true
+        };
+        localStorage.setItem('sitesTableSortState', JSON.stringify(sortingState));
+        console.log('Default sort (Name A-Z) saved to localStorage');
+    }
+}
+
+// Save the current sorting state to localStorage
+function saveSortingState() {
+    const sortingState = {
+        columnIndex: -1,
+        isAscending: true
+    };
+    
+    // Find which header has sorting class
+    const headerCells = document.querySelectorAll('.sites-list-header .list-header-cell');
+    headerCells.forEach((header, index) => {
+        if (header.classList.contains('sorting-asc')) {
+            sortingState.columnIndex = index;
+            sortingState.isAscending = true;
+        } else if (header.classList.contains('sorting-desc')) {
+            sortingState.columnIndex = index;
+            sortingState.isAscending = false;
+        }
+    });
+    
+    // Save to localStorage
+    localStorage.setItem('sitesTableSortState', JSON.stringify(sortingState));
+    console.log('Sort state saved:', sortingState);
+}
+
+// Restore sorting state from localStorage
+function restoreSortingState() {
+    try {
+        const savedState = localStorage.getItem('sitesTableSortState');
+        if (!savedState) return;
+        
+        const sortingState = JSON.parse(savedState);
+        if (sortingState.columnIndex === -1) return;
+        
+        // Find and apply the appropriate header sort
+        const headerCells = document.querySelectorAll('.sites-list-header .list-header-cell');
+        if (headerCells.length > sortingState.columnIndex) {
+            const targetHeader = headerCells[sortingState.columnIndex];
+            
+            // Skip if it's the action column
+            if (targetHeader.classList.contains('site-actions-col')) return;
+            
+            // Apply the proper class first
+            headerCells.forEach(h => {
+                h.classList.remove('sorting-asc', 'sorting-desc');
+            });
+            
+            // Add appropriate class based on the saved state
+            targetHeader.classList.add(sortingState.isAscending ? 'sorting-asc' : 'sorting-desc');
+            
+            // Get all site cards
+            const siteCards = Array.from(document.querySelectorAll('.site-card'));
+            
+            // Sort the site cards
+            sortSiteCards(siteCards, sortingState.columnIndex, sortingState.isAscending);
+            
+            // Find sites container
+            const sitesContainer = document.querySelector('.sites-grid');
+            if (!sitesContainer) return;
+            
+            // Reappend the sorted site cards to update the display
+            siteCards.forEach(card => {
+                sitesContainer.appendChild(card);
+            });
+            
+            console.log('Restored sort state:', sortingState);
+        }
+    } catch (e) {
+        console.error('Error restoring sort state:', e);
+        // Clean up potentially corrupted state
+        localStorage.removeItem('sitesTableSortState');
+        // Apply default sort instead
+        applyDefaultSort();
+    }
 }
 
 function sortSiteCards(cards, columnIndex, ascending) {
