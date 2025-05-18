@@ -1666,28 +1666,28 @@
 /* Tags display in list view */
 .list-cell.site-tags-col {
     display: flex;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     align-items: center !important;
-    text-align: center !important;
+    text-align: left !important;
     white-space: normal !important;
 }
 
 .list-cell.site-tags-col .list-tags-wrapper {
     width: 100%;
     display: flex;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     flex-wrap: wrap;
 }
 
 .list-cell.site-tags-col .tag-badge {
-    margin: 2px auto !important;
+    margin: 2px 2px 2px 0 !important;
     display: inline-block !important;
 }
 
 .list-cell.site-tags-col .no-tags {
     width: 100% !important;
-    text-align: center !important;
-    margin: 0 auto !important;
+    text-align: left !important;
+    margin: 0 !important;
 }
 
 /* Tags container in grid view */
@@ -1713,12 +1713,155 @@
 .list-tags-wrapper {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
     width: 100%;
-    gap: 2px;
+    gap: 4px;
+    padding-left: 0;
 }
 
 .list-tags-wrapper .tag-badge {
-    margin: 0;
+    margin: 2px;
+    display: inline-block;
+}
+
+/* List-view column alignment rules */
+.list-header-cell {
+    padding: 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+/* Text column headers (Name, URL, Tags) get left alignment */
+.list-header-cell.site-name,
+.list-header-cell.site-url-col,
+.list-header-cell.site-tags-col {
+    text-align: left;
+}
+
+.list-cell {
+    padding: 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+/* Text cells (Name, URL, Tags) get left alignment */
+.list-cell.site-name,
+.list-cell.site-url-col,
+.list-cell.site-tags-col {
+    text-align: left;
+}
+
+/* Ensure tags container is left-aligned in list view */
+.list-cell.site-tags-col .list-tags-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Update the previous center alignment to ensure it doesn't override our new rules */
+.list-cell.site-tags-col {
+    display: flex;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    text-align: left !important;
+    white-space: normal !important;
+}
+
+.list-cell.site-tags-col .list-tags-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start !important;
+    flex-wrap: wrap;
+}
+
+.list-cell.site-tags-col .tag-badge {
+    margin: 2px;
+    display: inline-block;
+}
+
+.list-cell.site-tags-col .no-tags {
+    width: 100% !important;
+    text-align: left !important;
+    margin: 0 !important;
+}
+
+/* Update sort headers for text columns */
+.sites-list .sites-list-header .list-header-cell.site-name .sort-header,
+.sites-list .sites-list-header .list-header-cell.site-url-col .sort-header,
+.sites-list .sites-list-header .list-header-cell.site-tags-col .sort-header {
+    justify-content: flex-start; /* Left-align sort headers for text columns */
+}
+
+/* Reinforce left alignment for Name column */
+.sites-list .site-name,
+.sites-list-header .site-name {
+    text-align: left !important;
+    padding-left: 15px;
+}
+
+/* Reinforce left alignment for URL column */
+.sites-list .site-url-col,
+.sites-list-header .site-url-col {
+    text-align: left !important;
+    padding-left: 15px;
+}
+
+/* Reinforce left alignment for Tags column */
+.sites-list .site-tags-col,
+.sites-list-header .site-tags-col {
+    text-align: left !important;
+    padding-left: 15px;
+}
+
+/* Ensure list view content cells are properly aligned */
+.sites-list .list-view-content .list-cell.site-name,
+.sites-list .list-view-content .list-cell.site-url-col,
+.sites-list .list-view-content .list-cell.site-tags-col {
+    text-align: left !important;
+    justify-content: flex-start !important;
+}
+
+/* Tag badge styling to match home.css */
+.tag-badge {
+    display: inline-block;
+    padding: 3px 6px;
+    margin: 2px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.no-tags {
+    color: var(--secondary-text-color);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* Fix list-tags-wrapper conflicting styles */
+.list-tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+    align-items: flex-start !important; 
+    width: 100%;
+    gap: 4px;
+    padding-left: 0;
+}
+
+/* Clear conflicting style for tag-badge in list view */
+.list-cell.site-tags-col .tag-badge {
+    margin: 2px;
+    display: inline-block;
 } 
