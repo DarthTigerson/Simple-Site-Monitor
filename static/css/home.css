@@ -1,8 +1,22 @@
+/* Add overflow control to the root elements */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.container-fluid {
+    max-height: 100vh;
+    overflow: hidden;
+}
+
 .dashboard-container {
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    width: 100%;
+    gap: 20px;
+    height: calc(100vh - 160px);
+    overflow: hidden;
 }
 
 :root {
@@ -12,24 +26,32 @@
 
 /* Sites Dashboard Section */
 .sites-dashboard {
+    flex-grow: 1;
     background-color: var(--card-bg);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 320px);
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
+    flex-shrink: 0;
 }
 
 .section-header h2 {
     margin-bottom: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
     background: linear-gradient(90deg, var(--text-color) 0%, #9bc8ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -45,7 +67,20 @@
 }
 
 .header-actions .form-control {
-    min-width: 140px;
+    min-width: 160px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-color);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.header-actions .form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.25);
 }
 
 .dashboard-header {
@@ -70,16 +105,19 @@
     border: none;
     width: 44px;
     height: 44px;
-    border-radius: 4px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .btn-action:hover {
     background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .btn-action.rotating {
@@ -94,115 +132,102 @@
 /* Status Summary Cards */
 .status-summary {
     display: flex;
-    gap: 20px;
-    margin-bottom: 0;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
     background-color: var(--card-bg);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-height: 140px;
+    overflow-y: hidden;
+    flex-shrink: 0;
 }
 
 .status-card {
-    background-color: var(--light-color);
-    border-radius: 8px;
-    padding: 20px 25px;
-    box-shadow: var(--shadow);
+    border-radius: 10px;
+    padding: 14px;
+    background-color: rgba(0,0,0,0.2);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    min-width: 135px;
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid var(--border-color);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    flex: 1;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
+    border-left: 4px solid transparent;
 }
 
 .status-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-}
-
-.status-card:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.05);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.status-card:hover:after {
-    opacity: 1;
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    background-color: rgba(0,0,0,0.2);
 }
 
 .status-card.active {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    background-color: rgba(255,255,255,0.08);
+    border-width: 4px;
 }
 
-.status-card.active:before {
+.status-card.active:after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: inherit;
-}
-
-.status-card.active.total:before {
-    background-color: var(--primary-color);
-}
-
-.status-card.active.error:before {
-    background-color: var(--danger-color);
-}
-
-.status-card.active.warning:before {
-    background-color: var(--warning-color);
-}
-
-.status-card.active.success:before {
-    background-color: var(--success-color);
-}
-
-.status-card.active.expiring:before {
-    background-color: var(--expiring-color);
-}
-
-.status-card.error {
-    border-top: 4px solid var(--danger-color);
-}
-
-.status-card.warning {
-    border-top: 4px solid var(--warning-color);
-}
-
-.status-card.success {
-    border-top: 4px solid var(--success-color);
-}
-
-.status-card.total {
-    border-top: 4px solid var(--primary-color);
-}
-
-.status-card.expiring {
-    border-top: 4px solid var(--expiring-color);
-}
-
-.status-card.unknown {
-    border-top: 4px solid var(--unknown-color);
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 4px;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .status-number {
-    font-size: 3rem;
+    font-size: 2.4rem;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin: 0;
+    line-height: 1.2;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.status-label {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Status card colors */
+.status-card.error {
+    border-left-color: var(--danger-color);
+}
+
+.status-card.warning {
+    border-left-color: var(--warning-color);
+}
+
+.status-card.success {
+    border-left-color: var(--success-color);
+}
+
+.status-card.total {
+    border-left-color: var(--primary-color);
+}
+
+.status-card.expiring {
+    border-left-color: var(--expiring-color);
+}
+
+.status-card.unknown {
+    border-left-color: var(--unknown-color);
 }
 
 .status-card.error .status-number {
@@ -229,10 +254,41 @@
     color: var(--unknown-color);
 }
 
-.status-label {
-    font-size: 1rem;
-    color: var(--secondary-text-color);
-    font-weight: 500;
+/* Active status indicator */
+.status-card.active:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 4px;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.status-card.active.error:after {
+    background-color: var(--danger-color);
+}
+
+.status-card.active.warning:after {
+    background-color: var(--warning-color);
+}
+
+.status-card.active.success:after {
+    background-color: var(--success-color);
+}
+
+.status-card.active.total:after {
+    background-color: var(--primary-color);
+}
+
+.status-card.active.expiring:after {
+    background-color: var(--expiring-color);
+}
+
+.status-card.active.unknown:after {
+    background-color: var(--unknown-color);
 }
 
 /* Logs Table Header */
@@ -267,83 +323,95 @@
 .logs-container {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+}
+
+.sites-table-container {
+    overflow-y: auto;
+    flex-grow: 1;
+    max-height: calc(100% - 50px);
+    border-radius: 8px;
 }
 
 .logs-table {
     overflow-x: auto;
     overflow-y: hidden;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: var(--light-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255,255,255,0.05);
+    background-color: rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
 }
 
-.table-scroll-container {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.logs-table table,
-.table-scroll-container table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    table-layout: fixed;
-}
-
 .logs-table th {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0,0,0,0.2);
     padding: 14px 15px;
     text-align: center;
     font-weight: 600;
     color: var(--text-color);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     white-space: nowrap;
     position: relative;
-}
-
-.logs-table th:first-child {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-    text-align: center;
-    border-top-left-radius: 8px;
-}
-
-.logs-table th:last-child {
-    border-top-right-radius: 8px;
+    letter-spacing: 0.5px;
 }
 
 .logs-table td {
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     color: var(--text-color);
     vertical-align: middle;
     height: 52px;
 }
 
-.logs-table td:first-child {
+.logs-table th.sortable {
+    cursor: pointer;
     position: relative;
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-    text-align: left;
-    padding-left: 35px;
+    user-select: none;
+    transition: background-color 0.2s;
 }
 
-.sort-icon {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 8px;
-    position: relative;
+.logs-table th.sortable:hover {
+    background-color: rgba(0,0,0,0.25);
 }
 
+.log-row {
+    transition: all 0.25s ease;
+}
+
+.log-row:hover {
+    background-color: rgba(255,255,255,0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Row background colors based on status */
+.log-row.error {
+    background-color: rgba(255, 69, 58, 0.1);
+}
+
+.log-row.warning {
+    background-color: rgba(255, 196, 0, 0.1);
+}
+
+.log-row.success {
+    background-color: rgba(52, 199, 89, 0.1);
+}
+
+.log-row.expiring {
+    background-color: rgba(230, 126, 34, 0.1);
+}
+
+.log-row.unknown {
+    background-color: rgba(158, 158, 158, 0.1);
+}
+
+/* Status indicator - the colored dot */
 .status-indicator {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     position: absolute;
     left: 15px;
@@ -354,8 +422,8 @@
 }
 
 tr:hover .status-indicator {
-    transform: translateY(-50%) scale(1.2);
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-50%) scale(1.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .status-indicator.error {
@@ -381,36 +449,6 @@ tr:hover .status-indicator {
 .status-indicator.unknown {
     background-color: var(--unknown-color);
     box-shadow: 0 0 5px rgba(158, 158, 158, 0.5);
-}
-
-.log-row {
-    transition: all 0.2s ease;
-}
-
-.log-row:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    transform: translateY(-1px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.log-row.error {
-    background-color: rgba(255, 69, 58, 0.05);
-}
-
-.log-row.warning {
-    background-color: rgba(255, 196, 0, 0.05);
-}
-
-.log-row.success {
-    background-color: rgba(52, 199, 89, 0.05);
-}
-
-.log-row.expiring {
-    background-color: rgba(230, 126, 34, 0.05);
-}
-
-.log-row.unknown {
-    background-color: rgba(158, 158, 158, 0.05);
 }
 
 .url-cell {
@@ -685,70 +723,71 @@ tr:hover .status-indicator {
     font-style: italic;
 }
 
-/* Responsive adjustments */
+/* Mobile adjustments */
 @media (max-width: 768px) {
-    .sites-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .site-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .site-actions {
-        margin-top: 10px;
-        width: 100%;
-    }
-    
-    .btn-edit, .btn-delete {
-        flex: 1;
-        text-align: center;
-    }
-    
-    .site-details strong {
-        min-width: 80px;
+    .dashboard-container {
+        height: calc(100vh - 120px);
+        gap: 15px;
     }
     
     .status-summary {
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-height: 110px;
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .sites-dashboard {
+        max-height: calc(100vh - 250px);
+        padding: 12px;
     }
     
     .status-card {
-        width: 100%;
-        padding: 15px;
+        min-width: 110px;
+        max-width: 150px;
+        padding: 10px;
+        background-color: rgba(0,0,0,0.2);
+    }
+    
+    .status-number {
+        font-size: 1.8rem;
+    }
+    
+    .status-label {
+        font-size: 0.8rem;
+        margin-top: 3px;
+        letter-spacing: 0.3px;
+    }
+    
+    .sites-table th, .sites-table td {
+        padding: 10px 6px;
+        font-size: 0.9rem;
     }
     
     .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
     }
     
-    .header-actions {
-        width: 100%;
-        justify-content: space-between;
+    .section-header h2 {
+        font-size: 1.3rem;
     }
     
-    .logs-table-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+    .header-actions .form-control {
+        min-width: 120px;
     }
     
-    .filter-controls {
-        width: 100%;
+    .btn-action {
+        width: 38px;
+        height: 38px;
     }
     
-    .form-control {
-        width: 100%;
-    }
-    
-    .logs-table th, 
-    .logs-table td {
-        padding: 8px 10px;
+    .status-card.active:after {
+        bottom: -6px;
+        height: 3px;
     }
 }
 
@@ -767,6 +806,20 @@ tr:hover .status-indicator {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.logs-table th:nth-child(2) .sort-header,
+.logs-table th:nth-child(3) .sort-header,
+.logs-table th:nth-child(4) .sort-header {
+    justify-content: flex-start;
+}
+
+.sort-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    position: relative;
 }
 
 th.sorting-asc .sort-icon:after {
@@ -910,6 +963,8 @@ th.sorting-desc .sort-icon:after {
 .table-scroll-container {
     overflow-y: auto;
     overflow-x: hidden;
+    flex: 1;
+    min-height: 0;
 }
 
 /* Table styling */
@@ -1291,7 +1346,7 @@ th.sorting-desc .sort-icon:after {
 
 /* Headers alignment */
 .logs-table th {
-    text-align: center; /* Default center alignment for headers */
+    text-align: center;
 }
 
 /* Status column */
@@ -1308,7 +1363,7 @@ th.sorting-desc .sort-icon:after {
     width: 120px;
     min-width: 120px;
     max-width: 120px;
-    text-align: left; /* Content is left-aligned */
+    text-align: left;
     padding-left: 35px;
 }
 
@@ -1345,7 +1400,7 @@ th.sorting-desc .sort-icon:after {
 .sort-header {
     display: flex;
     align-items: center;
-    justify-content: center; /* Default center alignment */
+    justify-content: center;
 }
 
 /* Text columns (Status content, Name, URL, Tags) get left-aligned content */
@@ -1384,10 +1439,45 @@ th.sorting-desc .sort-icon:after {
 .logs-table th:nth-child(2) .sort-header,
 .logs-table th:nth-child(3) .sort-header,
 .logs-table th:nth-child(4) .sort-header {
-    justify-content: flex-start; /* Left alignment for sort header content */
+    justify-content: flex-start;
 }
 
 /* Status text explicit left alignment */
 .status-text {
     text-align: left;
+}
+
+.sites-table-container {
+    overflow-y: auto;
+    flex-grow: 1;
+    max-height: calc(100% - 50px);
+    border-radius: 8px;
+}
+
+/* Status cards styling */
+.status-card {
+    border-radius: 8px;
+    padding: 12px;
+    background-color: var(--bg-color);
+    box-shadow: var(--card-shadow);
+    min-width: 140px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Mobile styles specific to the table display */
+@media (max-width: 768px) {
+    .sites-table th, .sites-table td {
+        padding: 8px 6px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Make cards more consistent with all sites label in uppercase */
+.status-card.total .status-label {
+    color: rgba(255,255,255,0.9);
 }

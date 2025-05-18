@@ -7,13 +7,15 @@
             <div class="status-number">{{ stats.total }}</div>
             <div class="status-label">All Sites</div>
         </div>
+        {% if stats.unknown > 0 %}
+        <div class="status-card unknown" data-filter="unknown">
+            <div class="status-number">{{ stats.unknown }}</div>
+            <div class="status-label">Pending</div>
+        </div>
+        {% endif %}
         <div class="status-card success" data-filter="healthy">
             <div class="status-number">{{ stats.healthy }}</div>
             <div class="status-label">Healthy</div>
-        </div>
-        <div class="status-card error" data-filter="down">
-            <div class="status-number">{{ stats.down }}</div>
-            <div class="status-label">Down</div>
         </div>
         <div class="status-card warning" data-filter="slow">
             <div class="status-number">{{ stats.slow }}</div>
@@ -23,27 +25,25 @@
             <div class="status-number">{{ stats.expiring }}</div>
             <div class="status-label">Token Expiring</div>
         </div>
-        {% if stats.unknown > 0 %}
-        <div class="status-card unknown" data-filter="unknown">
-            <div class="status-number">{{ stats.unknown }}</div>
-            <div class="status-label">Pending</div>
+        <div class="status-card error" data-filter="down">
+            <div class="status-number">{{ stats.down }}</div>
+            <div class="status-label">Down</div>
         </div>
-        {% endif %}
     </div>
 
     <section class="sites-dashboard">
         <div class="section-header">
             <h2>Monitoring</h2>
             <div class="header-actions">
-                <select id="logFilter" class="form-control">
+                <select id="logFilter" class="form-control" style="display: none;">
                     <option value="all">All Sites</option>
-                    <option value="healthy">Healthy</option>
-                    <option value="down">Down</option>
-                    <option value="slow">Slow</option>
-                    <option value="expiring">Token Expiring</option>
                     {% if stats.unknown > 0 %}
                     <option value="unknown">Pending</option>
                     {% endif %}
+                    <option value="healthy">Healthy</option>
+                    <option value="slow">Slow</option>
+                    <option value="expiring">Token Expiring</option>
+                    <option value="down">Down</option>
                 </select>
                 <button id="refreshDashboardBtn" class="btn btn-success">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
@@ -94,7 +94,7 @@
                                         {% if log.status == 'down' %}Down
                                         {% elif log.status == 'slow' %}Slow
                                         {% elif log.status == 'token_alert' %}Token Expiring
-                                        {% elif log.status == 'unknown' %}Unknown
+                                        {% elif log.status == 'unknown' %}Pending
                                         {% else %}Healthy{% endif %}
                                     </span>
                                 </td>
