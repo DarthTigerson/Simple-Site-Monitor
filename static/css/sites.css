@@ -112,7 +112,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background: linear-gradient(135deg, #2e61a1 0%, #3273c4 50%, #2c5d98 100%);
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -611,11 +611,12 @@
     grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
     padding: 12px 15px;
-    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
     font-weight: 600;
-    color: var(--text-color);
+    color: white;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     text-align: center;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     white-space: nowrap;
     position: sticky;
     top: 0;
@@ -1186,11 +1187,12 @@
     grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
     padding: 12px 15px;
-    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
     font-weight: 600;
-    color: var(--text-color);
+    color: white;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     text-align: center;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     white-space: nowrap;
     position: sticky;
     top: 0;
