@@ -691,7 +691,7 @@ function compareStatus(rowA, rowB, ascending) {
     if (result === 0) {
         const nameA = getCellValue(rowA, 1);
         const nameB = getCellValue(rowB, 1);
-        return ascending ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+        return nameA.localeCompare(nameB); // Always sort alphabetically within same status
     }
     
     return ascending ? result : -result;
