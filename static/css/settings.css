@@ -59,7 +59,7 @@
 }
 
 .settings-card-header {
-    background: linear-gradient(135deg, #2e61a1 0%, #3273c4 50%, #2c5d98 100%);
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
     color: white;
     padding: 15px 20px;
 }
@@ -442,13 +442,17 @@
     background: linear-gradient(135deg, #2d8757 0%, #38a169 50%, #2a7d50 100%);
     color: white;
     border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 4px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 4px;
     transition: background-color 0.3s, transform 0.2s;
+}
+
+.section-header .btn-success img {
+    width: 20px;
+    height: 20px;
 }
 
 .section-header .btn-success:hover {
