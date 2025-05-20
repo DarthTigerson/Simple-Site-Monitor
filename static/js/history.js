@@ -1,8 +1,9 @@
 // History Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     initSearchHelp();
-    initPagination();
     initSearchFunctionality();
+    initTableSorting();
+    restoreSortingState();
 });
 
 // Autocomplete suggestions data
@@ -449,12 +450,10 @@ function performSearch(query) {
         });
     }
     
-    // Update result count and pagination
+    // Update result count
     if (resultCount) {
         resultCount.textContent = visibleRows;
     }
-    
-    updatePagination(visibleRows);
 }
 
 // Parse the search query into individual filters
@@ -571,167 +570,6 @@ function parseFilterValue(value) {
     return value;
 }
 
-// Initialize pagination with dynamic row count
-function initPagination() {
-    const logRows = document.querySelectorAll('#logResults tr.log-row');
-    let rowsPerPage = calculateRowsPerPage();
-    let currentPage = 1;
-    
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const currentPageSpan = document.getElementById('currentPage');
-    const totalPagesSpan = document.getElementById('totalPages');
-    
-    // Update pagination on initial load
-    updatePagination(logRows.length);
-    
-    // Handle window resize to adjust row count
-    window.addEventListener('resize', debounce(function() {
-        rowsPerPage = calculateRowsPerPage();
-        updatePagination(getVisibleRowsCount());
-        goToPage(currentPage);
-    }, 250));
-    
-    // Handle page navigation
-    if (prevPageBtn && nextPageBtn) {
-        prevPageBtn.addEventListener('click', function() {
-            if (!this.disabled) {
-                goToPage(currentPage - 1);
-            }
-        });
-        
-        nextPageBtn.addEventListener('click', function() {
-            if (!this.disabled) {
-                goToPage(currentPage + 1);
-            }
-        });
-    }
-    
-    // Go to a specific page
-    function goToPage(page) {
-        const visibleRows = Array.from(logRows).filter(row => row.style.display !== 'none');
-        const totalPages = Math.max(1, Math.ceil(visibleRows.length / rowsPerPage));
-        
-        // Ensure page is in bounds
-        page = Math.max(1, Math.min(page, totalPages));
-        currentPage = page;
-        
-        // Update current page display
-        if (currentPageSpan) {
-            currentPageSpan.textContent = page;
-        }
-        
-        // Update button states
-        if (prevPageBtn) {
-            prevPageBtn.disabled = page <= 1;
-        }
-        if (nextPageBtn) {
-            nextPageBtn.disabled = page >= totalPages;
-        }
-        
-        // Hide/show rows based on current page
-        const startIdx = (page - 1) * rowsPerPage;
-        const endIdx = startIdx + rowsPerPage;
-        
-        visibleRows.forEach((row, idx) => {
-            if (idx >= startIdx && idx < endIdx) {
-                row.classList.add('page-visible');
-                row.classList.remove('page-hidden');
-            } else {
-                row.classList.add('page-hidden');
-                row.classList.remove('page-visible');
-            }
-        });
-    }
-    
-    // Calculate rows per page based on available height
-    function calculateRowsPerPage() {
-        const scrollContainer = document.querySelector('.table-scroll-container');
-        if (!scrollContainer) return 10;
-        
-        const containerHeight = scrollContainer.clientHeight;
-        const availableHeight = containerHeight - 20; // 20px buffer
-        
-        // Get row height from a sample row or use default
-        const sampleRow = scrollContainer.querySelector('tbody tr');
-        const rowHeight = sampleRow ? sampleRow.offsetHeight : 52;
-        
-        // Calculate how many rows can fit
-        let calculatedRows = Math.floor(availableHeight / rowHeight);
-        
-        // For full height display, return a high number to fit all rows
-        return 1000; // This essentially disables pagination by page size
-    }
-    
-    // Get count of visible rows
-    function getVisibleRowsCount() {
-        return Array.from(logRows).filter(row => row.style.display !== 'none').length;
-    }
-    
-    // Initial page load
-    goToPage(1);
-    
-    // Utility function for resize debouncing
-    function debounce(func, wait) {
-        let timeout;
-        return function() {
-            const context = this;
-            const args = arguments;
-            clearTimeout(timeout);
-            timeout = setTimeout(function() {
-                func.apply(context, args);
-            }, wait);
-        };
-    }
-}
-
-// Update pagination based on visible rows count
-function updatePagination(visibleRowCount) {
-    const scrollContainer = document.querySelector('.table-scroll-container');
-    if (!scrollContainer) return;
-    
-    // For full height display, we want all rows visible on one page
-    const rowsPerPage = 1000; // Large enough to show all rows
-    
-    const totalPages = Math.max(1, Math.ceil(visibleRowCount / rowsPerPage));
-    
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const currentPageSpan = document.getElementById('currentPage');
-    const totalPagesSpan = document.getElementById('totalPages');
-    
-    // Update total pages display
-    if (totalPagesSpan) {
-        totalPagesSpan.textContent = totalPages;
-    }
-    
-    // Reset to first page
-    if (currentPageSpan) {
-        currentPageSpan.textContent = '1';
-    }
-    
-    // Update button states
-    if (prevPageBtn) {
-        prevPageBtn.disabled = true; // First page
-    }
-    if (nextPageBtn) {
-        nextPageBtn.disabled = totalPages <= 1;
-    }
-    
-    // Apply pagination to visible rows - show all rows for scrolling
-    const logRows = document.querySelectorAll('#logResults tr.log-row');
-    
-    logRows.forEach(row => {
-        if (row.style.display !== 'none') {
-            row.classList.add('page-visible');
-            row.classList.remove('page-hidden');
-        } else {
-            row.classList.add('page-hidden');
-            row.classList.remove('page-visible');
-        }
-    });
-}
-
 // Function to collect available tags from the table
 function populateTagSuggestions() {
     const tagField = suggestions.find(s => s.field === 'tag');
@@ -752,4 +590,284 @@ function populateTagSuggestions() {
     
     // Add to suggestions
     tagField.values = Array.from(tagSet).sort();
+}
+
+// Save the current sorting state to localStorage
+function saveSortingState() {
+    const sortingState = {
+        columnIndex: -1,
+        isAscending: true
+    };
+    
+    // Find which header has sorting class
+    const headers = document.querySelectorAll('.logs-table th');
+    headers.forEach((header, index) => {
+        if (header.classList.contains('sorting-asc')) {
+            sortingState.columnIndex = index;
+            sortingState.isAscending = true;
+        } else if (header.classList.contains('sorting-desc')) {
+            sortingState.columnIndex = index;
+            sortingState.isAscending = false;
+        }
+    });
+    
+    // Save to localStorage
+    localStorage.setItem('historyTableSortState', JSON.stringify(sortingState));
+}
+
+// Restore sorting state from localStorage
+function restoreSortingState() {
+    try {
+        const savedState = localStorage.getItem('historyTableSortState');
+        if (!savedState) return;
+        
+        const sortingState = JSON.parse(savedState);
+        if (sortingState.columnIndex === -1) return;
+        
+        // Find and click the appropriate header to restore sort
+        const headers = document.querySelectorAll('.logs-table th');
+        if (headers.length > sortingState.columnIndex) {
+            const targetHeader = headers[sortingState.columnIndex];
+            
+            // If current state doesn't match saved state, click once
+            if ((targetHeader.classList.contains('sorting-asc') && !sortingState.isAscending) ||
+                (targetHeader.classList.contains('sorting-desc') && sortingState.isAscending) ||
+                (!targetHeader.classList.contains('sorting-asc') && !targetHeader.classList.contains('sorting-desc'))) {
+                // Programmatically click the header
+                targetHeader.click();
+            }
+            
+            // If after first click we need opposite direction, click again
+            if ((targetHeader.classList.contains('sorting-asc') && !sortingState.isAscending) ||
+                (targetHeader.classList.contains('sorting-desc') && sortingState.isAscending)) {
+                targetHeader.click();
+            }
+        }
+    } catch (e) {
+        console.error('Error restoring sort state:', e);
+        // Clean up potentially corrupted state
+        localStorage.removeItem('historyTableSortState');
+    }
+}
+
+// Table sorting functionality
+function initTableSorting() {
+    const table = document.querySelector('.logs-table table');
+    if (!table) return;
+    
+    const headers = table.querySelectorAll('th');
+    const tableBody = document.querySelector('.table-scroll-container tbody'); // Updated selector
+    const rows = tableBody.querySelectorAll('tr');
+    
+    // Skip the no-logs message row for sorting
+    const dataRows = Array.from(rows).filter(row => !row.querySelector('.no-logs-message'));
+    
+    // Add sort direction indicators and click handlers to all headers
+    headers.forEach((header, index) => {
+        // Add sort icons and make headers look clickable
+        header.classList.add('sortable');
+        
+        // Get header text
+        const headerText = header.textContent.trim();
+        
+        // Create sort header with appropriate alignment based on column
+        header.innerHTML = `
+            <div class="sort-header">
+                ${headerText}
+                <span class="sort-icon"></span>
+            </div>
+        `;
+        
+        // Add click handler for sorting
+        header.addEventListener('click', () => {
+            // Determine sort direction based on current state of the clicked header
+            let isAscending = true;
+            
+            // If this header is already being used for sorting
+            if (header.classList.contains('sorting-asc')) {
+                // Was ascending, now should be descending
+                isAscending = false;
+            } else if (header.classList.contains('sorting-desc')) {
+                // Was descending, now should be ascending
+                isAscending = true;
+            } else {
+                // Not currently sorted, default to ascending
+                isAscending = true;
+            }
+            
+            // Remove sorting classes from all headers
+            headers.forEach(h => {
+                h.classList.remove('sorting-asc', 'sorting-desc');
+            });
+            
+            // Add the appropriate class to the clicked header
+            header.classList.add(isAscending ? 'sorting-asc' : 'sorting-desc');
+            
+            // Sort the table rows
+            sortTable(dataRows, index, isAscending);
+            
+            // Re-append rows to update the display
+            dataRows.forEach(row => {
+                tableBody.appendChild(row);
+            });
+            
+            // Save the sorting state
+            saveSortingState();
+        });
+    });
+    
+    // Default sort by Start Time column (index 4) in descending order
+    if (dataRows.length > 0 && headers.length > 4) {
+        // Set Start Time column as initial sort with descending order
+        headers[4].classList.add('sorting-desc');
+        sortTable(dataRows, 4, false); // Sort by Start Time descending
+        
+        // Re-append rows to update the display
+        dataRows.forEach(row => {
+            tableBody.appendChild(row);
+        });
+        
+        // Save the initial sorting state
+        saveSortingState();
+    }
+}
+
+function sortTable(rows, columnIndex, ascending) {
+    rows.sort((a, b) => {
+        // Get the cell content to compare
+        const aValue = getCellValue(a, columnIndex);
+        const bValue = getCellValue(b, columnIndex);
+        
+        // Special case for status column - use custom status priority
+        if (columnIndex === 0) {
+            return compareStatus(a, b, ascending);
+        }
+        
+        // Special case for Tags column (index 3)
+        if (columnIndex === 3) {
+            // Handle "No tags" case
+            const aNoTags = aValue.includes('No tags');
+            const bNoTags = bValue.includes('No tags');
+            
+            if (aNoTags && bNoTags) return 0;
+            if (aNoTags) return ascending ? 1 : -1;
+            if (bNoTags) return ascending ? -1 : 1;
+            
+            // For rows with tags, sort alphabetically
+            return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        }
+        
+        // Special handling for Start Time and End Time columns - parse as dates
+        if (columnIndex === 4 || columnIndex === 5) {
+            // Try to convert to Date objects for comparison
+            const dateA = new Date(aValue);
+            const dateB = new Date(bValue);
+            
+            // Check if dates are valid
+            if (!isNaN(dateA) && !isNaN(dateB)) {
+                return ascending ? dateA - dateB : dateB - dateA;
+            }
+        }
+        
+        // Special handling for Duration column - convert to seconds for comparison
+        if (columnIndex === 6) { // Duration column
+            return compareDuration(aValue, bValue, ascending);
+        }
+        
+        // Default string comparison
+        if (ascending) {
+            return aValue.localeCompare(bValue);
+        } else {
+            return bValue.localeCompare(aValue);
+        }
+    });
+}
+
+function getCellValue(row, index) {
+    const cell = row.cells[index];
+    
+    // If it's the status cell, get the status text
+    if (index === 0) {
+        const statusText = cell.querySelector('.status-text');
+        return statusText ? statusText.textContent.trim() : '';
+    }
+    
+    // For URL cell, get the URL text
+    if (index === 2) {
+        const link = cell.querySelector('a');
+        return link ? link.textContent.trim() : '';
+    }
+    
+    // For tags cell, get all tag badges or "No tags"
+    if (index === 3) {
+        const noTags = cell.querySelector('.no-tags');
+        if (noTags) {
+            return "No tags";
+        }
+        
+        const tagBadges = cell.querySelectorAll('.tag-badge');
+        if (tagBadges && tagBadges.length > 0) {
+            return Array.from(tagBadges)
+                .map(badge => badge.textContent.trim())
+                .join(", ");
+        }
+        return '';
+    }
+    
+    // For other cells, get the text content
+    return cell ? cell.textContent.trim() : '';
+}
+
+function compareStatus(rowA, rowB, ascending) {
+    // Get status priority based on class names
+    const statusPriority = {
+        'error': 1,     // Down
+        'warning': 2,   // Slow
+        'expiring': 3,  // Token Expiring
+        'unknown': 4,   // Unknown/Pending
+        'success': 5    // Healthy
+    };
+    
+    // Determine row status from the class
+    const getRowStatus = (row) => {
+        if (row.classList.contains('error')) return 'error';
+        if (row.classList.contains('warning')) return 'warning';
+        if (row.classList.contains('expiring')) return 'expiring';
+        if (row.classList.contains('unknown')) return 'unknown';
+        return 'success';
+    };
+    
+    const statusA = getRowStatus(rowA);
+    const statusB = getRowStatus(rowB);
+    
+    // Compare by status priority
+    const result = statusPriority[statusA] - statusPriority[statusB];
+    
+    // If statuses are equal, compare by name (2nd column)
+    if (result === 0) {
+        const nameA = getCellValue(rowA, 1);
+        const nameB = getCellValue(rowB, 1);
+        return nameA.localeCompare(nameB);
+    }
+    
+    return ascending ? result : -result;
+}
+
+function compareDuration(a, b, ascending) {
+    // Convert duration strings to seconds for comparison
+    const getSeconds = (str) => {
+        if (!str) return 0;
+        
+        const value = parseInt(str.match(/\d+/)?.[0] || 0);
+        if (str.includes('second')) return value;
+        if (str.includes('minute')) return value * 60;
+        if (str.includes('hour')) return value * 3600;
+        if (str.includes('day')) return value * 86400;
+        return 0;
+    };
+    
+    const secondsA = getSeconds(a);
+    const secondsB = getSeconds(b);
+    
+    return ascending ? secondsA - secondsB : secondsB - secondsA;
 }

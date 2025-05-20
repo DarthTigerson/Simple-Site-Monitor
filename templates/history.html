@@ -114,22 +114,6 @@
                 </table>
             </div>
         </div>
-        
-        <div class="pagination">
-            <button id="prevPage" class="btn-page" disabled>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-                Previous
-            </button>
-            <div class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">{{ (total_logs / 10)|round(0, 'ceil')|int }}</span></div>
-            <button id="nextPage" class="btn-page" {% if total_logs <= 10 %}disabled{% endif %}>
-                Next
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
-        </div>
     </div>
 </div>
 {% endblock %}

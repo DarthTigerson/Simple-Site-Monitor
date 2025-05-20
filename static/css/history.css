@@ -350,10 +350,10 @@
     border: 1px solid var(--border-color);
     background-color: var(--light-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-bottom: 15px;
     width: 100%;
     display: flex;
     flex-direction: column;
+    margin-bottom: 0; /* Remove bottom margin since we removed pagination */
 }
 
 .table-scroll-container {
@@ -363,6 +363,7 @@
     min-height: 0; /* Critical for nested flex containers */
     display: flex;
     flex-direction: column;
+    max-height: none; /* Remove any max-height constraints */
 }
 
 .table-scroll-container table {
@@ -405,10 +406,63 @@
     background-color: var(--card-bg);
 }
 
+/* Sortable table headers */
+.logs-table th.sortable {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.logs-table th.sortable:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.sort-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logs-table th:nth-child(2) .sort-header,
+.logs-table th:nth-child(3) .sort-header,
+.logs-table th:nth-child(4) .sort-header {
+    justify-content: flex-start;
+}
+
+.sort-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    position: relative;
+}
+
+th.sorting-asc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--text-color);
+}
+
+th.sorting-desc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--text-color);
+}
+
+/* Update table header styles */
 .logs-table th {
     background-color: rgba(0, 0, 0, 0.1);
     padding: 14px 15px;
-    text-align: left;
+    text-align: center;
     font-weight: 600;
     color: var(--text-color);
     border-bottom: 1px solid var(--border-color);
@@ -416,6 +470,7 @@
     position: relative;
 }
 
+/* Rounded corners for header */
 .logs-table th:first-child {
     width: 120px;
     min-width: 120px;
@@ -428,13 +483,31 @@
     border-top-right-radius: 8px;
 }
 
-.logs-table td {
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-color);
+/* Text-based columns (name, url, tags) alignment */
+.logs-table th:nth-child(2),
+.logs-table th:nth-child(3),
+.logs-table th:nth-child(4) {
     text-align: left;
-    vertical-align: middle;
-    height: 52px; /* Slightly increased for better spacing */
+}
+
+/* Data columns remain center-aligned */
+.logs-table th:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table th:nth-child(7) {
+    text-align: center;
+}
+
+.logs-table td:nth-child(5),
+.logs-table td:nth-child(6),
+.logs-table td:nth-child(7) {
+    text-align: center;
+}
+
+/* Ensure alignment between header and body */
+.logs-table thead th,
+.table-scroll-container td {
+    width: auto;
+    text-align: center;
 }
 
 /* Status column styling */
@@ -445,6 +518,13 @@
     max-width: 120px;
     text-align: left;
     padding-left: 35px;
+}
+
+/* Text-based columns alignment */
+.logs-table td:nth-child(2),
+.logs-table td:nth-child(3),
+.logs-table td:nth-child(4) {
+    text-align: left;
 }
 
 /* Status text styling */
@@ -602,43 +682,6 @@ tr:hover .status-indicator {
     background-color: rgba(42, 124, 223, 0.2);
 }
 
-/* Pagination */
-.pagination {
-    flex: 0 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 10px;
-}
-
-.btn-page {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    background-color: rgba(42, 124, 223, 0.1);
-    color: var(--primary-color);
-    border: 1px solid rgba(42, 124, 223, 0.2);
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.btn-page:hover:not(:disabled) {
-    background-color: rgba(42, 124, 223, 0.2);
-}
-
-.btn-page:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.page-info {
-    color: var(--secondary-text-color);
-    font-size: 0.85rem;
-}
-
 /* Log Details Modal */
 .log-details-container {
     display: flex;
@@ -748,29 +791,6 @@ tr:hover .status-indicator {
     .log-detail-row {
         width: 100%;
     }
-    
-    .pagination {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-
-/* Log rows pagination */
-tr.page-hidden {
-    display: none !important;
-}
-
-tr.page-visible {
-    display: table-row;
-}
-
-/* No logs message */
-.no-logs-message {
-    padding: 30px !important;
-    text-align: center;
-    color: var(--secondary-text-color);
-    font-style: italic;
-    background-color: rgba(0, 0, 0, 0.02);
 }
 
 /* Search input highlighting */
@@ -930,4 +950,31 @@ tr.page-visible {
 .logs-table th:nth-child(4),
 .logs-table td:nth-child(4) {
     text-align: left;
+}
+
+/* Cell styling */
+.logs-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    vertical-align: middle;
+    height: 52px;
+}
+
+/* Remove pagination-related styles */
+tr.page-hidden {
+    display: none !important;
+}
+
+tr.page-visible {
+    display: table-row;
+}
+
+/* No logs message */
+.no-logs-message {
+    padding: 30px !important;
+    text-align: center;
+    color: var(--secondary-text-color);
+    font-style: italic;
+    background-color: rgba(0, 0, 0, 0.02);
 }
