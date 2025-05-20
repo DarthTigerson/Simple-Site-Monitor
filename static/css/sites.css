@@ -208,29 +208,29 @@
 
 /* Add Button Enhancement */
 #addSiteBtn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    gap: 8px;
+    padding: 8px 16px;
+    height: 38px;
+    border-radius: 6px;
     transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-    position: relative;
+    font-weight: 500;
+    font-size: 1rem;
+    color: white;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    background-color: #4CAF50;
 }
 
 #addSiteBtn:hover {
-    transform: scale(1.1);
+    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: #43a047;
 }
 
-#addSiteBtn svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
+#addSiteBtn .add-icon {
+    margin-right: 2px;
 }
 
 /* Responsive */
@@ -1273,17 +1273,32 @@
     cursor: pointer;
     position: relative;
     user-select: none;
+    transition: background-color 0.2s;
+    padding: 14px 15px; /* Add consistent padding */
 }
 
 .list-header-cell.sortable:hover {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.25);
 }
 
 .sort-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    width: 100%; /* Ensure the header content takes full width */
+    height: 100%; /* Ensure the header content takes full height */
+}
+
+/* Text columns (Name, URL, Tags) get left-aligned headers */
+.sites-list .sites-list-header .list-header-cell.site-name .sort-header,
+.sites-list .sites-list-header .list-header-cell.site-url-col .sort-header,
+.sites-list .sites-list-header .list-header-cell.site-tags-col .sort-header {
+    justify-content: flex-start; /* Left-align text columns */
+}
+
+/* Data columns (status, timeout, etc.) remain center-aligned */
+.sites-list .sites-list-header .list-header-cell:not(.site-name):not(.site-url-col):not(.site-tags-col):not(.site-actions-col) .sort-header {
+    justify-content: center; /* Center-align data columns */
 }
 
 .sort-icon {
@@ -1294,24 +1309,10 @@
     position: relative;
 }
 
-.list-header-cell.sorting-asc .sort-icon:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid var(--text-color);
-}
-
-.list-header-cell.sorting-desc .sort-icon:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid var(--text-color);
+/* Add gradient background to the table headers like in home.css */
+.sites-list .sites-list-header {
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
+    padding: 0; /* Remove outer padding since we'll add padding to each cell */
 }
 
 /* Two-column form layout */
@@ -1866,4 +1867,25 @@
 .list-cell.site-tags-col .tag-badge {
     margin: 2px;
     display: inline-block;
+}
+
+/* Sort indicator styling */
+.list-header-cell.sorting-asc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid white;
+}
+
+.list-header-cell.sorting-desc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid white;
 } 
