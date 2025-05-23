@@ -4,6 +4,12 @@
 <div class="history-dashboard">
     <div class="search-container">
         <div class="query-bar">
+            <button type="button" id="clearBtn" aria-label="Clear search" class="btn-clear">
+                <svg class="clear-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
             <div class="search-input-wrapper">
                 <div id="richSearchInput" contenteditable="true" spellcheck="false" role="textbox" aria-label="Search logs"></div>
                 <input type="text" id="searchQuery" placeholder="Search logs... (e.g. status:down name:example)" autocomplete="off" />

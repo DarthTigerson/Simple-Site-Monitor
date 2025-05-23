@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTableSorting();
     restoreSortingState();
     initExportFunctionality(); // Initialize export functionality
+    initClearButton(); // Initialize clear button functionality
 });
 
 // Initialize export functionality
@@ -1067,4 +1068,28 @@ function compareDuration(a, b, ascending) {
     const secondsB = getSeconds(b);
     
     return ascending ? secondsA - secondsB : secondsB - secondsA;
+}
+
+// Initialize clear button functionality
+function initClearButton() {
+    const clearBtn = document.getElementById('clearBtn');
+    const richSearchInput = document.getElementById('richSearchInput');
+    const searchQuery = document.getElementById('searchQuery');
+    
+    if (clearBtn && richSearchInput && searchQuery) {
+        clearBtn.addEventListener('click', function() {
+            // Clear the search inputs
+            richSearchInput.innerText = '';
+            searchQuery.value = '';
+            
+            // Show all results
+            performSearch('');
+            
+            // Reset the highlight
+            highlightTags(richSearchInput);
+            
+            // Focus back on the input
+            richSearchInput.focus();
+        });
+    }
 }
