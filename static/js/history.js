@@ -1,10 +1,12 @@
 // History Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    initDateSuggestions(); // Initialize date suggestions first
     initSearchHelp();
     initSearchFunctionality();
     initTableSorting();
     restoreSortingState();
     initExportFunctionality(); // Initialize export functionality
+    initClearButton(); // Initialize clear button functionality
 });
 
 // Initialize export functionality
@@ -137,8 +139,34 @@ const suggestions = [
     { field: 'status', operators: [':', '!='], values: ['down', 'healthy', 'slow', 'expiring'], description: 'Filter by site status' },
     { field: 'name', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site name' },
     { field: 'url', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site URL' },
-    { field: 'tag', operators: [':', '!='], values: [], description: 'Filter by site tag (e.g. tag:production)' }
+    { field: 'tag', operators: [':', '!='], values: [], description: 'Filter by site tag (e.g. tag:production)' },
+    { field: 'start_time', operators: [':'], values: [], description: 'Filter logs after this date' },
+    { field: 'end_time', operators: [':'], values: [], description: 'Filter logs before this date' }
 ];
+
+// Initialize date suggestion values
+function initDateSuggestions() {
+    // For start_time, suggest 2 days ago
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    const formattedTwoDaysAgo = twoDaysAgo.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    
+    // For end_time, suggest today
+    const today = new Date();
+    const formattedToday = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    
+    // Update suggestion values
+    const startTimeField = suggestions.find(s => s.field === 'start_time');
+    const endTimeField = suggestions.find(s => s.field === 'end_time');
+    
+    if (startTimeField) {
+        startTimeField.values = [formattedTwoDaysAgo];
+    }
+    
+    if (endTimeField) {
+        endTimeField.values = [formattedToday];
+    }
+}
 
 // Initialize search help toggling functionality
 function initSearchHelp() {
@@ -146,19 +174,6 @@ function initSearchHelp() {
     const helpContent = document.querySelector('.help-content');
     
     if (helpToggle && helpContent) {
-        // Create backdrop element
-        const backdrop = document.createElement('div');
-        backdrop.className = 'help-backdrop';
-        backdrop.style.position = 'fixed';
-        backdrop.style.top = '0';
-        backdrop.style.left = '0';
-        backdrop.style.width = '100%';
-        backdrop.style.height = '100%';
-        backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        backdrop.style.display = 'none';
-        backdrop.style.zIndex = '9';
-        document.body.appendChild(backdrop);
-        
         // Toggle help panel
         helpToggle.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -166,40 +181,34 @@ function initSearchHelp() {
             if (helpContent.style.display === 'block') {
                 // Hide panel
                 helpContent.style.opacity = '0';
-                backdrop.style.opacity = '0';
                 
                 setTimeout(() => {
                     helpContent.style.display = 'none';
-                    backdrop.style.display = 'none';
                 }, 200);
             } else {
                 // Show panel
                 helpContent.style.display = 'block';
-                backdrop.style.display = 'block';
                 helpContent.style.opacity = '0';
-                backdrop.style.opacity = '0';
                 
                 setTimeout(() => {
                     helpContent.style.opacity = '1';
-                    backdrop.style.opacity = '1';
                 }, 10);
             }
         });
         
-        // Close help content when clicking backdrop
-        backdrop.addEventListener('click', function() {
-            helpContent.style.opacity = '0';
-            backdrop.style.opacity = '0';
-            
-            setTimeout(() => {
-                helpContent.style.display = 'none';
-                backdrop.style.display = 'none';
-            }, 200);
+        // Close help content when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!helpContent.contains(e.target) && !helpToggle.contains(e.target) && helpContent.style.display === 'block') {
+                helpContent.style.opacity = '0';
+                
+                setTimeout(() => {
+                    helpContent.style.display = 'none';
+                }, 200);
+            }
         });
         
         // Apply transitions
         helpContent.style.transition = 'opacity 0.2s ease';
-        backdrop.style.transition = 'opacity 0.2s ease';
     }
 }
 
@@ -229,9 +238,8 @@ function initSearchFunctionality() {
     // When user focuses on rich input
     richSearchInput.addEventListener('focus', function() {
         const plainText = this.innerText;
-        if (plainText) {
-            showAutocomplete(plainText, autocompleteContainer);
-        }
+        // Show autocomplete suggestions even when the field is empty
+        showInitialSuggestions(autocompleteContainer);
     });
     
     // Handle keyboard navigation in autocomplete and search input
@@ -285,7 +293,7 @@ function initSearchFunctionality() {
 // Function to highlight filter tags in blue
 function highlightTags(element) {
     const text = element.innerText;
-    const tagRegex = /\b(status|name|url|tag):/g;
+    const tagRegex = /\b(status|name|url|tag|start_time|end_time):/g;
     
     // Save cursor position
     const selection = window.getSelection();
@@ -549,6 +557,56 @@ function showAutocomplete(text, container) {
     }
 }
 
+// Function to show initial filter suggestions when the search field is focused
+function showInitialSuggestions(container) {
+    if (!container) return;
+    
+    // Clear existing content
+    container.innerHTML = `
+        <div class="autocomplete-help">
+            Press <kbd>Tab</kbd> to complete, <kbd>↑</kbd><kbd>↓</kbd> to navigate
+        </div>
+    `;
+    
+    // Show initial suggestions for common filters
+    let firstItem = true;
+    
+    // Show one example from each filter type
+    suggestions.forEach(suggestion => {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item' + (firstItem ? ' selected' : '');
+        firstItem = false;
+        
+        div.innerHTML = `
+            <span class="autocomplete-field">${suggestion.field}</span><span class="autocomplete-operator">:</span>
+            <div class="autocomplete-description">${suggestion.description}</div>
+        `;
+        
+        div.addEventListener('click', () => {
+            const richInput = document.getElementById('richSearchInput');
+            const plainInput = document.getElementById('searchQuery');
+            
+            // Insert suggestion
+            plainInput.value = `${suggestion.field}:`;
+            richInput.innerText = `${suggestion.field}:`;
+            
+            // Re-highlight tags
+            highlightTags(richInput);
+            
+            // Focus and position cursor at end
+            richInput.focus();
+            placeCursorAtOffset(richInput, `${suggestion.field}:`.length);
+            
+            container.style.display = 'none';
+        });
+        
+        container.appendChild(div);
+    });
+    
+    // Display the container
+    container.style.display = 'block';
+}
+
 // Perform search on the log data
 function performSearch(query) {
     const logRows = document.querySelectorAll('#logResults tr.log-row');
@@ -603,6 +661,50 @@ function parseSearchQuery(query) {
 // Check if a row matches all the provided filters
 function matchesFilters(row, filters) {
     for (const filter of filters) {
+        // Special handling for date filters
+        if (filter.field === 'start_time' || filter.field === 'end_time') {
+            const isStartTime = filter.field === 'start_time';
+            const timeCell = row.cells[isStartTime ? 4 : 5];
+            
+            if (!timeCell) return false;
+            
+            // Get the date component from the row's timestamp
+            const timeText = timeCell.textContent.trim();
+            const rowDate = new Date(timeText);
+            const rowDateStr = rowDate.toISOString().split('T')[0]; // Get just the date part YYYY-MM-DD
+            
+            // Parse the filter value as a date
+            try {
+                // Handle date format YYYY-MM-DD
+                if (filter.value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    // For start_time, set time to start of day (00:00:00)
+                    // For end_time, set time to end of day (23:59:59)
+                    const filterDate = new Date(filter.value);
+                    if (isNaN(filterDate.getTime())) {
+                        console.warn('Invalid date format in filter:', filter.value);
+                        return false;
+                    }
+                    
+                    // For start_time comparison, we need row date >= filter date
+                    // For end_time comparison, we need row date <= filter date
+                    // Compare just the date parts without time
+                    const filterDateStr = filterDate.toISOString().split('T')[0];
+                    
+                    if (isStartTime && rowDateStr < filterDateStr) return false;
+                    if (!isStartTime && rowDateStr > filterDateStr) return false;
+                } else {
+                    console.warn('Invalid date format in filter:', filter.value);
+                    return false;
+                }
+            } catch (e) {
+                console.warn('Error parsing date:', e);
+                return false;
+            }
+            
+            // This filter passed
+            continue;
+        }
+        
         const value = getRowValue(row, filter.field);
         
         if (value === null) {
@@ -639,8 +741,8 @@ function getRowValue(row, field) {
         'name': 1,
         'url': 2,
         'tag': 3,
-        'start': 4,
-        'end': 5,
+        'start_time': 4,
+        'end_time': 5,
         'duration': 6
     };
     
@@ -749,7 +851,7 @@ function restoreSortingState() {
         
         const sortingState = JSON.parse(savedState);
         if (sortingState.columnIndex === -1) return;
-        
+    
         // Find and click the appropriate header to restore sort
         const headers = document.querySelectorAll('.logs-table th');
         if (headers.length > sortingState.columnIndex) {
@@ -787,7 +889,7 @@ function initTableSorting() {
     
     // Skip the no-logs message row for sorting
     const dataRows = Array.from(rows).filter(row => !row.querySelector('.no-logs-message'));
-    
+        
     // Add sort direction indicators and click handlers to all headers
     headers.forEach((header, index) => {
         // Add sort icons and make headers look clickable
@@ -894,7 +996,7 @@ function sortTable(rows, columnIndex, ascending) {
                 return ascending ? dateA - dateB : dateB - dateA;
             }
         }
-        
+
         // Special handling for Duration column - convert to seconds for comparison
         if (columnIndex === 6) { // Duration column
             return compareDuration(aValue, bValue, ascending);
@@ -996,4 +1098,28 @@ function compareDuration(a, b, ascending) {
     const secondsB = getSeconds(b);
     
     return ascending ? secondsA - secondsB : secondsB - secondsA;
+}
+
+// Initialize clear button functionality
+function initClearButton() {
+    const clearBtn = document.getElementById('clearBtn');
+    const richSearchInput = document.getElementById('richSearchInput');
+    const searchQuery = document.getElementById('searchQuery');
+    
+    if (clearBtn && richSearchInput && searchQuery) {
+        clearBtn.addEventListener('click', function() {
+            // Clear the search inputs
+            richSearchInput.innerText = '';
+            searchQuery.value = '';
+            
+            // Show all results
+            performSearch('');
+            
+            // Reset the highlight
+            highlightTags(richSearchInput);
+            
+            // Focus back on the input
+            richSearchInput.focus();
+        });
+    }
 }

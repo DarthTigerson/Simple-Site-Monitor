@@ -1,3 +1,10 @@
+/* Global body and html styles for history page */
+body.history-page,
+html.history-page {
+    overflow: hidden;
+    height: 100%;
+}
+
 /* History Page Styles */
 .history-dashboard {
     background-color: var(--card-bg);
@@ -10,6 +17,11 @@
     flex-direction: column;
     height: calc(100vh - 150px); /* Subtract header and margins */
     min-height: 500px; /* Minimum height for smaller screens */
+    position: fixed;
+    top: 80px; /* Account for header height */
+    left: 20px;
+    right: 20px;
+    overflow: hidden; /* Prevent dashboard from scrolling */
 }
 
 /* Variables needed for status colors */
@@ -69,20 +81,29 @@
     max-height: 300px;
     overflow-y: auto;
     background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
     z-index: 100;
     display: none;
+    margin-bottom: 15px;
+    backdrop-filter: blur(4px);
 }
 
 .autocomplete-help {
-    padding: 8px 15px;
-    font-size: 0.8rem;
-    color: var(--secondary-text-color);
-    border-bottom: 1px solid var(--border-color);
-    background-color: rgba(0, 0, 0, 0.05);
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
     text-align: center;
+    border-radius: 6px 6px 0 0;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 5;
 }
 
 .autocomplete-help kbd {
@@ -100,10 +121,11 @@
 }
 
 .autocomplete-item {
-    padding: 8px 15px;
+    padding: 10px 15px;
     cursor: pointer;
     border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
 .autocomplete-item:last-child {
@@ -112,11 +134,14 @@
 
 .autocomplete-item:hover, 
 .autocomplete-item.selected {
-    background-color: rgba(42, 124, 223, 0.1);
+    background-color: rgba(42, 124, 223, 0.15);
+    transform: translateX(3px);
 }
 
 .autocomplete-item.selected {
     border-left: 3px solid var(--primary-color);
+    background-color: rgba(42, 124, 223, 0.2);
+    font-weight: 500;
 }
 
 .autocomplete-item span {
@@ -857,6 +882,8 @@ tr:hover .status-indicator {
     overflow: hidden;
     white-space: nowrap;
     outline: none;
+    line-height: 22px; /* Align text vertically */
+    box-sizing: border-box; /* Ensure padding is included in height */
 }
 
 #richSearchInput:focus {
@@ -1003,4 +1030,30 @@ tr.page-visible {
     color: var(--secondary-text-color);
     font-style: italic;
     background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Clear button styling */
+.btn-clear {
+    padding: 8px;
+    background-color: rgba(128, 128, 128, 0.2);
+    color: var(--secondary-text-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    margin-right: 0px;
+}
+
+.btn-clear:hover {
+    background-color: rgba(128, 128, 128, 0.4);
+}
+
+.clear-icon {
+    width: 18px;
+    height: 18px;
 }

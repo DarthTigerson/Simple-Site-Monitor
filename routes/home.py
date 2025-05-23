@@ -204,6 +204,9 @@ async def get_history(request: Request):
     """Render the history page with logs from the database."""
     config = read_config()
     
+    # Get the names of sites currently in the configuration
+    configured_site_names = {site['name'] for site in config["sites"]}
+    
     # Get site data from database
     db = SessionLocal()
     try:
@@ -212,10 +215,13 @@ async def get_history(request: Request):
             RunnerSiteLog.last_scan_time.desc()
         ).limit(500).all()  # Limit to 500 recent logs for performance
         
+        # Filter logs to only include sites that are in the current configuration
+        filtered_logs = [log for log in all_logs if log.name in configured_site_names]
+        
         # Prepare site data for the history view
         display_logs = []
         
-        for log in all_logs:
+        for log in filtered_logs:
             # Get the URL from the config for this site
             site_url = ""
             for site in config["sites"]:
@@ -255,7 +261,7 @@ async def get_history(request: Request):
                 load_time_display = f"{log.response_time:.2f} s"
             
             # Map status to display status
-            status_display = "Unknown"
+            status_display = "Pending"
             status_class = "unknown"
             
             if log.status == "up" or log.status == "healthy":

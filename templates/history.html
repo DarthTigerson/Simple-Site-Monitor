@@ -1,9 +1,18 @@
 {% extends "layout.html" %}
 
+{% block html_classes %}history-page{% endblock %}
+{% block body_classes %}history-page{% endblock %}
+
 {% block content %}
 <div class="history-dashboard">
     <div class="search-container">
         <div class="query-bar">
+            <button type="button" id="clearBtn" aria-label="Clear search" class="btn-clear">
+                <svg class="clear-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
             <div class="search-input-wrapper">
                 <div id="richSearchInput" contenteditable="true" spellcheck="false" role="textbox" aria-label="Search logs"></div>
                 <input type="text" id="searchQuery" placeholder="Search logs... (e.g. status:down name:example)" autocomplete="off" />
@@ -54,9 +63,16 @@
                                 <li><code>tag:production</code> - Find logs for sites with a specific tag</li>
                             </ul>
                         </div>
+                        <div class="search-category">
+                            <h5>Date Filters</h5>
+                            <ul>
+                                <li><code>start_time:2023-05-14</code> - Logs after this date</li>
+                                <li><code>end_time:2023-05-20</code> - Logs before this date</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="search-tip">
-                        <strong>Pro Tip:</strong> Combine multiple filters like <code>status:down tag:production</code> for more specific results.
+                        <strong>Pro Tip:</strong> Combine multiple filters like <code>status:down tag:production</code> for more specific results. Use date ranges with <code>start_time:2023-05-14 end_time:2023-05-20</code>.
                     </div>
                 </div>
             </div>
@@ -84,18 +100,18 @@
             </table>
             <div class="table-scroll-container">
                 <table>
-                    <tbody id="logResults">
-                        {% if logs|length > 0 %}
-                            {% for log in logs %}
-                            <tr class="log-row {{ log.status_class }}" data-id="{{ log.id }}">
-                                <td>
-                                    <span class="status-indicator {{ log.status_class }}"></span>
-                                    <span class="status-text">{{ log.status_display }}</span>
-                                </td>
-                                <td>{{ log.name }}</td>
-                                <td class="url-cell">
-                                    <a href="{{ log.url }}" target="_blank">{{ log.url }}</a>
-                                </td>
+                <tbody id="logResults">
+                    {% if logs|length > 0 %}
+                        {% for log in logs %}
+                        <tr class="log-row {{ log.status_class }}" data-id="{{ log.id }}">
+                            <td>
+                                <span class="status-indicator {{ log.status_class }}"></span>
+                                <span class="status-text">{{ log.status_display }}</span>
+                            </td>
+                            <td>{{ log.name }}</td>
+                            <td class="url-cell">
+                                <a href="{{ log.url }}" target="_blank">{{ log.url }}</a>
+                            </td>
                                 <td class="tags-cell">
                                     {% if log.tags %}
                                         {% for tag in log.tags %}
@@ -105,21 +121,21 @@
                                         <span class="no-tags">No tags</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ log.start_time }}</td>
-                                <td>{{ log.end_time }}</td>
-                                <td>{{ log.duration }}</td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
+                            <td>{{ log.start_time }}</td>
+                            <td>{{ log.end_time }}</td>
+                            <td>{{ log.duration }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
                                 <td colspan="7" class="no-logs-message">
-                                    No log data found.
-                                </td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
+                                No log data found.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
         </div>
     </div>
 </div>
