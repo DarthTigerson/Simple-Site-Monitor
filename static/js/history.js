@@ -1,5 +1,6 @@
 // History Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    initDateSuggestions(); // Initialize date suggestions first
     initSearchHelp();
     initSearchFunctionality();
     initTableSorting();
@@ -137,8 +138,34 @@ const suggestions = [
     { field: 'status', operators: [':', '!='], values: ['down', 'healthy', 'slow', 'expiring'], description: 'Filter by site status' },
     { field: 'name', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site name' },
     { field: 'url', operators: [':', '!=', ':*', '!:*'], values: [], description: 'Filter by site URL' },
-    { field: 'tag', operators: [':', '!='], values: [], description: 'Filter by site tag (e.g. tag:production)' }
+    { field: 'tag', operators: [':', '!='], values: [], description: 'Filter by site tag (e.g. tag:production)' },
+    { field: 'start_time', operators: [':'], values: [], description: 'Filter logs after this date' },
+    { field: 'end_time', operators: [':'], values: [], description: 'Filter logs before this date' }
 ];
+
+// Initialize date suggestion values
+function initDateSuggestions() {
+    // For start_time, suggest 2 days ago
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    const formattedTwoDaysAgo = twoDaysAgo.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    
+    // For end_time, suggest today
+    const today = new Date();
+    const formattedToday = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    
+    // Update suggestion values
+    const startTimeField = suggestions.find(s => s.field === 'start_time');
+    const endTimeField = suggestions.find(s => s.field === 'end_time');
+    
+    if (startTimeField) {
+        startTimeField.values = [formattedTwoDaysAgo];
+    }
+    
+    if (endTimeField) {
+        endTimeField.values = [formattedToday];
+    }
+}
 
 // Initialize search help toggling functionality
 function initSearchHelp() {
@@ -285,7 +312,7 @@ function initSearchFunctionality() {
 // Function to highlight filter tags in blue
 function highlightTags(element) {
     const text = element.innerText;
-    const tagRegex = /\b(status|name|url|tag):/g;
+    const tagRegex = /\b(status|name|url|tag|start_time|end_time):/g;
     
     // Save cursor position
     const selection = window.getSelection();
@@ -603,6 +630,50 @@ function parseSearchQuery(query) {
 // Check if a row matches all the provided filters
 function matchesFilters(row, filters) {
     for (const filter of filters) {
+        // Special handling for date filters
+        if (filter.field === 'start_time' || filter.field === 'end_time') {
+            const isStartTime = filter.field === 'start_time';
+            const timeCell = row.cells[isStartTime ? 4 : 5];
+            
+            if (!timeCell) return false;
+            
+            // Get the date component from the row's timestamp
+            const timeText = timeCell.textContent.trim();
+            const rowDate = new Date(timeText);
+            const rowDateStr = rowDate.toISOString().split('T')[0]; // Get just the date part YYYY-MM-DD
+            
+            // Parse the filter value as a date
+            try {
+                // Handle date format YYYY-MM-DD
+                if (filter.value.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    // For start_time, set time to start of day (00:00:00)
+                    // For end_time, set time to end of day (23:59:59)
+                    const filterDate = new Date(filter.value);
+                    if (isNaN(filterDate.getTime())) {
+                        console.warn('Invalid date format in filter:', filter.value);
+                        return false;
+                    }
+                    
+                    // For start_time comparison, we need row date >= filter date
+                    // For end_time comparison, we need row date <= filter date
+                    // Compare just the date parts without time
+                    const filterDateStr = filterDate.toISOString().split('T')[0];
+                    
+                    if (isStartTime && rowDateStr < filterDateStr) return false;
+                    if (!isStartTime && rowDateStr > filterDateStr) return false;
+                } else {
+                    console.warn('Invalid date format in filter:', filter.value);
+                    return false;
+                }
+            } catch (e) {
+                console.warn('Error parsing date:', e);
+                return false;
+            }
+            
+            // This filter passed
+            continue;
+        }
+        
         const value = getRowValue(row, filter.field);
         
         if (value === null) {
@@ -639,8 +710,8 @@ function getRowValue(row, field) {
         'name': 1,
         'url': 2,
         'tag': 3,
-        'start': 4,
-        'end': 5,
+        'start_time': 4,
+        'end_time': 5,
         'duration': 6
     };
     
@@ -749,7 +820,7 @@ function restoreSortingState() {
         
         const sortingState = JSON.parse(savedState);
         if (sortingState.columnIndex === -1) return;
-        
+    
         // Find and click the appropriate header to restore sort
         const headers = document.querySelectorAll('.logs-table th');
         if (headers.length > sortingState.columnIndex) {
@@ -787,7 +858,7 @@ function initTableSorting() {
     
     // Skip the no-logs message row for sorting
     const dataRows = Array.from(rows).filter(row => !row.querySelector('.no-logs-message'));
-    
+        
     // Add sort direction indicators and click handlers to all headers
     headers.forEach((header, index) => {
         // Add sort icons and make headers look clickable
@@ -894,7 +965,7 @@ function sortTable(rows, columnIndex, ascending) {
                 return ascending ? dateA - dateB : dateB - dateA;
             }
         }
-        
+
         // Special handling for Duration column - convert to seconds for comparison
         if (columnIndex === 6) { // Duration column
             return compareDuration(aValue, bValue, ascending);
