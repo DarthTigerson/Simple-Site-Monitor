@@ -174,19 +174,6 @@ function initSearchHelp() {
     const helpContent = document.querySelector('.help-content');
     
     if (helpToggle && helpContent) {
-        // Create backdrop element
-        const backdrop = document.createElement('div');
-        backdrop.className = 'help-backdrop';
-        backdrop.style.position = 'fixed';
-        backdrop.style.top = '0';
-        backdrop.style.left = '0';
-        backdrop.style.width = '100%';
-        backdrop.style.height = '100%';
-        backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-        backdrop.style.display = 'none';
-        backdrop.style.zIndex = '9';
-        document.body.appendChild(backdrop);
-        
         // Toggle help panel
         helpToggle.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -194,40 +181,34 @@ function initSearchHelp() {
             if (helpContent.style.display === 'block') {
                 // Hide panel
                 helpContent.style.opacity = '0';
-                backdrop.style.opacity = '0';
                 
                 setTimeout(() => {
                     helpContent.style.display = 'none';
-                    backdrop.style.display = 'none';
                 }, 200);
             } else {
                 // Show panel
                 helpContent.style.display = 'block';
-                backdrop.style.display = 'block';
                 helpContent.style.opacity = '0';
-                backdrop.style.opacity = '0';
                 
                 setTimeout(() => {
                     helpContent.style.opacity = '1';
-                    backdrop.style.opacity = '1';
                 }, 10);
             }
         });
         
-        // Close help content when clicking backdrop
-        backdrop.addEventListener('click', function() {
-            helpContent.style.opacity = '0';
-            backdrop.style.opacity = '0';
-            
-            setTimeout(() => {
-                helpContent.style.display = 'none';
-                backdrop.style.display = 'none';
-            }, 200);
+        // Close help content when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!helpContent.contains(e.target) && !helpToggle.contains(e.target) && helpContent.style.display === 'block') {
+                helpContent.style.opacity = '0';
+                
+                setTimeout(() => {
+                    helpContent.style.display = 'none';
+                }, 200);
+            }
         });
         
         // Apply transitions
         helpContent.style.transition = 'opacity 0.2s ease';
-        backdrop.style.transition = 'opacity 0.2s ease';
     }
 }
 
@@ -257,9 +238,8 @@ function initSearchFunctionality() {
     // When user focuses on rich input
     richSearchInput.addEventListener('focus', function() {
         const plainText = this.innerText;
-        if (plainText) {
-            showAutocomplete(plainText, autocompleteContainer);
-        }
+        // Show autocomplete suggestions even when the field is empty
+        showInitialSuggestions(autocompleteContainer);
     });
     
     // Handle keyboard navigation in autocomplete and search input
@@ -575,6 +555,56 @@ function showAutocomplete(text, container) {
     } else {
         container.style.display = 'none';
     }
+}
+
+// Function to show initial filter suggestions when the search field is focused
+function showInitialSuggestions(container) {
+    if (!container) return;
+    
+    // Clear existing content
+    container.innerHTML = `
+        <div class="autocomplete-help">
+            Press <kbd>Tab</kbd> to complete, <kbd>↑</kbd><kbd>↓</kbd> to navigate
+        </div>
+    `;
+    
+    // Show initial suggestions for common filters
+    let firstItem = true;
+    
+    // Show one example from each filter type
+    suggestions.forEach(suggestion => {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item' + (firstItem ? ' selected' : '');
+        firstItem = false;
+        
+        div.innerHTML = `
+            <span class="autocomplete-field">${suggestion.field}</span><span class="autocomplete-operator">:</span>
+            <div class="autocomplete-description">${suggestion.description}</div>
+        `;
+        
+        div.addEventListener('click', () => {
+            const richInput = document.getElementById('richSearchInput');
+            const plainInput = document.getElementById('searchQuery');
+            
+            // Insert suggestion
+            plainInput.value = `${suggestion.field}:`;
+            richInput.innerText = `${suggestion.field}:`;
+            
+            // Re-highlight tags
+            highlightTags(richInput);
+            
+            // Focus and position cursor at end
+            richInput.focus();
+            placeCursorAtOffset(richInput, `${suggestion.field}:`.length);
+            
+            container.style.display = 'none';
+        });
+        
+        container.appendChild(div);
+    });
+    
+    // Display the container
+    container.style.display = 'block';
 }
 
 // Perform search on the log data
