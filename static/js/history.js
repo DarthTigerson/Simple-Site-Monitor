@@ -4,7 +4,133 @@ document.addEventListener('DOMContentLoaded', function() {
     initSearchFunctionality();
     initTableSorting();
     restoreSortingState();
+    initExportFunctionality(); // Initialize export functionality
 });
+
+// Initialize export functionality
+function initExportFunctionality() {
+    const exportBtn = document.getElementById('exportBtn');
+    
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            exportTableData();
+        });
+    }
+}
+
+// Export table data as CSV
+function exportTableData() {
+    // Get the table data
+    const tableData = getTableData();
+    
+    // Create filename with current date and time in readable format
+    const now = new Date();
+    
+    // Format date as YYYY-MM-DD
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+    
+    // Format time as HH-MM-SS
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const timeStr = `${hours}-${minutes}-${seconds}`;
+    
+    const filename = `SSM_Export_${dateStr}_${timeStr}.csv`;
+    
+    // Convert to CSV and download
+    const csvContent = convertToCSV(tableData);
+    downloadFile(csvContent, filename, 'text/csv');
+}
+
+// Get data from the table, respecting filters
+function getTableData() {
+    const rows = document.querySelectorAll('#logResults tr.log-row');
+    const headers = document.querySelectorAll('.logs-table thead th');
+    const headerTexts = Array.from(headers).map(header => header.textContent.trim());
+    
+    // Get only visible rows (respecting any filters applied)
+    const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+    
+    // Convert rows to data objects
+    return visibleRows.map(row => {
+        const rowData = {};
+        Array.from(row.cells).forEach((cell, index) => {
+            // For each cell, get the text content
+            let cellValue;
+            
+            // Special handling for status
+            if (index === 0) {
+                cellValue = cell.querySelector('.status-text').textContent.trim();
+            }
+            // Special handling for tags
+            else if (index === 3) {
+                const tagBadges = cell.querySelectorAll('.tag-badge');
+                if (tagBadges.length > 0) {
+                    cellValue = Array.from(tagBadges).map(badge => badge.textContent.trim()).join(', ');
+                } else {
+                    cellValue = 'No tags';
+                }
+            }
+            // Special handling for URL (if it's a link)
+            else if (index === 2) {
+                const link = cell.querySelector('a');
+                cellValue = link ? link.href : cell.textContent.trim();
+            }
+            // Default handling
+            else {
+                cellValue = cell.textContent.trim();
+            }
+            
+            rowData[headerTexts[index]] = cellValue;
+        });
+        return rowData;
+    });
+}
+
+// Convert data to CSV format
+function convertToCSV(data) {
+    if (data.length === 0) return '';
+    
+    const headers = Object.keys(data[0]);
+    
+    // Create CSV header row
+    let csvContent = headers.join(',') + '\n';
+    
+    // Add data rows
+    data.forEach(item => {
+        const row = headers.map(header => {
+            // Escape quotes and wrap in quotes if the value contains comma or quotes
+            const value = String(item[header] || '');
+            const escapedValue = value.replace(/"/g, '""');
+            return value.includes(',') || value.includes('"') ? `"${escapedValue}"` : value;
+        });
+        csvContent += row.join(',') + '\n';
+    });
+    
+    return csvContent;
+}
+
+// Generic file download function
+function downloadFile(content, filename, contentType) {
+    const blob = new Blob([content], { type: contentType });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    
+    document.body.appendChild(link);
+    link.click();
+    
+    setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }, 100);
+}
 
 // Autocomplete suggestions data
 const suggestions = [
