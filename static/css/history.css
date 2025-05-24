@@ -7,21 +7,22 @@ html.history-page {
 
 /* History Page Styles */
 .history-dashboard {
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+    background-color: #323748; /* Lighter blueish-gray */
+    background-image: linear-gradient(to bottom right, #353b4d, #2f3445);
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1) inset;
+    border: 1px solid rgba(100, 130, 180, 0.25); /* Slightly more visible border */
     margin-bottom: 30px;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 150px); /* Subtract header and margins */
-    min-height: 500px; /* Minimum height for smaller screens */
+    height: calc(100vh - 150px);
+    min-height: 500px;
     position: fixed;
-    top: 80px; /* Account for header height */
+    top: 80px;
     left: 20px;
     right: 20px;
-    overflow: hidden; /* Prevent dashboard from scrolling */
+    overflow: hidden;
 }
 
 /* Variables needed for status colors */
@@ -30,222 +31,28 @@ html.history-page {
     --unknown-color: #9e9e9e;  /* Gray color for unknown status */
 }
 
-/* Search Container */
+/* Search Container with unified components */
 .search-container {
     flex: 0 0 auto;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .query-bar {
     display: flex;
-    gap: 10px;
     position: relative;
-}
-
-.search-input-wrapper {
-    position: relative;
-    flex: 1;
-    display: block;
-}
-
-.query-bar input {
-    width: 100%;
-    height: 38px;
-    padding: 8px 15px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-color);
     border-radius: 4px;
-    color: var(--text-color);
-    font-size: 0.95rem;
-    font-family: inherit;
-    position: relative;
-    z-index: 1;
+    overflow: hidden; /* Ensures the child elements don't break the rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    height: 38px; /* Fixed height for all elements */
 }
 
-.query-bar input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.query-bar input::placeholder {
-    color: var(--secondary-text-color);
-    opacity: 0.7;
-}
-
-/* Autocomplete styles */
-.autocomplete-container {
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
-    width: calc(100% - 58px); /* Adjust for search button width and gap */
-    max-height: 300px;
-    overflow-y: auto;
-    background-color: var(--card-bg);
-    border: 2px solid var(--primary-color);
-    border-radius: 8px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-    z-index: 100;
-    display: none;
-    margin-bottom: 15px;
-    backdrop-filter: blur(4px);
-}
-
-.autocomplete-help {
-    padding: 10px 15px;
-    font-size: 0.85rem;
-    color: white;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
-    text-align: center;
-    border-radius: 6px 6px 0 0;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 5;
-}
-
-.autocomplete-help kbd {
-    display: inline-block;
-    padding: 2px 4px;
-    font-size: 0.75rem;
-    font-family: monospace;
-    line-height: 1;
-    color: var(--text-color);
-    background-color: rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    margin: 0 2px;
-}
-
-.autocomplete-item {
-    padding: 10px 15px;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.autocomplete-item:last-child {
-    border-bottom: none;
-}
-
-.autocomplete-item:hover, 
-.autocomplete-item.selected {
-    background-color: rgba(42, 124, 223, 0.15);
-    transform: translateX(3px);
-}
-
-.autocomplete-item.selected {
-    border-left: 3px solid var(--primary-color);
-    background-color: rgba(42, 124, 223, 0.2);
-    font-weight: 500;
-}
-
-.autocomplete-item span {
-    vertical-align: middle;
-}
-
-/* Syntax highlighting colors for autocomplete */
-.autocomplete-field {
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.autocomplete-operator {
-    color: #1e68c5;
-}
-
-.autocomplete-value {
-    color: var(--text-color);
-}
-
-.autocomplete-description {
-    font-size: 0.85rem;
-    color: var(--secondary-text-color);
-    margin-top: 3px;
-}
-
-/* Highlighting layer */
-.query-highlight {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 8px 15px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    white-space: pre;
-    overflow: hidden;
-    pointer-events: none;
-    background: transparent;
-    z-index: 2;
-    /* Position highlight text */
-    text-align: left;
-    line-height: normal;
-    box-sizing: border-box;
-}
-
-/* Use a different approach that won't mess with cursor position */
-.search-input-wrapper input {
-    color: var(--text-color);
-}
-
-/* The highlight elements need to be positioned as an overlay */
-.query-highlight {
-    color: transparent;
-    mix-blend-mode: multiply;
-}
-
-.highlight-field {
-    color: var(--primary-color) !important;
-    font-weight: 600;
-    background-color: rgba(42, 124, 223, 0.1);
-    border-radius: 3px;
-}
-
-.highlight-operator {
-    color: #1e68c5 !important;
-}
-
-.highlight-value {
-    color: transparent !important;
-}
-
-/* Search button */
-#searchBtn {
+/* Adjust the clear button */
+.btn-clear {
     padding: 8px;
-    background-color: var(--primary-color);
+    background: #333333; /* Darker background to blend with search input */
     color: white;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 38px;
-}
-
-#searchBtn:hover {
-    background-color: #1e68c5;
-}
-
-.search-icon {
-    width: 20px;
-    height: 20px;
-}
-
-/* Export button styling */
-.btn-export {
-    padding: 8px;
-    background: linear-gradient(135deg, #e6a819 0%, #ffa500 50%, #e69500 100%);
-    color: white;
-    border: none;
-    border-radius: 4px;
+    border-radius: 0; /* Remove border radius for middle components */
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -253,19 +60,88 @@ html.history-page {
     justify-content: center;
     min-width: 38px;
     height: 38px;
-    margin: 0 5px;
+    margin: 0;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.btn-clear:hover {
+    background: #444444;
+}
+
+/* Search input wrapper with border */
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    display: block;
+    height: 38px;
+    border-top: 2px solid #3273c4; /* Add blue top border */
+    border-bottom: 2px solid #3273c4; /* Add blue bottom border */
+}
+
+/* Content editable div styling - unified with buttons */
+#richSearchInput {
+    width: 100%;
+    height: 38px;
+    padding: 8px 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: none; /* Remove border */
+    border-radius: 0; /* Remove border radius */
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-family: inherit;
+    overflow: hidden;
+    white-space: nowrap;
+    outline: none;
+    line-height: 22px; /* Align text vertically */
+    box-sizing: border-box; /* Ensure padding is included in height */
+    position: relative; /* For positioning the ghost overlay */
+}
+
+#richSearchInput:focus {
+    background-color: rgba(0, 0, 0, 0.25); /* Slightly darker when focused */
+    box-shadow: none; /* Remove focus glow */
+}
+
+/* Search button with gradient */
+#searchBtn {
+    padding: 8px;
+    background-image: linear-gradient(135deg, #1a4387 0%, #3273c4 50%, #1e68c5 100%);
+    color: white;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+}
+
+#searchBtn:hover {
+    background-image: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #2563eb 100%);
+}
+
+/* Export button styling with gradient */
+.btn-export {
+    padding: 8px;
+    background-image: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #d97706 100%);
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    margin: 0;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .btn-export:hover {
-    background: linear-gradient(135deg, #ffa500 0%, #ffb733 50%, #ffa500 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.export-icon {
-    width: 20px;
-    height: 20px;
+    background-image: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
 }
 
 /* Search Help Row */
@@ -273,7 +149,7 @@ html.history-page {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 5px;
+    margin-top: 0px; /* Reduced from 10px to bring it closer to the search bar */
 }
 
 /* Search Help Section */
@@ -286,7 +162,7 @@ html.history-page {
     align-items: center;
     gap: 5px;
     color: var(--secondary-text-color);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: color 0.2s;
 }
@@ -298,18 +174,18 @@ html.history-page {
 .help-content {
     display: none;
     position: fixed;
-    top: 145px;
+    top: 135px; /* Adjusted for the unified search bar */
     left: 30px;
     right: 30px;
     z-index: 100;
-    background-color: #2a2f45; /* Slightly blueish dark background to distinguish from main content */
+    background-color: #2a2f45;
     background-image: linear-gradient(to bottom right, #2a2f45, #252a3d);
-    border: 1px solid #3273c4; /* Brighter blue border */
+    border: 1px solid #3273c4;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
     width: auto;
-    max-height: calc(100vh - 225px);
+    max-height: calc(100vh - 200px);
     overflow-y: auto;
 }
 
@@ -317,11 +193,12 @@ html.history-page {
     margin-top: 0;
     margin-bottom: 16px;
     color: var(--text-color);
-    font-size: 1.1rem;
+    font-size: 1.25rem; /* Slightly larger */
     font-weight: 600;
-    border-bottom: 1px solid #3273c4; /* Match border color */
-    padding-bottom: 8px;
+    border-bottom: 1px solid #3273c4;
+    padding-bottom: 10px;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
 }
 
 .search-categories {
@@ -335,10 +212,11 @@ html.history-page {
 }
 
 .search-category h5 {
-    margin: 0 0 8px;
-    font-size: 0.9rem;
+    margin: 0 0 10px;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--primary-color);
+    letter-spacing: 0.5px;
 }
 
 .help-content ul {
@@ -403,13 +281,15 @@ html.history-page {
 /* Results info */
 .results-info {
     color: var(--secondary-text-color);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     text-align: right;
+    margin-top: 6px;
 }
 
 #resultCount {
     font-weight: 600;
     color: var(--primary-color);
+    font-size: 1rem;
 }
 
 /* Logs Container */
@@ -421,19 +301,19 @@ html.history-page {
     min-height: 0; /* Important for flexbox to respect child overflow */
 }
 
-/* Logs Table */
+/* Improved table styling */
 .logs-table {
     overflow-x: auto;
-    overflow-y: hidden; /* Scroll happens in inner container */
-    flex: 1; /* Take all available space */
+    overflow-y: hidden;
+    flex: 1;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: var(--light-color);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(100, 130, 180, 0.25);
+    background-color: #2a2d3a;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-bottom: 0; /* Remove bottom margin since we removed pagination */
+    margin-bottom: 0;
     overflow: hidden;
 }
 
@@ -469,9 +349,9 @@ html.history-page {
 
 .logs-table thead th:first-child,
 .table-scroll-container td:first-child {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
 }
 
 /* Remove the overflowing tbody style as we now have a dedicated scroll container */
@@ -489,19 +369,23 @@ html.history-page {
 /* Add gradient background to the header row */
 .logs-table thead tr {
     background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Update table header styles */
+/* Table header styling */
 .logs-table th {
-    background-color: transparent; /* Let gradient show through */
-    padding: 14px 15px;
+    background-color: transparent;
+    padding: 16px 20px; /* Increased padding */
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     white-space: nowrap;
     position: relative;
-    text-align: center;
+    text-align: left;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 /* Sortable table headers */
@@ -519,13 +403,13 @@ html.history-page {
 .sort-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* Left alignment for all headers */
 }
 
 .logs-table th:nth-child(2) .sort-header,
 .logs-table th:nth-child(3) .sort-header,
 .logs-table th:nth-child(4) .sort-header {
-    justify-content: flex-start;
+    justify-content: flex-start; /* Ensure left alignment for previously centered columns */
 }
 
 .sort-icon {
@@ -573,7 +457,7 @@ th.sorting-desc .sort-icon:after {
 .logs-table td:nth-child(5),
 .logs-table td:nth-child(6),
 .logs-table td:nth-child(7) {
-    text-align: center;
+    text-align: left; /* Make all data cells left-aligned */
 }
 
 /* Ensure alignment between header and body */
@@ -585,9 +469,9 @@ th.sorting-desc .sort-icon:after {
 
 /* Rounded corners for header */
 .logs-table th:first-child {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
     text-align: center;
     border-top-left-radius: 8px;
 }
@@ -595,9 +479,9 @@ th.sorting-desc .sort-icon:after {
 /* Status column styling */
 .logs-table td:first-child {
     position: relative;
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
     text-align: left;
     padding-left: 35px;
 }
@@ -616,12 +500,13 @@ th.sorting-desc .sort-icon:after {
     font-weight: 500;
     white-space: nowrap;
     text-align: left;
+    font-size: 0.9rem;
 }
 
 /* Perfect status indicator positioning */
 .status-indicator {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     position: absolute;
     left: 15px;
@@ -642,7 +527,7 @@ tr:hover .status-indicator {
 }
 
 .log-row:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(50, 120, 220, 0.05); /* Subtle blue highlight */
     transform: translateY(-1px);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -685,11 +570,14 @@ tr:hover .status-indicator {
     color: var(--primary-color);
     text-decoration: none;
     transition: color 0.2s;
+    font-size: 0.9rem;
+    opacity: 0.9;
 }
 
 .url-cell a:hover {
     text-decoration: underline;
-    color: var(--primary-color);
+    color: #4d8cce;
+    opacity: 1;
 }
 
 /* Status indicators and text */
@@ -912,31 +800,6 @@ tr:hover .status-indicator {
     font-style: italic;
 }
 
-/* Content editable div styling - will look like the input but support rich text */
-#richSearchInput {
-    width: 100%;
-    height: 38px;
-    padding: 8px 15px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 2px solid var(--primary-color);
-    border-radius: 4px;
-    color: var(--text-color);
-    font-size: 0.95rem;
-    font-family: inherit;
-    overflow: hidden;
-    white-space: nowrap;
-    outline: none;
-    line-height: 22px; /* Align text vertically */
-    box-sizing: border-box; /* Ensure padding is included in height */
-    position: relative; /* For positioning the ghost overlay */
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-#richSearchInput:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
-}
-
 /* Hide the original input but keep it in DOM for form submission */
 #searchQuery {
     position: absolute;
@@ -963,7 +826,7 @@ tr:hover .status-indicator {
 
 .tag-badge {
     display: inline-block;
-    padding: 3px 6px;
+    padding: 3px 8px;
     margin: 2px;
     font-size: 0.75rem;
     font-weight: 500;
@@ -971,9 +834,10 @@ tr:hover .status-indicator {
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
-    border-radius: 4px;
+    border-radius: 12px; /* More rounded */
     background-color: var(--primary-color);
     color: white;
+    letter-spacing: 0.3px;
 }
 
 .no-tags {
@@ -1031,9 +895,9 @@ tr:hover .status-indicator {
 
 /* Status column specific alignment */
 .logs-table th:first-child {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
     text-align: center; /* Keep header centered */
     border-top-left-radius: 8px;
 }
@@ -1052,13 +916,14 @@ tr:hover .status-indicator {
     text-align: left;
 }
 
-/* Cell styling */
+/* Cell styling with optimized padding */
 .logs-table td {
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
+    padding: 12px 20px; /* Increased horizontal padding */
+    border-bottom: 1px solid rgba(100, 130, 180, 0.1);
     color: var(--text-color);
     vertical-align: middle;
-    height: 52px;
+    height: 56px; /* Slightly taller rows */
+    font-size: 0.9rem;
 }
 
 /* Remove pagination-related styles */
@@ -1131,4 +996,80 @@ tr.page-visible {
     color: #888;
     opacity: 0.9;
     font-weight: 400;
+}
+
+/* Keyboard shortcut styling in help content */
+.search-tip kbd {
+    display: inline-block;
+    padding: 2px 5px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    line-height: 1;
+    color: #f8f9fa;
+    background-color: #343a40;
+    border: 1px solid #495057;
+    border-radius: 3px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    margin: 0 2px;
+}
+
+/* Ensure all table cells use left alignment, especially the date/time/duration columns */
+.logs-table th,
+.logs-table td {
+    text-align: left;
+}
+
+/* Override any specific alignment rules for these columns */
+.logs-table th:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table th:nth-child(7),
+.logs-table td:nth-child(5),
+.logs-table td:nth-child(6),
+.logs-table td:nth-child(7) {
+    text-align: left !important; /* Use !important to override any other rules */
+}
+
+/* Also update the sort header alignment for these columns */
+.logs-table th:nth-child(5) .sort-header,
+.logs-table th:nth-child(6) .sort-header,
+.logs-table th:nth-child(7) .sort-header {
+    justify-content: flex-start !important;
+}
+
+/* Optimize column widths */
+.logs-table th:nth-child(2),
+.logs-table td:nth-child(2) {
+    width: 140px;
+    min-width: 140px;
+}
+
+.logs-table th:nth-child(3),
+.logs-table td:nth-child(3) {
+    width: 220px;
+    min-width: 220px;
+}
+
+.logs-table th:nth-child(4),
+.logs-table td:nth-child(4) {
+    width: 130px;
+    min-width: 130px;
+}
+
+.logs-table th:nth-child(5),
+.logs-table td:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table td:nth-child(6) {
+    width: 150px;
+    min-width: 150px;
+}
+
+.logs-table th:nth-child(7),
+.logs-table td:nth-child(7) {
+    width: 120px;
+    min-width: 120px;
+}
+
+/* Add subtle zebra striping for better row distinction */
+.log-row:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
 }
