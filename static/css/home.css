@@ -27,9 +27,11 @@ html, body {
 /* Sites Dashboard Section */
 .sites-dashboard {
     flex-grow: 1;
-    background-color: var(--card-bg);
+    background-color: #323748; /* Lighter blueish-gray to match history page */
+    background-image: linear-gradient(to bottom right, #353b4d, #2f3445);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.1) inset;
+    border: 1px solid rgba(100, 130, 180, 0.25);
     padding: 15px;
     overflow: hidden;
     display: flex;
@@ -135,12 +137,13 @@ html, body {
     flex-wrap: wrap;
     gap: 15px;
     padding: 15px;
-    background-color: var(--card-bg);
+    background-color: #2a2d3a; /* Match table background from history page */
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     max-height: 140px;
     overflow-y: hidden;
     flex-shrink: 0;
+    margin-bottom: 10px; /* Reduced margin */
 }
 
 .status-card {
@@ -339,32 +342,36 @@ html, body {
     overflow-x: auto;
     overflow-y: hidden;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.05);
-    background-color: rgba(0,0,0,0.15);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid rgba(100, 130, 180, 0.25);
+    background-color: #2a2d3a;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
 }
 
 .logs-table th {
     background-color: transparent;
-    padding: 14px 15px;
-    text-align: center;
+    padding: 16px 20px; /* Increased padding */
+    text-align: left; /* All headers left-aligned */
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     white-space: nowrap;
     position: relative;
+    font-size: 0.95rem;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .logs-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 12px 20px; /* Increased horizontal padding */
+    border-bottom: 1px solid rgba(100, 130, 180, 0.1);
     color: var(--text-color);
     vertical-align: middle;
-    height: 52px;
+    height: 56px; /* Slightly taller rows */
+    font-size: 0.9rem;
+    text-align: left; /* All cells left-aligned */
 }
 
 .logs-table th.sortable {
@@ -383,9 +390,9 @@ html, body {
 }
 
 .log-row:hover {
-    background-color: rgba(255,255,255,0.05);
+    background-color: rgba(50, 120, 220, 0.05); /* Subtle blue highlight */
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Row background colors based on status */
@@ -411,14 +418,14 @@ html, body {
 
 /* Status indicator - the colored dot */
 .status-indicator {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     position: absolute;
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    display: block;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -806,7 +813,7 @@ tr:hover .status-indicator {
 .sort-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start !important;
 }
 
 .logs-table th:nth-child(2) .sort-header,
@@ -859,7 +866,7 @@ th.sorting-desc .sort-icon:after {
 
 .tag-badge {
     display: inline-block;
-    padding: 3px 6px;
+    padding: 3px 8px;
     margin: 2px;
     font-size: 0.75rem;
     font-weight: 500;
@@ -867,9 +874,10 @@ th.sorting-desc .sort-icon:after {
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
-    border-radius: 4px;
+    border-radius: 12px; /* More rounded */
     background-color: var(--primary-color);
     color: white;
+    letter-spacing: 0.3px;
 }
 
 .no-tags {
@@ -1176,7 +1184,7 @@ tr:hover .status-indicator {
 .sort-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start !important;
 }
 
 .sort-icon {
@@ -1402,7 +1410,7 @@ th.sorting-desc .sort-icon:after {
 .sort-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start !important;
 }
 
 /* Text columns (Status content, Name, URL, Tags) get left-aligned content */
