@@ -1,8 +1,15 @@
 # Simple Site Monitor
 
+## v0.1.5 - History Page Beef Up
+### UI
+- [#14] Added `Export` button yp History page
+- [#20] Improved query search with datetime and UI improvements
+
+
 ## v0.1.4 - Frontend updates and bug fixes
 ### UI
 - [#13] Interface Improvements and history page table fix
+
 
 ## v0.1.3 - Added Tags, UI Table Improvement and Bug Fixes
 ### UI
