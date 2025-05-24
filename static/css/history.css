@@ -7,21 +7,22 @@ html.history-page {
 
 /* History Page Styles */
 .history-dashboard {
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
+    background-color: #323748; /* Lighter blueish-gray */
+    background-image: linear-gradient(to bottom right, #353b4d, #2f3445);
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1) inset;
+    border: 1px solid rgba(100, 130, 180, 0.25); /* Slightly more visible border */
     margin-bottom: 30px;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 150px); /* Subtract header and margins */
-    min-height: 500px; /* Minimum height for smaller screens */
+    height: calc(100vh - 150px);
+    min-height: 500px;
     position: fixed;
-    top: 80px; /* Account for header height */
+    top: 80px;
     left: 20px;
     right: 20px;
-    overflow: hidden; /* Prevent dashboard from scrolling */
+    overflow: hidden;
 }
 
 /* Variables needed for status colors */
@@ -33,7 +34,7 @@ html.history-page {
 /* Search Container with unified components */
 .search-container {
     flex: 0 0 auto;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .query-bar {
@@ -67,12 +68,14 @@ html.history-page {
     background: #444444;
 }
 
-/* Search input wrapper */
+/* Search input wrapper with border */
 .search-input-wrapper {
     position: relative;
     flex: 1;
     display: block;
     height: 38px;
+    border-top: 2px solid #3273c4; /* Add blue top border */
+    border-bottom: 2px solid #3273c4; /* Add blue bottom border */
 }
 
 /* Content editable div styling - unified with buttons */
@@ -99,15 +102,15 @@ html.history-page {
     box-shadow: none; /* Remove focus glow */
 }
 
-/* Search button */
+/* Search button with gradient */
 #searchBtn {
     padding: 8px;
-    background-color: var(--primary-color);
+    background-image: linear-gradient(135deg, #1a4387 0%, #3273c4 50%, #1e68c5 100%);
     color: white;
     border: none;
-    border-radius: 0; /* Remove left border radius */
+    border-radius: 0;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -115,13 +118,17 @@ html.history-page {
     height: 38px;
 }
 
-/* Export button styling - match other buttons */
+#searchBtn:hover {
+    background-image: linear-gradient(135deg, #2563eb 0%, #3b82f6 50%, #2563eb 100%);
+}
+
+/* Export button styling with gradient */
 .btn-export {
     padding: 8px;
-    background-color: #e6a819; /* Simplified gradient */
+    background-image: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #d97706 100%);
     color: white;
     border: none;
-    border-radius: 0 4px 4px 0; /* Only round the right corners */
+    border-radius: 0 4px 4px 0;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -134,7 +141,7 @@ html.history-page {
 }
 
 .btn-export:hover {
-    background-color: #ffa500;
+    background-image: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
 }
 
 /* Search Help Row */
@@ -300,9 +307,9 @@ html.history-page {
     overflow-y: hidden;
     flex: 1;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background-color: var(--light-color);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(100, 130, 180, 0.25);
+    background-color: #2a2d3a; /* Darker than dashboard, but still readable */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     width: 100%;
     display: flex;
     flex-direction: column;
