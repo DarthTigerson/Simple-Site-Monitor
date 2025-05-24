@@ -301,14 +301,14 @@ html.history-page {
     min-height: 0; /* Important for flexbox to respect child overflow */
 }
 
-/* Logs Table */
+/* Improved table styling */
 .logs-table {
     overflow-x: auto;
     overflow-y: hidden;
     flex: 1;
     border-radius: 8px;
     border: 1px solid rgba(100, 130, 180, 0.25);
-    background-color: #2a2d3a; /* Darker than dashboard, but still readable */
+    background-color: #2a2d3a;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     width: 100%;
     display: flex;
@@ -349,9 +349,9 @@ html.history-page {
 
 .logs-table thead th:first-child,
 .table-scroll-container td:first-child {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
 }
 
 /* Remove the overflowing tbody style as we now have a dedicated scroll container */
@@ -372,10 +372,10 @@ html.history-page {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Update table header styles */
+/* Table header styling */
 .logs-table th {
     background-color: transparent;
-    padding: 14px 15px;
+    padding: 16px 20px; /* Increased padding */
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
@@ -469,9 +469,9 @@ th.sorting-desc .sort-icon:after {
 
 /* Rounded corners for header */
 .logs-table th:first-child {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
     text-align: center;
     border-top-left-radius: 8px;
 }
@@ -479,9 +479,9 @@ th.sorting-desc .sort-icon:after {
 /* Status column styling */
 .logs-table td:first-child {
     position: relative;
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
     text-align: left;
     padding-left: 35px;
 }
@@ -527,7 +527,7 @@ tr:hover .status-indicator {
 }
 
 .log-row:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(50, 120, 220, 0.05); /* Subtle blue highlight */
     transform: translateY(-1px);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -895,9 +895,9 @@ tr:hover .status-indicator {
 
 /* Status column specific alignment */
 .logs-table th:first-child {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
     text-align: center; /* Keep header centered */
     border-top-left-radius: 8px;
 }
@@ -916,13 +916,13 @@ tr:hover .status-indicator {
     text-align: left;
 }
 
-/* Cell styling */
+/* Cell styling with optimized padding */
 .logs-table td {
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
+    padding: 12px 20px; /* Increased horizontal padding */
+    border-bottom: 1px solid rgba(100, 130, 180, 0.1);
     color: var(--text-color);
     vertical-align: middle;
-    height: 52px;
+    height: 56px; /* Slightly taller rows */
     font-size: 0.9rem;
 }
 
@@ -1034,4 +1034,42 @@ tr.page-visible {
 .logs-table th:nth-child(6) .sort-header,
 .logs-table th:nth-child(7) .sort-header {
     justify-content: flex-start !important;
+}
+
+/* Optimize column widths */
+.logs-table th:nth-child(2),
+.logs-table td:nth-child(2) {
+    width: 140px;
+    min-width: 140px;
+}
+
+.logs-table th:nth-child(3),
+.logs-table td:nth-child(3) {
+    width: 220px;
+    min-width: 220px;
+}
+
+.logs-table th:nth-child(4),
+.logs-table td:nth-child(4) {
+    width: 130px;
+    min-width: 130px;
+}
+
+.logs-table th:nth-child(5),
+.logs-table td:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table td:nth-child(6) {
+    width: 150px;
+    min-width: 150px;
+}
+
+.logs-table th:nth-child(7),
+.logs-table td:nth-child(7) {
+    width: 120px;
+    min-width: 120px;
+}
+
+/* Add subtle zebra striping for better row distinction */
+.log-row:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
 }
