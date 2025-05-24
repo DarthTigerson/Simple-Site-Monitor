@@ -75,7 +75,7 @@
                 </table>
                 <div class="table-scroll-container">
                     <table>
-                        <tbody>
+                        <tbody id="logResults">
                             {% for log in logs %}
                             <tr class="log-row 
                                 {% if log.status == 'down' %}error
@@ -138,7 +138,7 @@
                             
                             {% if logs|length == 0 %}
                             <tr>
-                                <td colspan="8" class="no-sites-message">
+                                <td colspan="8" class="no-logs-message">
                                     No monitored sites found. Add sites in the settings.
                                 </td>
                             </tr>

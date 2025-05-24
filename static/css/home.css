@@ -326,9 +326,9 @@ html, body {
 .logs-container {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     flex: 1;
-    min-height: 0;
+    overflow: hidden;
+    min-height: 0; /* Important for flexbox to respect child overflow */
 }
 
 .sites-table-container {
@@ -341,39 +341,78 @@ html, body {
 .logs-table {
     overflow-x: auto;
     overflow-y: hidden;
+    flex: 1;
     border-radius: 8px;
     border: 1px solid rgba(100, 130, 180, 0.25);
     background-color: #2a2d3a;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    width: 100%;
     display: flex;
     flex-direction: column;
+    margin-bottom: 0;
+    overflow: hidden;
 }
 
+.table-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0; /* Critical for nested flex containers */
+    display: flex;
+    flex-direction: column;
+    max-height: none; /* Remove any max-height constraints */
+}
+
+.table-scroll-container table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+.logs-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+/* Ensure header columns and body columns align perfectly */
+.logs-table thead th,
+.table-scroll-container td {
+    width: auto;
+}
+
+/* Sticky header */
+.logs-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Add gradient background to the header row */
+.logs-table thead tr {
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Table header styling */
 .logs-table th {
     background-color: transparent;
-    padding: 16px 20px !important;
-    text-align: left !important;
+    padding: 16px 20px;
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     white-space: nowrap;
     position: relative;
+    text-align: left;
     font-size: 0.95rem;
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
-.logs-table td {
-    padding: 12px 20px !important;
-    border-bottom: 1px solid rgba(100, 130, 180, 0.1);
-    color: var(--text-color);
-    vertical-align: middle;
-    height: 56px; /* Slightly taller rows */
-    font-size: 0.9rem;
-    text-align: left !important;
-}
-
+/* Sortable table headers */
 .logs-table th.sortable {
     cursor: pointer;
     position: relative;
@@ -382,41 +421,86 @@ html, body {
 }
 
 .logs-table th.sortable:hover {
-    background-color: rgba(0,0,0,0.25);
+    background-color: rgba(0, 0, 0, 0.25);
 }
 
-.log-row {
-    transition: all 0.25s ease;
+.sort-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.log-row:hover {
-    background-color: rgba(50, 120, 220, 0.05); /* Subtle blue highlight */
-    transform: translateY(-1px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.sort-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    position: relative;
 }
 
-/* Row background colors based on status */
-.log-row.error {
-    background-color: rgba(255, 69, 58, 0.1);
+th.sorting-asc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid white;
 }
 
-.log-row.warning {
-    background-color: rgba(255, 196, 0, 0.1);
+th.sorting-desc .sort-icon:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid white;
 }
 
-.log-row.success {
-    background-color: rgba(52, 199, 89, 0.1);
+/* Cell styling with optimized padding */
+.logs-table td {
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(100, 130, 180, 0.1);
+    color: var(--text-color);
+    vertical-align: middle;
+    height: 56px;
+    font-size: 0.9rem;
 }
 
-.log-row.expiring {
-    background-color: rgba(230, 126, 34, 0.1);
+/* Status column specific alignment */
+.logs-table th:first-child {
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
+    text-align: center;
+    border-top-left-radius: 8px;
 }
 
-.log-row.unknown {
-    background-color: rgba(158, 158, 158, 0.1);
+.logs-table th:last-child {
+    border-top-right-radius: 8px;
 }
 
-/* Status indicator - the colored dot */
+.logs-table td:first-child {
+    position: relative;
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
+    text-align: left;
+    padding-left: 35px;
+}
+
+/* Status text styling */
+.status-text {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: 500;
+    white-space: nowrap;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+/* Perfect status indicator positioning */
 .status-indicator {
     width: 8px;
     height: 8px;
@@ -429,52 +513,226 @@ html, body {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Make status indicators slightly larger on hover for interactivity */
 tr:hover .status-indicator {
-    transform: translateY(-50%) scale(1.3);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-50%) scale(1.2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
-.status-indicator.error {
-    background-color: var(--danger-color);
-    box-shadow: 0 0 5px rgba(255, 69, 58, 0.5);
+/* Row styling based on status */
+.log-row {
+    transition: background-color 0.2s ease;
+    background-color: var(--background-color) !important;
+    border-left: 3px solid transparent;
 }
 
-.status-indicator.warning {
-    background-color: var(--warning-color);
-    box-shadow: 0 0 5px rgba(255, 196, 0, 0.5);
+/* Status-specific row styling with brighter colors */
+.log-row.error {
+    background-color: rgba(229, 62, 62, 0.15) !important;
+    border-left: 3px solid rgb(229, 62, 62);
 }
 
-.status-indicator.success {
-    background-color: var(--success-color);
-    box-shadow: 0 0 5px rgba(0, 128, 0, 0.5);
+.log-row.warning {
+    background-color: rgba(221, 107, 32, 0.15) !important;
+    border-left: 3px solid rgb(221, 107, 32);
 }
 
-.status-indicator.expiring {
-    background-color: var(--expiring-color);
-    box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
+.log-row.success {
+    background-color: rgba(56, 161, 105, 0.15) !important;
+    border-left: 3px solid rgb(56, 161, 105);
 }
 
-.status-indicator.unknown {
-    background-color: var(--unknown-color);
-    box-shadow: 0 0 5px rgba(158, 158, 158, 0.5);
+.log-row.expiring {
+    background-color: rgba(237, 137, 54, 0.15) !important;
+    border-left: 3px solid rgb(237, 137, 54);
 }
 
+.log-row.unknown {
+    background-color: rgba(113, 128, 150, 0.15) !important;
+    border-left: 3px solid rgb(113, 128, 150);
+}
+
+/* Hover effects with more intense colors */
+.log-row.error:hover {
+    background-color: rgba(229, 62, 62, 0.25) !important;
+}
+
+.log-row.warning:hover {
+    background-color: rgba(221, 107, 32, 0.25) !important;
+}
+
+.log-row.success:hover {
+    background-color: rgba(56, 161, 105, 0.25) !important;
+}
+
+.log-row.expiring:hover {
+    background-color: rgba(237, 137, 54, 0.25) !important;
+}
+
+.log-row.unknown:hover {
+    background-color: rgba(113, 128, 150, 0.25) !important;
+}
+
+/* URL cell styling */
 .url-cell {
     max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: left;
 }
 
 .url-cell a {
     color: var(--primary-color);
     text-decoration: none;
     transition: color 0.2s;
+    font-size: 0.9rem;
+    opacity: 0.9;
 }
 
 .url-cell a:hover {
     text-decoration: underline;
+    color: #4d8cce;
+    opacity: 1;
+}
+
+/* Tags styling */
+.tags-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+.tag-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    margin: 2px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    letter-spacing: 0.3px;
+}
+
+.no-tags {
+    color: var(--secondary-text-color);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* SSL Days styling */
+.ssl-days-cell {
+    white-space: nowrap;
+}
+
+.ssl-days {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.ssl-days.expiring {
+    background-color: rgba(230, 126, 34, 0.2);
+    color: var(--expiring-color);
+    border: 1px solid rgba(230, 126, 34, 0.3);
+}
+
+.ssl-days.not-monitored {
+    color: var(--secondary-text-color);
+    font-style: italic;
+}
+
+/* No logs message */
+.no-logs-message {
+    padding: 30px !important;
+    text-align: center;
+    color: var(--secondary-text-color);
+    font-style: italic;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Add subtle zebra striping for better row distinction */
+.log-row:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .logs-table th:nth-child(5),
+    .logs-table td:nth-child(5),
+    .logs-table th:nth-child(6),
+    .logs-table td:nth-child(6) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .logs-table th:nth-child(4),
+    .logs-table td:nth-child(4) {
+        display: none;
+    }
+    
+    .logs-table td:first-child {
+        padding-left: 30px;
+    }
+    
+    .status-indicator {
+        left: 10px;
+    }
+    
+    .tags-cell {
+        max-width: 100px;
+    }
+    
+    .tag-badge {
+        padding: 2px 4px;
+        font-size: 0.7rem;
+    }
+}
+
+/* Optimize column widths */
+.logs-table th:nth-child(2),
+.logs-table td:nth-child(2) {
+    width: 140px;
+    min-width: 140px;
+}
+
+.logs-table th:nth-child(3),
+.logs-table td:nth-child(3) {
+    width: 220px;
+    min-width: 220px;
+}
+
+.logs-table th:nth-child(4),
+.logs-table td:nth-child(4) {
+    width: 130px;
+    min-width: 130px;
+}
+
+.logs-table th:nth-child(5),
+.logs-table td:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table td:nth-child(6) {
+    width: 150px;
+    min-width: 150px;
+}
+
+.logs-table th:nth-child(7),
+.logs-table td:nth-child(7) {
+    width: 150px;
+    min-width: 150px;
+}
+
+.logs-table th:nth-child(8),
+.logs-table td:nth-child(8) {
+    width: 120px;
+    min-width: 120px;
 }
 
 /* Site Grid and Cards */
@@ -1119,23 +1377,23 @@ tr:hover .status-indicator {
 
 /* Row background colors based on status */
 .log-row.error {
-    background-color: rgba(255, 69, 58, 0.05);
+    background-color: rgba(255, 69, 58, 0.1);
 }
 
 .log-row.warning {
-    background-color: rgba(255, 196, 0, 0.05);
+    background-color: rgba(255, 196, 0, 0.1);
 }
 
 .log-row.success {
-    background-color: rgba(52, 199, 89, 0.05);
+    background-color: rgba(52, 199, 89, 0.1);
 }
 
 .log-row.expiring {
-    background-color: rgba(230, 126, 34, 0.05);
+    background-color: rgba(230, 126, 34, 0.1);
 }
 
 .log-row.unknown {
-    background-color: rgba(158, 158, 158, 0.05);
+    background-color: rgba(158, 158, 158, 0.1);
 }
 
 /* URL styling */
