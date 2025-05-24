@@ -1005,3 +1005,26 @@ tr.page-visible {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     margin: 0 2px;
 }
+
+/* Ensure all table cells use left alignment, especially the date/time/duration columns */
+.logs-table th,
+.logs-table td {
+    text-align: left;
+}
+
+/* Override any specific alignment rules for these columns */
+.logs-table th:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table th:nth-child(7),
+.logs-table td:nth-child(5),
+.logs-table td:nth-child(6),
+.logs-table td:nth-child(7) {
+    text-align: left !important; /* Use !important to override any other rules */
+}
+
+/* Also update the sort header alignment for these columns */
+.logs-table th:nth-child(5) .sort-header,
+.logs-table th:nth-child(6) .sort-header,
+.logs-table th:nth-child(7) .sort-header {
+    justify-content: flex-start !important;
+}
