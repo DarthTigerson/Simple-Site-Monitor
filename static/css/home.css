@@ -351,8 +351,8 @@ html, body {
 
 .logs-table th {
     background-color: transparent;
-    padding: 16px 20px; /* Increased padding */
-    text-align: left; /* All headers left-aligned */
+    padding: 16px 20px !important;
+    text-align: left !important;
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
@@ -365,13 +365,13 @@ html, body {
 }
 
 .logs-table td {
-    padding: 12px 20px; /* Increased horizontal padding */
+    padding: 12px 20px !important;
     border-bottom: 1px solid rgba(100, 130, 180, 0.1);
     color: var(--text-color);
     vertical-align: middle;
     height: 56px; /* Slightly taller rows */
     font-size: 0.9rem;
-    text-align: left; /* All cells left-aligned */
+    text-align: left !important;
 }
 
 .logs-table th.sortable {
@@ -1356,7 +1356,7 @@ th.sorting-desc .sort-icon:after {
 
 /* Headers alignment */
 .logs-table th {
-    text-align: center;
+    text-align: left !important;
 }
 
 /* Status column */
@@ -1495,4 +1495,59 @@ th.sorting-desc .sort-icon:after {
 /* Add gradient background to table headers */
 .logs-table thead tr {
     background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
+}
+
+/* Ensure ALL table headers are left-aligned */
+.logs-table th {
+    text-align: left !important;
+}
+
+/* Ensure ALL table cells are left-aligned */
+.logs-table td {
+    text-align: left !important;
+}
+
+/* Specifically target columns that might have overriding styles */
+.logs-table th:nth-child(1),
+.logs-table th:nth-child(2),
+.logs-table th:nth-child(3),
+.logs-table th:nth-child(4),
+.logs-table th:nth-child(5),
+.logs-table th:nth-child(6),
+.logs-table th:nth-child(7),
+.logs-table td:nth-child(1),
+.logs-table td:nth-child(2),
+.logs-table td:nth-child(3),
+.logs-table td:nth-child(4),
+.logs-table td:nth-child(5),
+.logs-table td:nth-child(6),
+.logs-table td:nth-child(7) {
+    text-align: left !important;
+}
+
+/* Ensure sort headers contain flex elements that are left-aligned */
+.sort-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start !important;
+}
+
+/* Apply consistent padding for better alignment */
+.logs-table th {
+    padding: 16px 20px !important;
+}
+
+.logs-table td {
+    padding: 12px 20px !important;
+}
+
+/* Target specific status column to ensure proper alignment with status indicator */
+.logs-table td:first-child {
+    padding-left: 35px !important;
+    position: relative;
+}
+
+/* Add subtle zebra striping for better row distinction */
+.log-row:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
 }
