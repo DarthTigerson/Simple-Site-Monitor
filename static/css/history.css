@@ -522,40 +522,58 @@ tr:hover .status-indicator {
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Row styling based on status */
 .log-row {
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
+    background-color: var(--background-color) !important;
+    border-left: 3px solid transparent;
 }
 
-.log-row:hover {
-    background-color: rgba(50, 120, 220, 0.05); /* Subtle blue highlight */
-    transform: translateY(-1px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Remove zebra striping and ensure last row has no border */
-.logs-table tr:last-child td {
-    border-bottom: none;
-}
-
-/* Status-based background colors */
+/* Status-specific row styling with brighter colors */
 .log-row.error {
-    background-color: rgba(255, 69, 58, 0.05);
+    background-color: rgba(229, 62, 62, 0.15) !important;
+    border-left: 3px solid rgb(229, 62, 62);
 }
 
 .log-row.warning {
-    background-color: rgba(255, 196, 0, 0.05);
+    background-color: rgba(221, 107, 32, 0.15) !important;
+    border-left: 3px solid rgb(221, 107, 32);
 }
 
 .log-row.success {
-    background-color: rgba(52, 199, 89, 0.05); /* Slightly greener for healthy status */
+    background-color: rgba(56, 161, 105, 0.15) !important;
+    border-left: 3px solid rgb(56, 161, 105);
 }
 
 .log-row.expiring {
-    background-color: rgba(230, 126, 34, 0.05);
+    background-color: rgba(237, 137, 54, 0.15) !important;
+    border-left: 3px solid rgb(237, 137, 54);
 }
 
 .log-row.unknown {
-    background-color: rgba(158, 158, 158, 0.05);
+    background-color: rgba(113, 128, 150, 0.15) !important;
+    border-left: 3px solid rgb(113, 128, 150);
+}
+
+/* Hover effects with more intense colors */
+.log-row.error:hover {
+    background-color: rgba(229, 62, 62, 0.25) !important;
+}
+
+.log-row.warning:hover {
+    background-color: rgba(221, 107, 32, 0.25) !important;
+}
+
+.log-row.success:hover {
+    background-color: rgba(56, 161, 105, 0.25) !important;
+}
+
+.log-row.expiring:hover {
+    background-color: rgba(237, 137, 54, 0.25) !important;
+}
+
+.log-row.unknown:hover {
+    background-color: rgba(113, 128, 150, 0.25) !important;
 }
 
 /* URL cell styling */
