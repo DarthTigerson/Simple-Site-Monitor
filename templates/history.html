@@ -30,7 +30,6 @@
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
             </button>
-            <div class="autocomplete-container" id="autocomplete"></div>
         </div>
         
         <div class="search-help-row">
@@ -49,30 +48,49 @@
                         <div class="search-category">
                             <h5>Status Filters</h5>
                             <ul>
-                                <li><code>status:down</code> - Find logs with down status</li>
-                                <li><code>status:slow</code> - Find logs with slow response</li>
-                                <li><code>status:healthy</code> - Find logs with healthy status</li>
-                                <li><code>status:expiring</code> - Find logs with expiring tokens</li>
+                                <li><code><span class="field-name">status</span><span class="operator">=</span>down</code> - Find logs with down status</li>
+                                <li><code><span class="field-name">status</span><span class="operator">!=</span>healthy</code> - Find logs with non-healthy status</li>
+                                <li><code><span class="field-name">status</span><span class="operator">=</span>slow</code> - Find logs with slow response</li>
+                                <li><code><span class="field-name">status</span><span class="operator">=</span>expiring</code> - Find logs with expiring tokens</li>
                             </ul>
                         </div>
                         <div class="search-category">
                             <h5>Site Filters</h5>
                             <ul>
-                                <li><code>name:example</code> - Find logs for a specific site name</li>
-                                <li><code>url:example.com</code> - Find logs for specific URLs</li>
-                                <li><code>tag:production</code> - Find logs for sites with a specific tag</li>
+                                <li><code><span class="field-name">name</span><span class="operator">=</span>example</code> - Find logs containing this name</li>
+                                <li><code><span class="field-name">name</span><span class="operator">!=</span><span class="quoted">"exact name"</span></code> - Exclude logs with exact name</li>
+                                <li><code><span class="field-name">url</span><span class="operator">=</span><span class="quoted">'example.com'</span></code> - Find logs for specific URLs</li>
+                                <li><code><span class="field-name">tags</span><span class="operator">=</span>production</code> - Find logs with specific tag</li>
                             </ul>
                         </div>
                         <div class="search-category">
                             <h5>Date Filters</h5>
                             <ul>
-                                <li><code>start_time:2023-05-14</code> - Logs after this date</li>
-                                <li><code>end_time:2023-05-20</code> - Logs before this date</li>
+                                <li><code><span class="field-name">start_time</span><span class="operator">=</span>2023-05-14</code> - Logs from this date</li>
+                                <li><code><span class="field-name">start_time</span><span class="operator">></span>2023-05-14</code> - Logs after this date</li>
+                                <li><code><span class="field-name">end_time</span><span class="operator"><</span>2023-05-20</code> - Logs before this date</li>
+                            </ul>
+                        </div>
+                        <div class="search-category">
+                            <h5>Duration Filters</h5>
+                            <ul>
+                                <li><code><span class="field-name">duration</span><span class="operator">></span>30s</code> - Over 30 seconds</li>
+                                <li><code><span class="field-name">duration</span><span class="operator"><</span>5m</code> - Under 5 minutes</li>
+                                <li><code><span class="field-name">duration</span><span class="operator">=</span><span class="quoted">"1h 30m"</span></code> - Exactly 1.5 hours</li>
+                                <li><code><span class="field-name">duration</span><span class="operator">></span>1d</code> - Over 1 day</li>
+                            </ul>
+                        </div>
+                        <div class="search-category">
+                            <h5>Exact Matching</h5>
+                            <ul>
+                                <li><code><span class="field-name">name</span><span class="operator">=</span><span class="quoted">"WordPress Site"</span></code> - Exact name match with spaces</li>
+                                <li><code><span class="field-name">url</span><span class="operator">=</span><span class="quoted">'https://example.com'</span></code> - Exact URL match</li>
+                                <li><code><span class="field-name">tags</span><span class="operator">=</span><span class="quoted">"high priority"</span></code> - Match exact tag with spaces</li>
                             </ul>
                         </div>
                     </div>
                     <div class="search-tip">
-                        <strong>Pro Tip:</strong> Combine multiple filters like <code>status:down tag:production</code> for more specific results. Use date ranges with <code>start_time:2023-05-14 end_time:2023-05-20</code>.
+                        <strong>Pro Tip:</strong> Use quotes for exact matches, <code><span class="logical">AND</span></code>/<code><span class="logical">OR</span></code> for logical operations. Press <kbd>Tab</kbd> to complete suggestions.
                     </div>
                 </div>
             </div>
