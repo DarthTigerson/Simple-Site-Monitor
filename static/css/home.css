@@ -51,13 +51,59 @@ html, body {
     margin-bottom: 0;
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--text-color);
-    background: linear-gradient(90deg, var(--text-color) 0%, #9bc8ff 100%);
+    color: var(--text-color); /* Fallback color */
+    background: linear-gradient(90deg, var(--text-color) 0%, #9bc8ff 100%); /* Default/All Sites */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
     display: inline-block;
+    transition: background 0.3s ease; /* Add transition for smooth color change */
+}
+
+/* Header color for Healthy filter */
+#monitoringHeaderTitle.header-healthy {
+    background: linear-gradient(90deg, var(--text-color) 0%, var(--success-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* Header color for Slow (warning) filter */
+#monitoringHeaderTitle.header-slow {
+    background: linear-gradient(90deg, var(--text-color) 0%, var(--warning-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* Header color for Token Expiring filter */
+#monitoringHeaderTitle.header-expiring {
+    background: linear-gradient(90deg, var(--text-color) 0%, var(--expiring-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* Header color for Down (error) filter */
+#monitoringHeaderTitle.header-down {
+    background: linear-gradient(90deg, var(--text-color) 0%, var(--danger-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* Header color for Pending (unknown) filter */
+#monitoringHeaderTitle.header-unknown {
+    background: linear-gradient(90deg, var(--text-color) 0%, var(--unknown-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
 }
 
 .header-actions {
@@ -1041,7 +1087,7 @@ th.sorting-desc .sort-icon:after {
 .logs-table th:nth-child(6),
 .logs-table th:nth-child(7),
 .logs-table th:nth-child(8) {
-    text-align: center;
+    text-align: left;
 }
 
 /* Status text styling */
@@ -1387,14 +1433,14 @@ th.sorting-desc .sort-icon:after {
 .logs-table th:nth-child(6),
 .logs-table th:nth-child(7),
 .logs-table th:nth-child(8) {
-    text-align: center;
+    text-align: left;
 }
 
 .logs-table td:nth-child(5),
 .logs-table td:nth-child(6),
 .logs-table td:nth-child(7),
 .logs-table td:nth-child(8) {
-    text-align: center;
+    text-align: left;
 }
 
 /* Let's create a new file with only the comprehensive column alignment rules */
@@ -1429,12 +1475,15 @@ th.sorting-desc .sort-icon:after {
 .logs-table th:nth-child(5),
 .logs-table th:nth-child(6), 
 .logs-table th:nth-child(7),
-.logs-table th:nth-child(8),
+.logs-table th:nth-child(8) {
+    text-align: left;
+}
+
 .logs-table td:nth-child(5),
 .logs-table td:nth-child(6),
 .logs-table td:nth-child(7),
 .logs-table td:nth-child(8) {
-    text-align: center;
+    text-align: left;
 }
 
 /* Update sort headers for left-aligned columns */
@@ -1486,5 +1535,42 @@ th.sorting-desc .sort-icon:after {
 
 /* Add gradient background to table headers */
 .logs-table thead tr {
-    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
+    background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%); /* Default/All Sites */
+    transition: background 0.3s ease; /* For smooth color change */
+}
+
+/* New styles for filter-specific table header row backgrounds */
+#monitoringTableHeaderRow.header-row-healthy {
+    background: linear-gradient(135deg, #1e7e34 0%, var(--success-color) 50%, #155724 100%);
+}
+
+#monitoringTableHeaderRow.header-row-slow {
+    background: linear-gradient(135deg, #cca300 0%, var(--warning-color) 50%, #b38f00 100%);
+}
+
+#monitoringTableHeaderRow.header-row-expiring {
+    background: linear-gradient(135deg, #c0651a 0%, var(--expiring-color) 50%, #a04f10 100%);
+}
+
+#monitoringTableHeaderRow.header-row-down {
+    background: linear-gradient(135deg, #b02a37 0%, var(--danger-color) 50%, #8c1c27 100%);
+}
+
+#monitoringTableHeaderRow.header-row-unknown {
+    background: linear-gradient(135deg, #757575 0%, var(--unknown-color) 50%, #616161 100%);
+}
+
+/* Let's create a new file with only the comprehensive column alignment rules */
+.logs-table th:nth-child(3) .sort-header,
+.logs-table th:nth-child(4) .sort-header,
+.logs-table th:nth-child(5) .sort-header,
+.logs-table th:nth-child(6) .sort-header,
+.logs-table th:nth-child(7) .sort-header,
+.logs-table th:nth-child(8) .sort-header {
+    justify-content: flex-start;
+}
+
+/* Status text explicit left alignment */
+.status-text {
+    text-align: left;
 }
