@@ -1,5 +1,10 @@
 # Simple Site Monitor
 
+## v0.1.6 - Frontend Imrpovement
+### UI
+- [#35] UI improvements - reddit fixup edition
+
+
 ## v0.1.5 - History Page Beef Up
 ### UI
 - [#14] Added `Export` button yp History page

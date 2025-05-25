@@ -1,6 +1,6 @@
 [project]
 name = "Simple-Site-Monitor"
-version = "0.1.5"
+version = "0.1.6"
 description = "Default template for PDM package"
 authors = [
     {name = "Thomas Bonnici", email = "thomas.bonnici@icloud.com"},

@@ -2,7 +2,7 @@
 
 A robust web application for monitoring website uptime, performance, and SSL certificate expiration. Simple Site Monitor provides an easy-to-use dashboard to track the health of your websites in real-time.
 
-![Dashboard](screenshot_1.png)
+![Dashboard](screenshot_0.png)
 
 ## Features
 
