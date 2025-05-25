@@ -5,24 +5,22 @@
     <aside class="settings-sidebar">
         <nav>
             <ul>
-                <li class="settings-tab-link active" data-tab="general"><span>General</span></li>
-                <li class="settings-tab-link" data-tab="webhooks"><span>Webhooks</span></li>
-                <li class="settings-tab-link" data-tab="data"><span>Data</span></li>
+                <li class="settings-tab-link active" data-tab="general" data-tab-title="General"><span>General</span></li>
+                <li class="settings-tab-link" data-tab="webhooks" data-tab-title="Webhooks"><span>Webhooks</span></li>
+                <li class="settings-tab-link" data-tab="data" data-tab-title="Data"><span>Data</span></li>
             </ul>
         </nav>
     </aside>
     <main class="settings-main">
         <div class="settings-header">
-            <h2>Settings</h2>
+            <h2 id="settingsPageTitle">General</h2>
             <button type="button" id="saveSettingsBtn" class="btn btn-success">
                 <img src="/static/images/save.svg" width="20" height="20" alt="Save" style="filter: brightness(0) invert(1);">
-                <span>Save</span>
             </button>
         </div>
         <form id="settingsForm">
             <section id="tab-general" class="settings-tab-panel active">
                 <div class="settings-card">
-                    <div class="settings-card-header"><h3>General</h3></div>
                     <div class="settings-card-content">
                         <div class="settings-list">
                             {% for field in [
@@ -52,7 +50,6 @@
                 </div>
             </section>
             <section id="tab-webhooks" class="settings-tab-panel">
-                <!-- Webhooks settings card content moved here -->
                 <div class="settings-card">
                     <div class="settings-card-header"><h3>Webhooks</h3></div>
                     <div class="settings-card-content">
@@ -116,7 +113,6 @@
                 </div>
             </section>
             <section id="tab-data" class="settings-tab-panel">
-                <!-- Data settings card content moved here -->
                 <div class="settings-card">
                     <div class="settings-card-header"><h3>Data</h3></div>
                     <div class="settings-card-content">

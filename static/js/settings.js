@@ -411,25 +411,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Tab Navigation Logic ---
     const tabLinks = document.querySelectorAll('.settings-tab-link');
     const tabPanels = document.querySelectorAll('.settings-tab-panel');
+    const settingsPageTitle = document.getElementById('settingsPageTitle');
+
+    // Function to set the active tab and title
+    function setActiveTab(tabLink) {
+        // Remove active from all links
+        tabLinks.forEach(l => l.classList.remove('active'));
+        // Hide all panels
+        tabPanels.forEach(panel => panel.classList.remove('active'));
+        // Activate clicked link
+        tabLink.classList.add('active');
+        // Show corresponding panel
+        const tab = tabLink.getAttribute('data-tab');
+        const panel = document.getElementById('tab-' + tab);
+        if (panel) panel.classList.add('active');
+        // Update page title
+        if (settingsPageTitle) {
+            settingsPageTitle.textContent = tabLink.getAttribute('data-tab-title') || 'Settings';
+        }
+    }
 
     tabLinks.forEach(link => {
         link.addEventListener('click', function() {
-            // Remove active from all links
-            tabLinks.forEach(l => l.classList.remove('active'));
-            // Hide all panels
-            tabPanels.forEach(panel => panel.classList.remove('active'));
-            // Activate clicked link
-            this.classList.add('active');
-            // Show corresponding panel
-            const tab = this.getAttribute('data-tab');
-            const panel = document.getElementById('tab-' + tab);
-            if (panel) panel.classList.add('active');
+            setActiveTab(this);
         });
     });
 
-    // Optionally, activate the first tab by default if none is active
-    if (![...tabLinks].some(l => l.classList.contains('active'))) {
-        tabLinks[0].classList.add('active');
-        tabPanels[0].classList.add('active');
+    // Set initial active tab and title on page load
+    const activeTabOnLoad = document.querySelector('.settings-tab-link.active');
+    if (activeTabOnLoad) {
+        setActiveTab(activeTabOnLoad);
+    } else if (tabLinks.length > 0) {
+        // If no tab is active by default, activate the first one
+        setActiveTab(tabLinks[0]);
     }
 }); 
