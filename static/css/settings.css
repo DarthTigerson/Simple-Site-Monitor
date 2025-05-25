@@ -671,12 +671,11 @@
 }
 
 .settings-sidebar {
-    width: 220px;
-    background: var(--card-bg);
+    width: 240px;
+    background: var(--dark-bg);
     border-radius: 10px 0 0 10px;
-    box-shadow: var(--shadow);
-    margin-right: 30px;
-    padding: 30px 0 30px 0;
+    border-right: 1px solid var(--border-color);
+    padding: 25px 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -687,34 +686,38 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
 .settings-tab-link {
-    padding: 16px 32px;
-    color: var(--text-color);
-    font-size: 1.1rem;
+    padding: 15px 25px;
+    color: var(--text-secondary-color);
+    font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
     border: none;
     background: none;
     outline: none;
-    transition: background 0.2s, color 0.2s;
+    transition: background-color 0.2s, color 0.2s, border-left-color 0.2s;
     border-left: 4px solid transparent;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .settings-tab-link.active {
-    background: linear-gradient(90deg, #2563eb 0%, #1a4387 100%);
-    color: #fff;
-    border-left: 4px solid #4b6cb7;
-    border-radius: 0 20px 20px 0;
+    color: var(--primary-accent-color);
+    background-color: rgba(75, 108, 183, 0.1);
+    border-left: 4px solid var(--primary-accent-color);
+    font-weight: 600;
 }
 
 .settings-tab-link:hover:not(.active) {
-    background: rgba(75, 108, 183, 0.08);
-    color: #9bc8ff;
+    background-color: rgba(75, 108, 183, 0.05);
+    color: var(--text-color);
+    border-left: 4px solid var(--border-color);
 }
 
 .settings-main {
@@ -758,6 +761,8 @@
         margin-bottom: 20px;
         min-height: unset;
         padding: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
     }
     .settings-sidebar nav ul {
         display: flex;
@@ -766,17 +771,26 @@
         justify-content: space-around;
     }
     .settings-tab-link {
-        padding: 14px 0;
+        padding: 14px 10px;
         border-left: none;
         border-bottom: 4px solid transparent;
         border-radius: 0;
         justify-content: center;
-        width: 100%;
+        text-align: center;
+        flex-grow: 1;
     }
     .settings-tab-link.active {
-        background: linear-gradient(90deg, #2563eb 0%, #1a4387 100%);
+        background-color: rgba(75, 108, 183, 0.1);
+        color: var(--primary-accent-color);
         border-left: none;
-        border-bottom: 4px solid #4b6cb7;
-        border-radius: 0 0 20px 20px;
+        border-bottom: 4px solid var(--primary-accent-color);
+    }
+    .settings-tab-link:hover:not(.active) {
+        border-left: none;
+        border-bottom: 4px solid var(--border-color);
+        background-color: rgba(75, 108, 183, 0.05);
+    }
+    .settings-main {
+        border-radius: 0 0 10px 10px;
     }
 } 
