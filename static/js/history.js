@@ -1685,22 +1685,15 @@ function compareStatus(rowA, rowB, ascending) {
 }
 
 function compareDuration(a, b, ascending) {
-    // Convert duration strings to seconds for comparison
-    const getSeconds = (str) => {
-        if (!str) return 0;
-        
-        const value = parseInt(str.match(/\d+/)?.[0] || 0);
-        if (str.includes('second')) return value;
-        if (str.includes('minute')) return value * 60;
-        if (str.includes('hour')) return value * 3600;
-        if (str.includes('day')) return value * 86400;
-        return 0;
-    };
-    
-    const secondsA = getSeconds(a);
-    const secondsB = getSeconds(b);
-    
-    return ascending ? secondsA - secondsB : secondsB - secondsA;
+    // Convert duration strings to seconds for comparison using the more robust parser
+    const secondsA = parseDurationToSeconds(a);
+    const secondsB = parseDurationToSeconds(b);
+
+    // Handle cases where parsing might fail (though parseDurationToSeconds returns null)
+    const valA = secondsA === null ? 0 : secondsA;
+    const valB = secondsB === null ? 0 : secondsB;
+
+    return ascending ? valA - valB : valB - valA;
 }
 
 // Initialize clear button functionality

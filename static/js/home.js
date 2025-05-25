@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const allSitesCard = document.querySelector('.status-card[data-filter="all"]');
     if (allSitesCard) {
         allSitesCard.classList.add('active');
+        updateMonitoringHeader(allSitesCard.querySelector('.status-label').textContent.trim(), 'all');
         
         // Also set the filter dropdown to "All Sites"
         const logFilter = document.getElementById('logFilter');
@@ -303,10 +304,12 @@ document.addEventListener('DOMContentLoaded', function() {
     statusCards.forEach(card => {
         card.addEventListener('click', function() {
             const filterValue = this.getAttribute('data-filter');
+            const filterText = this.querySelector('.status-label').textContent.trim();
             const logFilter = document.getElementById('logFilter');
             
             if (logFilter && filterValue) {
                 logFilter.value = filterValue;
+                updateMonitoringHeader(filterText, filterValue);
                 // Trigger the change event to apply filtering
                 const event = new Event('change');
                 logFilter.dispatchEvent(event);
@@ -323,8 +326,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logFilter) {
         logFilter.addEventListener('change', function() {
             const filterValue = this.value;
+            const selectedOption = this.options[this.selectedIndex];
+            const filterText = selectedOption.textContent.trim();
             const rows = document.querySelectorAll('.log-row');
             
+            updateMonitoringHeader(filterText, filterValue);
+
             // Update active status on cards based on selected filter
             const statusCards = document.querySelectorAll('.status-card');
             statusCards.forEach(card => {
@@ -428,6 +435,9 @@ function restoreSortingState() {
             const logFilter = document.getElementById('logFilter');
             if (logFilter && logFilter.value !== sortingState.filterValue) {
                 logFilter.value = sortingState.filterValue;
+                
+                const selectedOptionText = logFilter.options[logFilter.selectedIndex].textContent.trim();
+                updateMonitoringHeader(selectedOptionText, sortingState.filterValue);
                 
                 // Update status card active states
                 const statusCards = document.querySelectorAll('.status-card');
@@ -897,4 +907,28 @@ function getTagsFromUI() {
     return Array.from(tagsContainer.querySelectorAll('.tag-item')).map(tag => 
         tag.querySelector('.tag-text').textContent
     );
+}
+
+// Function to update the monitoring header text and color
+function updateMonitoringHeader(text, filterValue) {
+    const headerTitle = document.getElementById('monitoringHeaderTitle');
+    const tableHeaderRow = document.getElementById('monitoringTableHeaderRow');
+
+    if (headerTitle) {
+        headerTitle.textContent = text;
+        headerTitle.classList.remove('header-healthy', 'header-slow', 'header-expiring', 'header-down', 'header-unknown');
+        if (filterValue && filterValue !== 'all') {
+            headerTitle.classList.add(`header-${filterValue}`);
+        }
+    }
+
+    if (tableHeaderRow) {
+        // Remove any existing header row color classes
+        tableHeaderRow.classList.remove('header-row-healthy', 'header-row-slow', 'header-row-expiring', 'header-row-down', 'header-row-unknown');
+        // Add the new class based on filterValue
+        if (filterValue && filterValue !== 'all') {
+            tableHeaderRow.classList.add(`header-row-${filterValue}`);
+        }
+        // If filterValue is 'all' or not provided, it will use the default CSS for the <tr>
+    }
 }

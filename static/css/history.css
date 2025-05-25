@@ -38,14 +38,49 @@ html.history-page {
 
 .query-bar {
     display: flex;
-    gap: 10px;
     position: relative;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    align-items: stretch;
+}
+
+.query-bar:focus-within {
+    /* border-color: var(--primary-color); */ /* Style moved */
+    /* box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25); */ /* Style moved */
 }
 
 .search-input-wrapper {
-    position: relative;
+    position: relative; /* For z-index */
     flex: 1;
     display: block;
+    /* Add separators and initial transparent top/bottom for focus effect */
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+
+    margin: 0;
+    padding: 0; 
+    box-sizing: border-box; /* Borders included in height/width */
+
+    /* Adjust margins and height to make its border overlay query-bar's border on focus */
+    margin-top: -1px;
+    margin-bottom: -1px;
+    height: calc(100% + 2px); /* Compensate for negative margins */
+
+    transition: border-top-color 0.2s ease, border-bottom-color 0.2s ease, border-left-color 0.2s ease, border-right-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* When richSearchInput (child of search-input-wrapper) is focused */
+.search-input-wrapper:focus-within {
+    border-top-color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    border-left-color: var(--primary-color);
+    border-right-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+    z-index: 1; /* Ensure its borders and shadow are on top */
 }
 
 .query-bar input {
@@ -221,13 +256,15 @@ html.history-page {
     background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0;
     cursor: pointer;
     transition: background-color 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 38px;
+    border-right: 1px solid var(--border-color);
+    margin: 0;
 }
 
 #searchBtn:hover {
@@ -245,7 +282,10 @@ html.history-page {
     background: linear-gradient(135deg, #e6a819 0%, #ffa500 50%, #e69500 100%);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -253,7 +293,7 @@ html.history-page {
     justify-content: center;
     min-width: 38px;
     height: 38px;
-    margin: 0 5px;
+    margin: 0;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
@@ -528,6 +568,13 @@ html.history-page {
     justify-content: flex-start;
 }
 
+/* Add this new rule to left-align sort-header content for Start Time, End Time, Duration */
+.logs-table th:nth-child(5) .sort-header,
+.logs-table th:nth-child(6) .sort-header,
+.logs-table th:nth-child(7) .sort-header {
+    justify-content: flex-start;
+}
+
 .sort-icon {
     display: inline-block;
     width: 0;
@@ -567,13 +614,13 @@ th.sorting-desc .sort-icon:after {
 .logs-table th:nth-child(5),
 .logs-table th:nth-child(6),
 .logs-table th:nth-child(7) {
-    text-align: center;
+    text-align: left;
 }
 
 .logs-table td:nth-child(5),
 .logs-table td:nth-child(6),
 .logs-table td:nth-child(7) {
-    text-align: center;
+    text-align: left;
 }
 
 /* Ensure alignment between header and body */
@@ -915,11 +962,13 @@ tr:hover .status-indicator {
 /* Content editable div styling - will look like the input but support rich text */
 #richSearchInput {
     width: 100%;
-    height: 38px;
+    /* height: 38px; */ /* Original fixed height */
+    height: 100%; /* Fill the adjusted height of search-input-wrapper */
     padding: 8px 15px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 2px solid var(--primary-color);
-    border-radius: 4px;
+    /* background-color: rgba(0, 0, 0, 0.2); */ /* Handled by .query-bar */
+    background-color: transparent; /* Show query-bar background */
+    border: none;
+    border-radius: 0;
     color: var(--text-color);
     font-size: 0.95rem;
     font-family: inherit;
@@ -929,12 +978,13 @@ tr:hover .status-indicator {
     line-height: 22px; /* Align text vertically */
     box-sizing: border-box; /* Ensure padding is included in height */
     position: relative; /* For positioning the ghost overlay */
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    /* transition: border-color 0.2s ease, box-shadow 0.2s ease; */ /* Handled by .search-input-wrapper:focus-within */
 }
 
 #richSearchInput:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+    /* border-color: var(--primary-color); */ /* Handled by .search-input-wrapper:focus-within */
+    /* box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25); */ /* Handled by .search-input-wrapper:focus-within */
+    outline: none; /* Ensure no default focus outline if border is removed */
 }
 
 /* Hide the original input but keep it in DOM for form submission */
@@ -1026,7 +1076,7 @@ tr:hover .status-indicator {
 .logs-table td:nth-child(6),
 .logs-table th:nth-child(7),
 .logs-table td:nth-child(7) {
-    text-align: center;
+    text-align: left;
 }
 
 /* Status column specific alignment */
@@ -1085,7 +1135,10 @@ tr.page-visible {
     background: linear-gradient(135deg, #444444 0%, #666666 50%, #444444 100%);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -1093,7 +1146,7 @@ tr.page-visible {
     justify-content: center;
     min-width: 38px;
     height: 38px;
-    margin-right: 0px;
+    margin: 0;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
