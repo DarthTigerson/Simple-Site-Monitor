@@ -799,16 +799,22 @@
 .settings-list {
     display: flex;
     flex-direction: column;
-    gap: 0; /* Remove gap if subcards had it, manage spacing via padding/borders */
+    gap: 0;
+}
+
+#tab-general .settings-card-content {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .setting-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 15px; /* Adjust padding for rows */
-    border-bottom: 1px solid var(--border-color); /* Separator for list items */
-    /* Remove card-specific styles if they were on .settings-subcard before */
+    padding: 25px 20px;
+    border-bottom: 1px solid var(--border-color);
     background-color: transparent;
     box-shadow: none;
     border-radius: 0;
@@ -820,65 +826,74 @@
 }
 
 .setting-item:hover {
-    background-color: rgba(var(--primary-rgb, 75, 108, 183), 0.03); /* Subtle hover, assumes --primary-rgb or use direct rgba */
+    background-color: rgba(var(--primary-rgb, 75, 108, 183), 0.03);
 }
 
 .setting-info {
-    flex: 1; /* Allows text to take available space */
-    padding-right: 20px; /* Space between info and control */
+    flex: 1;
+    padding-right: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .setting-info label {
-    font-size: 1rem; /* Was 0.95rem */
-    font-weight: 600; /* Was 500 */
-    color: var(--text-color); /* Brighter than subcard labels */
-    margin-bottom: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
     display: block;
-    text-transform: none; /* Was uppercase */
+    text-transform: none;
 }
 
 .setting-description {
-    font-size: 0.9rem; /* Was 0.85rem */
-    color: var(--text-secondary-color); /* More subtle description */
+    font-size: 0.9rem;
+    color: var(--text-secondary-color);
     line-height: 1.5;
-    margin-bottom: 0; /* Remove bottom margin if any */
+    margin-bottom: 0;
 }
 
 .setting-control {
     display: flex;
-    flex-direction: column; /* Stack input and unit label */
-    align-items: center; /* Center them horizontally */
-    min-width: 180px; /* Ensure enough space for number input */
+    flex-direction: column;
+    align-items: center;
+    min-width: 200px;
+    padding-left: 10px;
 }
 
-/* Adjustments for number input within list view if needed */
 .setting-item .number-input-container {
-    margin-bottom: 5px; /* Original was 5px, ensure it fits */
-    width: auto; /* Allow it to size based on content */
+    margin-bottom: 8px;
+    width: auto;
 }
 
 .setting-item .unit-label {
-    font-size: 0.8rem; /* Was 0.85rem */
+    font-size: 0.8rem;
     color: var(--text-secondary-color);
 }
 
 /* Responsive adjustments for settings list */
 @media (max-width: 768px) {
+    #tab-general .settings-card-content {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
     .setting-item {
         flex-direction: column;
         align-items: flex-start;
-        padding: 15px;
+        padding: 20px 15px;
     }
     .setting-info {
         padding-right: 0;
-        margin-bottom: 15px; /* Space between info and control on mobile */
+        margin-bottom: 20px;
         width: 100%;
     }
     .setting-control {
         width: 100%;
-        align-items: flex-start; /* Align controls to the left on mobile */
+        align-items: flex-start;
+        min-width: unset;
+        padding-left: 0;
     }
     .setting-item .number-input-container {
-        justify-content: flex-start; /* Align number input to left */
+        justify-content: flex-start;
     }
-} 
+}
