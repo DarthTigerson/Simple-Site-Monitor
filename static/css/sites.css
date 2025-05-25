@@ -610,12 +610,12 @@
     display: grid;
     grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
-    padding: 12px 15px;
+    padding: 0;
     background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    text-align: center;
+    text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     white-space: nowrap;
     position: sticky;
@@ -624,11 +624,11 @@
 }
 
 .list-header-cell {
-    padding: 0 5px;
+    padding: 12px 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: center;
+    text-align: left;
 }
 
 .list-view-content {
@@ -639,7 +639,7 @@
     display: grid;
     grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
-    padding: 12px 15px;
+    padding: 0;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
 }
@@ -653,11 +653,11 @@
 }
 
 .list-cell {
-    padding: 0 5px;
+    padding: 12px 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: center;
+    text-align: left;
 }
 
 .sites-list .site-card {
@@ -1186,12 +1186,12 @@
     display: grid;
     grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
-    padding: 12px 15px;
+    padding: 0;
     background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
     font-weight: 600;
     color: white;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    text-align: center;
+    text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     white-space: nowrap;
     position: sticky;
@@ -1200,34 +1200,34 @@
 }
 
 .list-header-cell {
-    padding: 0 5px;
+    padding: 12px 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: center;
+    text-align: left;
 }
 
 .sites-list .list-view-content {
     display: grid;
     grid-template-columns: minmax(120px, 1fr) minmax(150px, 1.5fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) minmax(100px, 0.8fr) 120px;
     gap: 10px;
-    padding: 12px 15px;
+    padding: 0;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
 }
 
 .list-cell {
-    padding: 0 5px;
+    padding: 12px 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: center;
+    text-align: left;
 }
 
 /* Only first column (name) should be left-aligned */
-.list-cell.site-name {
-    text-align: center;
-}
+/* .list-cell.site-name { */
+    /* text-align: left; */ /* Covered by general .list-cell */
+/* } */
 
 /* URL styling to match home.html */
 .list-cell.site-url-col a {
@@ -1274,7 +1274,6 @@
     position: relative;
     user-select: none;
     transition: background-color 0.2s;
-    padding: 14px 15px; /* Add consistent padding */
 }
 
 .list-header-cell.sortable:hover {
@@ -1284,22 +1283,22 @@
 .sort-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 100%; /* Ensure the header content takes full width */
-    height: 100%; /* Ensure the header content takes full height */
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
 }
 
 /* Text columns (Name, URL, Tags) get left-aligned headers */
-.sites-list .sites-list-header .list-header-cell.site-name .sort-header,
+/* .sites-list .sites-list-header .list-header-cell.site-name .sort-header,
 .sites-list .sites-list-header .list-header-cell.site-url-col .sort-header,
 .sites-list .sites-list-header .list-header-cell.site-tags-col .sort-header {
-    justify-content: flex-start; /* Left-align text columns */
-}
+    justify-content: flex-start; 
+} */ /* Covered by general .sort-header */
 
 /* Data columns (status, timeout, etc.) remain center-aligned */
-.sites-list .sites-list-header .list-header-cell:not(.site-name):not(.site-url-col):not(.site-tags-col):not(.site-actions-col) .sort-header {
-    justify-content: center; /* Center-align data columns */
-}
+/* .sites-list .sites-list-header .list-header-cell:not(.site-name):not(.site-url-col):not(.site-tags-col):not(.site-actions-col) .sort-header {
+    justify-content: flex-start; 
+} */ /* Covered by general .sort-header, adjust if specific columns need centering */
 
 .sort-icon {
     display: inline-block;
@@ -1312,7 +1311,6 @@
 /* Add gradient background to the table headers like in home.css */
 .sites-list .sites-list-header {
     background: linear-gradient(135deg, #1a4387 0%, #2563eb 50%, #1e429f 100%);
-    padding: 0; /* Remove outer padding since we'll add padding to each cell */
 }
 
 /* Two-column form layout */
@@ -1729,77 +1727,50 @@
 }
 
 /* List-view column alignment rules */
-.list-header-cell {
-    padding: 0 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-}
+/* .list-header-cell { */
+    /* padding: 0 5px; */
+    /* white-space: nowrap; */
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+    /* text-align: left; */ /* Covered by main .list-header-cell */
+/* } */
 
 /* Text column headers (Name, URL, Tags) get left alignment */
-.list-header-cell.site-name,
+/* .list-header-cell.site-name,
 .list-header-cell.site-url-col,
 .list-header-cell.site-tags-col {
-    text-align: left;
-}
+    text-align: left; 
+} */ /* Covered by main .list-header-cell */
 
-.list-cell {
-    padding: 0 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-}
+/* .list-cell { */
+    /* padding: 0 5px; */
+    /* white-space: nowrap; */
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+    /* text-align: left; */ /* Covered by main .list-cell */
+/* } */
 
 /* Text cells (Name, URL, Tags) get left alignment */
-.list-cell.site-name,
+/* .list-cell.site-name,
 .list-cell.site-url-col,
 .list-cell.site-tags-col {
-    text-align: left;
-}
+    text-align: left; 
+} */ /* Covered by main .list-cell */
 
 /* Ensure tags container is left-aligned in list view */
-.list-cell.site-tags-col .list-tags-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-}
-
-/* Update the previous center alignment to ensure it doesn't override our new rules */
-.list-cell.site-tags-col {
-    display: flex;
-    justify-content: flex-start !important;
-    align-items: center !important;
-    text-align: left !important;
-    white-space: normal !important;
-}
-
-.list-cell.site-tags-col .list-tags-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start !important;
-    flex-wrap: wrap;
-}
-
-.list-cell.site-tags-col .tag-badge {
-    margin: 2px;
-    display: inline-block;
-}
-
-.list-cell.site-tags-col .no-tags {
-    width: 100% !important;
-    text-align: left !important;
-    margin: 0 !important;
-}
+/* .list-cell.site-tags-col .list-tags-wrapper { */
+    /* width: 100%; */
+    /* display: flex; */
+    /* justify-content: flex-start; */
+    /* flex-wrap: wrap; */
+/* } */
 
 /* Update sort headers for text columns */
-.sites-list .sites-list-header .list-header-cell.site-name .sort-header,
+/* .sites-list .sites-list-header .list-header-cell.site-name .sort-header,
 .sites-list .sites-list-header .list-header-cell.site-url-col .sort-header,
 .sites-list .sites-list-header .list-header-cell.site-tags-col .sort-header {
-    justify-content: flex-start; /* Left-align sort headers for text columns */
-}
+    justify-content: flex-start; 
+} */ /* Covered by general .sort-header */
 
 /* Reinforce left alignment for Name column */
 .sites-list .site-name,
@@ -1823,12 +1794,12 @@
 }
 
 /* Ensure list view content cells are properly aligned */
-.sites-list .list-view-content .list-cell.site-name,
+/* .sites-list .list-view-content .list-cell.site-name,
 .sites-list .list-view-content .list-cell.site-url-col,
 .sites-list .list-view-content .list-cell.site-tags-col {
-    text-align: left !important;
+    text-align: left !important; 
     justify-content: flex-start !important;
-}
+} */ /* These should be covered by the general .list-cell and the specific padding rules above */
 
 /* Tag badge styling to match home.css */
 .tag-badge {
