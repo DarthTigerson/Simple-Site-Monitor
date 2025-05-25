@@ -793,4 +793,92 @@
     .settings-main {
         border-radius: 0 0 10px 10px;
     }
+}
+
+/* --- Settings List View (General Tab) --- */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* Remove gap if subcards had it, manage spacing via padding/borders */
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 15px; /* Adjust padding for rows */
+    border-bottom: 1px solid var(--border-color); /* Separator for list items */
+    /* Remove card-specific styles if they were on .settings-subcard before */
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    transition: background-color 0.2s;
+}
+
+.setting-item:last-child {
+    border-bottom: none;
+}
+
+.setting-item:hover {
+    background-color: rgba(var(--primary-rgb, 75, 108, 183), 0.03); /* Subtle hover, assumes --primary-rgb or use direct rgba */
+}
+
+.setting-info {
+    flex: 1; /* Allows text to take available space */
+    padding-right: 20px; /* Space between info and control */
+}
+
+.setting-info label {
+    font-size: 1rem; /* Was 0.95rem */
+    font-weight: 600; /* Was 500 */
+    color: var(--text-color); /* Brighter than subcard labels */
+    margin-bottom: 5px;
+    display: block;
+    text-transform: none; /* Was uppercase */
+}
+
+.setting-description {
+    font-size: 0.9rem; /* Was 0.85rem */
+    color: var(--text-secondary-color); /* More subtle description */
+    line-height: 1.5;
+    margin-bottom: 0; /* Remove bottom margin if any */
+}
+
+.setting-control {
+    display: flex;
+    flex-direction: column; /* Stack input and unit label */
+    align-items: center; /* Center them horizontally */
+    min-width: 180px; /* Ensure enough space for number input */
+}
+
+/* Adjustments for number input within list view if needed */
+.setting-item .number-input-container {
+    margin-bottom: 5px; /* Original was 5px, ensure it fits */
+    width: auto; /* Allow it to size based on content */
+}
+
+.setting-item .unit-label {
+    font-size: 0.8rem; /* Was 0.85rem */
+    color: var(--text-secondary-color);
+}
+
+/* Responsive adjustments for settings list */
+@media (max-width: 768px) {
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+    .setting-info {
+        padding-right: 0;
+        margin-bottom: 15px; /* Space between info and control on mobile */
+        width: 100%;
+    }
+    .setting-control {
+        width: 100%;
+        align-items: flex-start; /* Align controls to the left on mobile */
+    }
+    .setting-item .number-input-container {
+        justify-content: flex-start; /* Align number input to left */
+    }
 } 
