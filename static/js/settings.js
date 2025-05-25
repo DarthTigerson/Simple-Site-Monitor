@@ -407,4 +407,29 @@ document.addEventListener('DOMContentLoaded', function() {
             return { message: 'Webhook cleared successfully' };
         });
     }
+
+    // --- Tab Navigation Logic ---
+    const tabLinks = document.querySelectorAll('.settings-tab-link');
+    const tabPanels = document.querySelectorAll('.settings-tab-panel');
+
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            // Remove active from all links
+            tabLinks.forEach(l => l.classList.remove('active'));
+            // Hide all panels
+            tabPanels.forEach(panel => panel.classList.remove('active'));
+            // Activate clicked link
+            this.classList.add('active');
+            // Show corresponding panel
+            const tab = this.getAttribute('data-tab');
+            const panel = document.getElementById('tab-' + tab);
+            if (panel) panel.classList.add('active');
+        });
+    });
+
+    // Optionally, activate the first tab by default if none is active
+    if (![...tabLinks].some(l => l.classList.contains('active'))) {
+        tabLinks[0].classList.add('active');
+        tabPanels[0].classList.add('active');
+    }
 }); 

@@ -1,92 +1,60 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="dashboard-container">
-    <section class="sites-dashboard">
-        <div class="section-header">
+<div class="settings-layout">
+    <aside class="settings-sidebar">
+        <nav>
+            <ul>
+                <li class="settings-tab-link active" data-tab="general"><span>General</span></li>
+                <li class="settings-tab-link" data-tab="webhooks"><span>Webhooks</span></li>
+                <li class="settings-tab-link" data-tab="data"><span>Data</span></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="settings-main">
+        <div class="settings-header">
             <h2>Settings</h2>
             <button type="button" id="saveSettingsBtn" class="btn btn-success">
                 <img src="/static/images/save.svg" width="20" height="20" alt="Save" style="filter: brightness(0) invert(1);">
                 <span>Save</span>
             </button>
         </div>
-
         <form id="settingsForm">
-            <div class="settings-grid">
+            <section id="tab-general" class="settings-tab-panel active">
+                <!-- General settings card content moved here -->
                 <div class="settings-card">
-                    <div class="settings-card-header">
-                        <h3>General</h3>
-                    </div>
+                    <div class="settings-card-header"><h3>General</h3></div>
                     <div class="settings-card-content">
                         <div class="settings-subcards">
+                            <!-- ... General settings subcards ... -->
+                            {% for field in [
+                                {"id": "scanInterval", "label": "SCAN INTERVAL", "desc": "How often the runner will check site status that doesnt have a set custom scan interval", "value": config.default_scan_interval, "min": 30, "max": 86400, "step": 1, "unit": "seconds"},
+                                {"id": "defaultTimeout", "label": "TIMEOUT", "desc": "The maximum amount of time the runner will wait for a site to respond before flagging it as down", "value": config.default_timeout, "min": 10, "max": 300, "step": 1, "unit": "seconds"},
+                                {"id": "slowThreshold", "label": "SLOW THRESHOLD", "desc": "If a site surpasses this threshold, it will be flagged as slow", "value": config.default_slow_threshold, "min": 0.5, "max": 300, "step": 0.5, "unit": "seconds"},
+                                {"id": "expiringTokenThreshold", "label": "EXPIRING TOKEN THRESHOLD", "desc": "If enabled, the runner will show warnings if the token is expiring soon", "value": config.expiring_token_threshold, "min": 1, "max": 60, "step": 1, "unit": "days"},
+                                {"id": "attemptBeforeTrigger", "label": "ATTEMPT BEFORE TRIGGER", "desc": "The number of attempts before the runner will trigger a down alert", "value": config.attempt_before_trigger, "min": 1, "max": 999, "step": 1, "unit": "attempts"}
+                            ] %}
                             <div class="settings-subcard">
                                 <div class="form-group">
-                                    <label for="scanInterval">SCAN INTERVAL</label>
-                                    <p class="setting-description">How often the runner will check site status that doesnt have a set custom scan interval</p>
+                                    <label for="{{ field.id }}">{{ field.label }}</label>
+                                    <p class="setting-description">{{ field.desc }}</p>
                                     <div class="number-input-container">
-                                        <button type="button" class="number-decrement" onclick="this.nextElementSibling.stepDown(); this.nextElementSibling.dispatchEvent(new Event('change'));">-</button>
-                                        <input type="number" id="scanInterval" name="scanInterval" value="{{ config.default_scan_interval }}" min="30" max="86400" step="1" required>
-                                        <button type="button" class="number-increment" onclick="this.previousElementSibling.stepUp(); this.previousElementSibling.dispatchEvent(new Event('change'));">+</button>
+                                        <button type="button" class="number-decrement" onclick="this.nextElementSibling.stepDown(); this.nextElementSibling.dispatchEvent(new Event('change'))">-</button>
+                                        <input type="number" id="{{ field.id }}" name="{{ field.id }}" value="{{ field.value }}" min="{{ field.min }}" max="{{ field.max }}" step="{{ field.step }}" required>
+                                        <button type="button" class="number-increment" onclick="this.previousElementSibling.stepUp(); this.previousElementSibling.dispatchEvent(new Event('change'))">+</button>
                                     </div>
-                                    <span class="unit-label">seconds</span>
+                                    <span class="unit-label">{{ field.unit }}</span>
                                 </div>
                             </div>
-                            <div class="settings-subcard">
-                                <div class="form-group">
-                                    <label for="defaultTimeout">TIMEOUT</label>
-                                    <p class="setting-description">The maximum amount of time the runner will wait for a site to respond before flagging it as down</p>
-                                    <div class="number-input-container">
-                                        <button type="button" class="number-decrement" onclick="this.nextElementSibling.stepDown(); this.nextElementSibling.dispatchEvent(new Event('change'));">-</button>
-                                        <input type="number" id="defaultTimeout" name="defaultTimeout" value="{{ config.default_timeout }}" min="10" max="300" step="1" required>
-                                        <button type="button" class="number-increment" onclick="this.previousElementSibling.stepUp(); this.previousElementSibling.dispatchEvent(new Event('change'));">+</button>
-                                    </div>
-                                    <span class="unit-label">seconds</span>
-                                </div>
-                            </div>
-                            <div class="settings-subcard">
-                                <div class="form-group">
-                                    <label for="slowThreshold">SLOW THRESHOLD</label>
-                                    <p class="setting-description">If a site surpasses this threshold, it will be flagged as slow</p>
-                                    <div class="number-input-container">
-                                        <button type="button" class="number-decrement" onclick="this.nextElementSibling.stepDown(); this.nextElementSibling.dispatchEvent(new Event('change'));">-</button>
-                                        <input type="number" id="slowThreshold" name="slowThreshold" value="{{ config.default_slow_threshold }}" min="0.5" max="300" step="0.5" required>
-                                        <button type="button" class="number-increment" onclick="this.previousElementSibling.stepUp(); this.previousElementSibling.dispatchEvent(new Event('change'));">+</button>
-                                    </div>
-                                    <span class="unit-label">seconds</span>
-                                </div>
-                            </div>
-                            <div class="settings-subcard">
-                                <div class="form-group">
-                                    <label for="expiringTokenThreshold">EXPIRING TOKEN THRESHOLD</label>
-                                    <p class="setting-description">If enabled, the runner will show warnings if the token is expiring soon</p>
-                                    <div class="number-input-container">
-                                        <button type="button" class="number-decrement" onclick="this.nextElementSibling.stepDown(); this.nextElementSibling.dispatchEvent(new Event('change'));">-</button>
-                                        <input type="number" id="expiringTokenThreshold" name="expiringTokenThreshold" value="{{ config.expiring_token_threshold }}" min="1" max="60" step="1" required>
-                                        <button type="button" class="number-increment" onclick="this.previousElementSibling.stepUp(); this.previousElementSibling.dispatchEvent(new Event('change'));">+</button>
-                                    </div>
-                                    <span class="unit-label">days</span>
-                                </div>
-                            </div>
-                            <div class="settings-subcard">
-                                <div class="form-group">
-                                    <label for="attemptBeforeTrigger">ATTEMPT BEFORE TRIGGER</label>
-                                    <p class="setting-description">The number of attempts before the runner will trigger a down alert</p>
-                                    <div class="number-input-container">
-                                        <button type="button" class="number-decrement" onclick="this.nextElementSibling.stepDown(); this.nextElementSibling.dispatchEvent(new Event('change'));">-</button>
-                                        <input type="number" id="attemptBeforeTrigger" name="attemptBeforeTrigger" value="{{ config.attempt_before_trigger }}" min="1" max="999" step="1" required>
-                                        <button type="button" class="number-increment" onclick="this.previousElementSibling.stepUp(); this.previousElementSibling.dispatchEvent(new Event('change'));">+</button>
-                                    </div>
-                                    <span class="unit-label">attempts</span>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-
+            </section>
+            <section id="tab-webhooks" class="settings-tab-panel">
+                <!-- Webhooks settings card content moved here -->
                 <div class="settings-card">
-                    <div class="settings-card-header">
-                        <h3>Webhooks</h3>
-                    </div>
+                    <div class="settings-card-header"><h3>Webhooks</h3></div>
                     <div class="settings-card-content">
                         <div class="settings-subcards">
                             <div class="settings-subcard webhook-controls-card">
@@ -146,20 +114,35 @@
                         </div>
                     </div>
                 </div>
-
+            </section>
+            <section id="tab-data" class="settings-tab-panel">
+                <!-- Data settings card content moved here -->
                 <div class="settings-card">
-                    <div class="settings-card-header">
-                        <h3>Data</h3>
-                    </div>
+                    <div class="settings-card-header"><h3>Data</h3></div>
                     <div class="settings-card-content">
                         <div class="settings-subcards">
-                            <!-- Data settings will be added here -->
+                            <div class="settings-subcard">
+                                <div class="form-group">
+                                    <label for="configData">CONFIGURATION DATA</label>
+                                    <p class="setting-description">Import or export your application configuration file. This includes all settings and site configurations.</p>
+                                    <div class="actions-container" style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
+                                        <button type="button" id="importConfigBtn" class="btn btn-primary" style="background-color: #4b6cb7; color: white; padding: 10px 15px; border-radius: 5px;">
+                                            <img src="/static/images/upload.svg" width="16" height="16" alt="Import" style="filter: brightness(0) invert(1); margin-right: 5px;">
+                                            Import
+                                        </button>
+                                        <button type="button" id="exportConfigBtn" class="btn btn-secondary" style="background-color: #6c757d; color: white; padding: 10px 15px; border-radius: 5px;">
+                                            <img src="/static/images/download.svg" width="16" height="16" alt="Export" style="filter: brightness(0) invert(1); margin-right: 5px;">
+                                            Export
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </form>
-    </section>
+    </main>
 </div>
 {% endblock %}
 
